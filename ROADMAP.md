@@ -175,12 +175,12 @@ worked example. The list is the actual registry contents.
 
 | Category | Tools |
 | --- | --- |
-| **Text** (10) | word-counter · case-converter · duplicate-line-remover · text-reverser · alphabetical-sorter · whitespace-cleaner · slug-generator · find-and-replace · lorem-ipsum-generator · text-diff |
-| **Calculators** (9) | percentage-calculator · percentage-change-calculator · discount-calculator · vat-calculator · age-calculator · days-between-dates · average-calculator · standard-deviation-calculator · gpa-calculator |
-| **Developer** (9) | json-formatter · base64-encoder-decoder · url-encoder-decoder · html-entity-encoder · hash-generator · uuid-generator · jwt-decoder · timestamp-converter · color-converter |
+| **Text** (10) | word-counter · case-converter · duplicate-line-remover · text-reverser · alphabetical-text-sorter · remove-extra-spaces · text-to-slug-converter · find-and-replace · lorem-ipsum-generator · text-diff |
+| **Calculators** (9) | percentage-calculator · percentage-increase-decrease-calculator · discount-calculator · vat-calculator · age-calculator · days-between-dates-calculator · average-calculator · standard-deviation-calculator · gpa-calculator |
+| **Developer** (9) | json-formatter · base64-encoder-decoder · url-encoder-decoder · html-entity-encoder · hash-generator · uuid-generator · jwt-decoder · timestamp-converter · color-code-converter |
 | **Finance** (4) | loan-calculator · compound-interest-calculator · profit-margin-calculator · roi-calculator |
 | **Everyday** (4) | unit-converter · temperature-converter · time-zone-converter · bmi-calculator |
-| **SEO** (4) | serp-preview · utm-link-builder · keyword-density-analyzer · robots-txt-generator |
+| **SEO** (4) | serp-snippet-previewer · utm-link-builder · keyword-density-analyzer · robots-txt-generator |
 | **Security** (1) | password-generator |
 
 Definition of done per tool (all seven required, checked by the catalogue test plus a manual

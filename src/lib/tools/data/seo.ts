@@ -2,8 +2,8 @@ import type { ToolDefinition } from "../types";
 
 export const seoTools: ToolDefinition[] = [
   {
-    slug: "serp-preview",
-    name: "SERP Snippet Preview",
+    slug: "serp-snippet-previewer",
+    name: "SERP Snippet Previewer",
     category: "seo",
     tagline: "See how your title and description fit in Google's results, by pixel width.",
     intent: "preview google search result snippet",

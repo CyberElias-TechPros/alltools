@@ -124,11 +124,11 @@ Run on every release, in a **private window** (so `localStorage` starts empty).
 | Tool | Cases to try |
 | --- | --- |
 | percentage-calculator | zero whole, negative values, very small decimals |
-| percentage-change-calculator | 0 → 100 (no `Infinity`), decrease, negative baseline |
+| percentage-increase-decrease-calculator | 0 → 100 (no `Infinity`), decrease, negative baseline |
 | discount-calculator | 100% discount, discount > price |
 | vat-calculator | add vs remove VAT, 0% rate, rounding on `.005` |
 | age-calculator | 29 Feb birthday in a non-leap year, birth date after today |
-| days-between-dates | same day, reversed dates, a span crossing a month end |
+| days-between-dates-calculator | same day, reversed dates, a span crossing a month end |
 | average / standard-deviation | single value (sample mode), all-identical values, large list |
 | gpa-calculator | zero-credit course, no courses, 4.0 vs 5.0 vs 10-point scale |
 | loan-calculator | 0% interest, 1-month term, rounding of the final payment |
@@ -138,13 +138,13 @@ Run on every release, in a **private window** (so `localStorage` starts empty).
 | jwt-decoder | malformed token, expired token (no verification claimed) |
 | hash-generator | empty string, 1 MB text, every offered algorithm |
 | timestamp-converter | epoch 0, negative epoch, DST boundary in the visitor's zone |
-| color-converter | 3-digit hex, `rgb()` with spaces, out-of-range values, contrast pairs |
+| color-code-converter | 3-digit hex, `rgb()` with spaces, out-of-range values, contrast pairs |
 | unit-converter | 0, negative, very large values, cross-family conversion attempt |
 | temperature-converter | -40 (C = F), absolute zero, below absolute zero |
 | time-zone-converter | half-hour offsets (IST), DST transition day, day rollover |
 | password-generator | every option off, length extremes, ambiguous-character toggle |
 | keyword-density-analyzer | empty text, one-word text, repeated phrase |
-| serp-preview | title too long, no description, emoji in title |
+| serp-snippet-previewer | title too long, no description, emoji in title |
 | robots-txt-generator | no rules (must not produce a block-everything file by accident) |
 
 ## 5. Accessibility checks

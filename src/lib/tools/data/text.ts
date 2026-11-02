@@ -312,8 +312,8 @@ export const textTools: ToolDefinition[] = [
     },
   },
   {
-    slug: "alphabetical-sorter",
-    name: "Alphabetical Sorter",
+    slug: "alphabetical-text-sorter",
+    name: "Alphabetical Text Sorter",
     category: "text",
     tagline: "Sort lines A–Z, Z–A, numerically or by length in one click.",
     intent: "sort a list alphabetically",
@@ -385,8 +385,8 @@ export const textTools: ToolDefinition[] = [
     },
   },
   {
-    slug: "whitespace-cleaner",
-    name: "Whitespace Cleaner",
+    slug: "remove-extra-spaces",
+    name: "Remove Extra Spaces",
     category: "text",
     tagline: "Fix double spaces, stray tabs, ragged line breaks and invisible characters.",
     intent: "remove extra spaces from text",
@@ -458,8 +458,8 @@ export const textTools: ToolDefinition[] = [
     },
   },
   {
-    slug: "slug-generator",
-    name: "Slug Generator",
+    slug: "text-to-slug-converter",
+    name: "Text to Slug Converter",
     category: "text",
     tagline: "Turn any title into a clean, URL-safe slug with sensible options.",
     intent: "convert title to url slug",

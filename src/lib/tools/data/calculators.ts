@@ -84,8 +84,8 @@ export const calculatorTools: ToolDefinition[] = [
     },
   },
   {
-    slug: "percentage-change-calculator",
-    name: "Percentage Change Calculator",
+    slug: "percentage-increase-decrease-calculator",
+    name: "Percentage Increase/Decrease Calculator",
     category: "calculators",
     tagline: "Measure increase or decrease between two values, with absolute and relative change.",
     intent: "calculate percentage increase or decrease",
@@ -376,8 +376,8 @@ export const calculatorTools: ToolDefinition[] = [
     },
   },
   {
-    slug: "days-between-dates",
-    name: "Days Between Dates",
+    slug: "days-between-dates-calculator",
+    name: "Days Between Dates Calculator",
     category: "calculators",
     tagline: "Count days, weeks and business days between any two dates.",
     intent: "count days between two dates",

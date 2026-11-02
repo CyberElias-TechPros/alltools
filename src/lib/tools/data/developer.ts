@@ -590,8 +590,8 @@ export const developerTools: ToolDefinition[] = [
     },
   },
   {
-    slug: "color-converter",
-    name: "Color Converter",
+    slug: "color-code-converter",
+    name: "Color Code Converter",
     category: "developer",
     tagline: "Convert HEX, RGB, HSL and HSV with live preview and contrast checking.",
     intent: "convert hex to rgb and hsl",

@@ -106,7 +106,7 @@ export const guides: Guide[] = [
         ],
       },
     ],
-    toolSlugs: ["percentage-change-calculator", "percentage-calculator", "discount-calculator"],
+    toolSlugs: ["percentage-increase-decrease-calculator", "percentage-calculator", "discount-calculator"],
   },
   {
     slug: "encoding-vs-encryption",

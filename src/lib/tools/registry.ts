@@ -1,6 +1,7 @@
 import { textTools } from "./data/text";
 import { textMoreTools } from "./data/text-more";
 import { calculatorTools } from "./data/calculators";
+import { calculatorMoreTools } from "./data/calculators-more";
 import { financeTools } from "./data/finance";
 import { developerTools } from "./data/developer";
 import { everydayTools } from "./data/everyday";
@@ -13,6 +14,7 @@ export const tools: ToolDefinition[] = [
   ...textTools,
   ...textMoreTools,
   ...calculatorTools,
+  ...calculatorMoreTools,
   ...financeTools,
   ...developerTools,
   ...everydayTools,
