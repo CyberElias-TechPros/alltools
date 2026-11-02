@@ -1,0 +1,11 @@
+# ads.txt — Toolora
+#
+# Do not add placeholder or invented seller records. An incorrect ads.txt can
+# invalidate authorised-seller status for real inventory.
+#
+# When Google AdSense approves this site, replace this file with the exact line
+# supplied in your AdSense account, in the form:
+#
+#   google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+#
+# The file must be publicly reachable at /ads.txt and served with HTTP 200.

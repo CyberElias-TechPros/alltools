@@ -1,0 +1,91 @@
+"use client";
+
+import dynamic from "next/dynamic";
+import { useEffect } from "react";
+import type { ComponentType } from "react";
+import Link from "next/link";
+import { rememberTool } from "@/components/search-dialog";
+
+/**
+ * Each tool is code-split: a visitor downloads only the component for the page
+ * they are on, not the other 39 tools. This keeps first-load JS flat as the
+ * catalogue grows.
+ */
+const loading = () => (
+  <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+    <div className="shimmer h-6 w-40 rounded" />
+    <div className="shimmer mt-3 h-24 w-full rounded-xl" />
+  </div>
+);
+
+export const toolComponents: Record<string, ComponentType> = {
+  "word-counter": dynamic(() => import("./text/word-counter"), { loading }),
+  "case-converter": dynamic(() => import("./text/case-converter"), { loading }),
+  "duplicate-line-remover": dynamic(() => import("./text/duplicate-line-remover"), { loading }),
+  "text-reverser": dynamic(() => import("./text/text-reverser"), { loading }),
+  "alphabetical-sorter": dynamic(() => import("./text/alphabetical-sorter"), { loading }),
+  "whitespace-cleaner": dynamic(() => import("./text/whitespace-cleaner"), { loading }),
+  "slug-generator": dynamic(() => import("./text/slug-generator"), { loading }),
+  "find-and-replace": dynamic(() => import("./text/find-and-replace"), { loading }),
+  "lorem-ipsum-generator": dynamic(() => import("./text/lorem-ipsum-generator"), { loading }),
+  "text-diff": dynamic(() => import("./text/text-diff"), { loading }),
+
+  "percentage-calculator": dynamic(() => import("./calculators/percentage-calculator"), { loading }),
+  "percentage-change-calculator": dynamic(() => import("./calculators/percentage-change-calculator"), { loading }),
+  "discount-calculator": dynamic(() => import("./calculators/discount-calculator"), { loading }),
+  "vat-calculator": dynamic(() => import("./calculators/vat-calculator"), { loading }),
+  "age-calculator": dynamic(() => import("./calculators/age-calculator"), { loading }),
+  "days-between-dates": dynamic(() => import("./calculators/days-between-dates"), { loading }),
+  "average-calculator": dynamic(() => import("./calculators/average-calculator"), { loading }),
+  "standard-deviation-calculator": dynamic(() => import("./calculators/standard-deviation-calculator"), { loading }),
+  "gpa-calculator": dynamic(() => import("./calculators/gpa-calculator"), { loading }),
+
+  "loan-calculator": dynamic(() => import("./finance/loan-calculator"), { loading }),
+  "compound-interest-calculator": dynamic(() => import("./finance/compound-interest-calculator"), { loading }),
+  "profit-margin-calculator": dynamic(() => import("./finance/profit-margin-calculator"), { loading }),
+  "roi-calculator": dynamic(() => import("./finance/roi-calculator"), { loading }),
+
+  "json-formatter": dynamic(() => import("./developer/json-formatter"), { loading }),
+  "base64-encoder-decoder": dynamic(() => import("./developer/base64-encoder-decoder"), { loading }),
+  "url-encoder-decoder": dynamic(() => import("./developer/url-encoder-decoder"), { loading }),
+  "html-entity-encoder": dynamic(() => import("./developer/html-entity-encoder"), { loading }),
+  "hash-generator": dynamic(() => import("./developer/hash-generator"), { loading }),
+  "uuid-generator": dynamic(() => import("./developer/uuid-generator"), { loading }),
+  "jwt-decoder": dynamic(() => import("./developer/jwt-decoder"), { loading }),
+  "timestamp-converter": dynamic(() => import("./developer/timestamp-converter"), { loading }),
+  "color-converter": dynamic(() => import("./developer/color-converter"), { loading }),
+
+  "unit-converter": dynamic(() => import("./everyday/unit-converter"), { loading }),
+  "temperature-converter": dynamic(() => import("./everyday/temperature-converter"), { loading }),
+  "time-zone-converter": dynamic(() => import("./everyday/time-zone-converter"), { loading }),
+  "bmi-calculator": dynamic(() => import("./everyday/bmi-calculator"), { loading }),
+
+  "serp-preview": dynamic(() => import("./seo/serp-preview"), { loading }),
+  "utm-link-builder": dynamic(() => import("./seo/utm-link-builder"), { loading }),
+  "keyword-density-analyzer": dynamic(() => import("./seo/keyword-density-analyzer"), { loading }),
+  "robots-txt-generator": dynamic(() => import("./seo/robots-txt-generator"), { loading }),
+
+  "password-generator": dynamic(() => import("./security/password-generator"), { loading }),
+};
+
+export function ToolRunner({ slug }: { slug: string }) {
+  const Tool = toolComponents[slug];
+
+  useEffect(() => {
+    rememberTool(slug);
+  }, [slug]);
+
+  if (!Tool) {
+    return (
+      <div className="rounded-2xl border border-dashed border-[var(--border-strong)] p-6 text-sm text-[var(--text-muted)]">
+        This tool is still being built.{" "}
+        <Link href="/tools/" className="link">
+          Browse the tools that are ready
+        </Link>
+        .
+      </div>
+    );
+  }
+
+  return <Tool />;
+}
