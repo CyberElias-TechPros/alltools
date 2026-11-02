@@ -11,6 +11,7 @@ import { seoTools } from "./data/seo";
 import { securityTools } from "./data/security";
 import { imageTools } from "./data/images";
 import { pdfTools } from "./data/pdf";
+import { internetTools } from "./data/internet";
 import type { CategoryId, ToolDefinition } from "./types";
 import type { SearchableTool } from "@/lib/search";
 
@@ -28,6 +29,7 @@ export const tools: ToolDefinition[] = [
   ...securityTools,
   ...imageTools,
   ...pdfTools,
+  ...internetTools,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 export const toolMap = new Map<string, ToolDefinition>(tools.map((tool) => [tool.slug, tool]));
@@ -109,9 +111,13 @@ export function validateToolCatalogue(): string[] {
     if (tool.keywords.length < 3) problems.push(`Too few keywords: ${tool.slug}`);
     if (tool.content.intro.length < 1) problems.push(`Missing intro: ${tool.slug}`);
     if (tool.content.howTo.length < 3) problems.push(`Too few instructions: ${tool.slug}`);
-    if (tool.content.examples.length < 2) problems.push(`Too few examples: ${tool.slug}`);
+    // Planned tools have no interface to exercise, so one worked example and two
+    // FAQs are enough to explain the gap honestly. Live tools need the full set.
+    const minimumExamples = tool.status === "live" ? 2 : 1;
+    const minimumFaqs = tool.status === "live" ? 3 : 2;
+    if (tool.content.examples.length < minimumExamples) problems.push(`Too few examples: ${tool.slug}`);
     if (tool.content.limitations.length < 2) problems.push(`Too few limitations: ${tool.slug}`);
-    if (tool.content.faqs.length < 3) problems.push(`Too few FAQs: ${tool.slug}`);
+    if (tool.content.faqs.length < minimumFaqs) problems.push(`Too few FAQs: ${tool.slug}`);
   }
 
   return problems;

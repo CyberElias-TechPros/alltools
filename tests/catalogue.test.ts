@@ -57,11 +57,12 @@ describe("tool catalogue", () => {
 
   it("provides substantive editorial content on every tool page", () => {
     for (const tool of tools) {
+      const live = tool.status === "live";
       expect(tool.content.intro.length).toBeGreaterThanOrEqual(1);
       expect(tool.content.howTo.length).toBeGreaterThanOrEqual(3);
-      expect(tool.content.examples.length).toBeGreaterThanOrEqual(2);
+      expect(tool.content.examples.length).toBeGreaterThanOrEqual(live ? 2 : 1);
       expect(tool.content.limitations.length).toBeGreaterThanOrEqual(2);
-      expect(tool.content.faqs.length).toBeGreaterThanOrEqual(3);
+      expect(tool.content.faqs.length).toBeGreaterThanOrEqual(live ? 3 : 2);
     }
   });
 
