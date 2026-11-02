@@ -8,6 +8,7 @@ import { ToolCard } from "@/components/tool-card";
 import { guideMap, guides } from "@/lib/guides";
 import { getTool } from "@/lib/tools/registry";
 import { siteConfig } from "@/lib/site";
+import { articleSchema as articleSchemaHelper, pageMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return guides.map((guide) => ({ slug: guide.slug }));
@@ -23,17 +24,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const guide = guideMap.get(slug);
   if (!guide) return {};
-  return {
+  return pageMetadata({
     title: guide.title,
     description: guide.description,
-    alternates: { canonical: `/guides/${guide.slug}/` },
-    openGraph: {
-      type: "article",
-      title: guide.title,
-      description: guide.description,
-      url: `${siteConfig.url}/guides/${guide.slug}/`,
-    },
-  };
+    path: `/guides/${guide.slug}/`,
+    keywords: [guide.title, ...guide.toolSlugs, "guide", "explained"],
+    type: "article",
+    modifiedTime: guide.updated,
+  });
 }
 
 export default async function GuidePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -44,15 +42,28 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const tools = guide.toolSlugs.map((toolSlug) => getTool(toolSlug)).filter(Boolean);
   const more = guides.filter((item) => item.slug !== guide.slug).slice(0, 2);
 
+  const published = new Date(guide.updated);
   const articleSchema = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: guide.title,
-    description: guide.description,
-    dateModified: "2025-11-02",
-    author: { "@type": "Organization", name: siteConfig.name, url: siteConfig.url },
-    publisher: { "@id": `${siteConfig.url}/#organization` },
-    mainEntityOfPage: `${siteConfig.url}/guides/${guide.slug}/`,
+    ...articleSchemaHelper({
+      headline: guide.title,
+      description: guide.description,
+      path: `/guides/${guide.slug}/`,
+      datePublished: (Number.isNaN(published.getTime()) ? new Date("2025-11-02") : published).toISOString(),
+      dateModified: (Number.isNaN(published.getTime()) ? new Date("2025-11-02") : published).toISOString(),
+    }),
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: `${siteConfig.url}/` },
+        { "@type": "ListItem", position: 2, name: "Guides", item: `${siteConfig.url}/guides/` },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: guide.title,
+          item: `${siteConfig.url}/guides/${guide.slug}/`,
+        },
+      ],
+    },
   };
 
   return (

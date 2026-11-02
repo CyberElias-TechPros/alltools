@@ -14,7 +14,7 @@ import {
 } from "@/components/ui";
 import { formatJson } from "@/lib/dev";
 
-const SAMPLE = `{"team":"Toolora","tool":"json-formatter","live":true,"tags":["fast","private"],"owner":{"name":"You","email":"you@example.com"}}`;
+const SAMPLE = `{"team":"Tools","tool":"json-formatter","live":true,"tags":["fast","private"],"owner":{"name":"You","email":"you@example.com"}}`;
 
 export default function JsonFormatter() {
   const [input, setInput] = useState("");

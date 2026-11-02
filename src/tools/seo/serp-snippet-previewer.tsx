@@ -33,7 +33,7 @@ export default function SerpPreview() {
   const [description, setDescription] = useState(
     "Calculate percentages instantly: X% of Y, what percent X is of Y, and percentage increase or decrease. Formulas and worked examples included.",
   );
-  const [url, setUrl] = useState("https://toolora.example.com/tools/percentage-calculator/");
+  const [url, setUrl] = useState("https://tools.example.com/tools/percentage-calculator/");
   const [mounted, setMounted] = useState(false);
   const measureRef = useRef<HTMLSpanElement>(null);
 
@@ -129,7 +129,7 @@ export default function SerpPreview() {
               </span>
               <div className="min-w-0 leading-tight">
                 <p className="truncate text-[0.75rem] text-[#202124] dark:text-[#e8eaed]">
-                  Toolora
+                  Tools
                 </p>
                 <p className="truncate text-[0.7rem] text-[#4d5156] dark:text-[#bdc1c6]">{displayUrl}</p>
               </div>
@@ -154,7 +154,7 @@ export default function SerpPreview() {
                 T
               </span>
               <div className="min-w-0 leading-tight">
-                <p className="truncate text-[0.7rem] text-[#202124] dark:text-[#e8eaed]">Toolora</p>
+                <p className="truncate text-[0.7rem] text-[#202124] dark:text-[#e8eaed]">Tools</p>
                 <p className="truncate text-[0.65rem] text-[#4d5156] dark:text-[#bdc1c6]">{displayUrl}</p>
               </div>
             </div>

@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import { PageShell } from "@/components/page-shell";
 import { ContactForm } from "@/components/contact-form";
 import { siteConfig } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Contact Toolora",
-  description:
-    "Report a wrong result, request a tool, flag an accessibility problem or ask a privacy question.",
-  alternates: { canonical: "/contact/" },
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Contact Tools",
+  description: "Report a wrong result, request a tool, flag an accessibility problem or ask a privacy question.",
+  path: "/contact/",
+  keywords: ['contact', 'report a bug', 'suggest a tool'],
+});
 
 export default function ContactPage() {
   return (

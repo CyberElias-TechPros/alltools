@@ -1,8 +1,8 @@
 {
-  "name": "toolora",
+  "name": "tools",
   "version": "1.0.0",
   "private": true,
-  "description": "Toolora — fast, free, privacy-first online tools that run in your browser.",
+  "description": "Tools — 254 fast, free, privacy-first online tools that run in your browser.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

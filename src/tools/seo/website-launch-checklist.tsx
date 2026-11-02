@@ -59,7 +59,7 @@ export default function WebsiteLaunchChecklist() {
   return (
     <ChecklistTool
       id="launch-checklist"
-      storageKey="toolora.launch-checklist"
+      storageKey="tools.launch-checklist"
       intro="The things that actually break on launch day, ordered by when you need them. Everything here is checkable in an afternoon if the site is genuinely ready — and the items you cannot tick are the ones worth delaying for."
       sections={SECTIONS}
     />

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { footerLinkGroups, siteConfig } from "@/lib/site";
-import { liveTools } from "@/lib/tools/registry";
+import { liveTools, popularTools } from "@/lib/tools/registry";
 import { categories } from "@/lib/tools/categories";
 import { CookieSettings } from "./analytics";
 import { LogoMark } from "./logo";
@@ -29,7 +29,7 @@ export function SiteFooter() {
           ))}
         </div>
 
-        <div className="grid gap-10 py-12 md:grid-cols-[1.5fr_repeat(3,1fr)]">
+        <div className="grid gap-10 py-12 md:grid-cols-[1.4fr_repeat(4,1fr)]">
           <div>
             <div className="flex items-center gap-2.5">
               <LogoMark className="size-6 text-[var(--text)]" />
@@ -43,6 +43,22 @@ export function SiteFooter() {
             </p>
             <p className="eyebrow mt-5">Processed locally · nothing stored</p>
           </div>
+
+          <nav aria-label="Popular tools">
+            <h2 className="eyebrow">Popular tools</h2>
+            <ul className="mt-4 flex flex-col gap-2.5">
+              {popularTools.slice(0, 8).map((tool) => (
+                <li key={tool.slug}>
+                  <Link
+                    href={`/tools/${tool.slug}/`}
+                    className="text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--accent-text)]"
+                  >
+                    {tool.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
           {footerLinkGroups.map((group) => (
             <nav key={group.title} aria-label={group.title}>
@@ -92,7 +108,7 @@ export function SiteFooter() {
             aria-hidden
             className="select-none whitespace-nowrap pt-6 text-center font-display text-[19vw] font-extrabold leading-[0.78] tracking-[-0.06em] text-[var(--text)] opacity-[0.05]"
           >
-            TOOLORA
+            TOOLS
           </p>
         </div>
       </div>

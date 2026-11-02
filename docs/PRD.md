@@ -1,4 +1,4 @@
-# Toolora — Product requirements
+# Tools — Product requirements
 
 | | |
 | --- | --- |
@@ -26,7 +26,7 @@ straight into a contract, an invoice or a form.
 
 ## 2. Product
 
-**Toolora is a directory of small, instant, browser-local utilities with honest
+**Tools is a directory of small, instant, browser-local utilities with honest
 documentation.**
 
 Three promises, and the code enforces each one:
@@ -203,7 +203,7 @@ Search Console and server logs.
 | Copy drifts from behaviour | Misleading users, thin-content penalties | Catalogue tests on SEO copy; examples pinned by unit tests |
 | AdSense rejection for thin content | No revenue | 41 substantive pages, 4 guides, policy pages, 30-day wait before applying |
 | Ads degrade the experience | Bounce, policy risk | Inert by default, fixed-height, never adjacent to a control or result |
-| Brand name conflict (Toolora unverified) | Rebrand cost | Confirmed as a risk in the blueprint; rename is a config + copy change, not an architectural one |
+| Brand name conflict (Tools unverified) | Rebrand cost | Confirmed as a risk in the blueprint; rename is a config + copy change, not an architectural one |
 | Placeholder config ships to production | Broken canonicals, unreachable contact | `siteUrlIsPlaceholder` flag, pre-launch checklist, smoke test |
 | Static hosting terms disallow ads | Takedown | Documented host constraint (Vercel Hobby unsuitable) |
 
@@ -221,7 +221,7 @@ A release is shippable when:
 
 ## 13. Open questions for the operator
 
-1. Real brand name and domain (blueprint flags "Toolora" as unverified).
+1. Real brand name and domain (blueprint flags "Tools" as unverified).
 2. Which jurisdiction's law the policy pages should be written against.
 3. Whether a monitored contact mailbox exists, or contact should stay mailto-only.
 4. Hosting provider with advertising-compatible terms.

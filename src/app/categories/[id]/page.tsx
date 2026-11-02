@@ -6,10 +6,12 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { HeaderStat } from "@/components/page-header";
 import { JsonLd } from "@/components/json-ld";
 import { ToolCard, PlannedToolPill } from "@/components/tool-card";
-import { CategoryIcon, CategoryTile } from "@/components/category-icon";
+import { CategoryIcon, CategoryTile, categoryTone } from "@/components/category-icon";
+import { CategoryArt } from "@/components/category-art";
 import { categories, getCategory } from "@/lib/tools/categories";
 import { toolsByCategory } from "@/lib/tools/registry";
 import { siteConfig } from "@/lib/site";
+import { categoryKeywords, collectionSchema, mergeKeywords, pageMetadata } from "@/lib/seo";
 import type { CategoryId } from "@/lib/tools/types";
 
 export function generateStaticParams() {
@@ -26,11 +28,17 @@ export async function generateMetadata({
   const { id } = await params;
   const category = categories.find((item) => item.id === id);
   if (!category) return {};
-  return {
+  return pageMetadata({
     title: `${category.name} — Free Online Tools`,
     description: category.description,
-    alternates: { canonical: `/categories/${category.id}/` },
-  };
+    path: `/categories/${category.id}/`,
+    keywords: mergeKeywords(
+      [category.shortName, category.name, `${category.shortName} tools`],
+      categoryKeywords[category.id],
+    ),
+    image: `/og/${category.id}.png`,
+    imageAlt: `${category.name} — free online tools`,
+  });
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ id: string }> }) {
@@ -43,18 +51,15 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
 
   const itemList =
     live.length > 0
-      ? {
-          "@context": "https://schema.org",
-          "@type": "ItemList",
-          name: category.name,
-          numberOfItems: live.length,
-          itemListElement: live.map((tool, index) => ({
-            "@type": "ListItem",
-            position: index + 1,
+      ? collectionSchema({
+          name: `${category.name} — free online tools`,
+          description: category.description,
+          path: `/categories/${category.id}/`,
+          items: live.map((tool) => ({
             name: tool.name,
             url: `${siteConfig.url}/tools/${tool.slug}/`,
           })),
-        }
+        })
       : null;
 
   return (
@@ -67,17 +72,25 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
         ]}
       />
 
-      <header className="pb-2">
-        <div className="flex flex-wrap items-center gap-3">
-          <CategoryTile id={category.id} size="lg" />
-          <span className="chip">
-            {live.length > 0 ? `${live.length} tools live` : "Planned — not yet published"}
-          </span>
+      <header className={`pb-2 ${categoryTone(category.id)}`}>
+        <div className="flex items-start justify-between gap-6">
+          <div>
+            <div className="flex flex-wrap items-center gap-3">
+              <CategoryTile id={category.id} size="lg" />
+              <span className="chip">
+                {live.length > 0 ? `${live.length} tools live` : "Planned — not yet published"}
+              </span>
+            </div>
+            <h1 className="display mt-4 text-[clamp(2.1rem,4.8vw,3.5rem)] text-[var(--text)]">
+              {category.name}
+            </h1>
+            <p className="lede mt-3">{category.tagline}.</p>
+          </div>
+          <CategoryArt
+            id={category.id}
+            className="hidden h-28 w-36 shrink-0 opacity-70 sm:block"
+          />
         </div>
-        <h1 className="display mt-4 text-[clamp(2.1rem,4.8vw,3.5rem)] text-[var(--text)]">
-          {category.name}
-        </h1>
-        <p className="lede mt-3">{category.tagline}.</p>
       </header>
 
       <div className="prose-tool mt-8 max-w-3xl">

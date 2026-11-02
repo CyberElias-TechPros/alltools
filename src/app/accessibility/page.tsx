@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Accessibility Statement",
-  description:
-    "How Toolora is built for keyboard, screen reader and low-vision users, what we test, and how to report a barrier.",
-  alternates: { canonical: "/accessibility/" },
-};
+  description: "How this site is built for keyboard, screen reader and low-vision users, what we test, and how to report a barrier.",
+  path: "/accessibility/",
+  keywords: ['accessibility', 'keyboard navigation', 'screen reader', 'wcag'],
+});
 
 export default function AccessibilityPage() {
   return (

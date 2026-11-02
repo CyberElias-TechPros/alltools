@@ -1,8 +1,8 @@
-# Toolora
+# Tools
 
 **Fast, free, privacy-first online tools that run entirely in your browser.**
 
-Toolora is a static Next.js app that hosts a growing catalogue of small utilities — text
+This is a static Next.js app that hosts a growing catalogue of small utilities — text
 cleaners, calculators, converters, developer helpers, SEO previews — with no sign-up, no
 uploads and no server-side processing. Every tool is a pure TypeScript function wrapped in
 a React component, so results are instant, work offline after first load, and can be
@@ -191,7 +191,7 @@ Everything is optional for development; see [`.env.example`](.env.example).
 
 | Variable | Purpose | Default |
 | --- | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | Canonical origin for canonicals, sitemap, robots, JSON-LD | `https://toolora.example.com` (placeholder) |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin for canonicals, sitemap, robots, JSON-LD | `https://tools.example.com` (placeholder) |
 | `NEXT_PUBLIC_GA_ID` | GA4 measurement ID; analytics also requires cookie consent | empty — no analytics |
 | `NEXT_PUBLIC_ADSENSE_CLIENT` | Publisher ID from Google after approval | empty — no ad script |
 | `NEXT_PUBLIC_ADSENSE_SLOT_TOOL` | Ad unit id for the tool-page slot | empty — slot renders nothing |

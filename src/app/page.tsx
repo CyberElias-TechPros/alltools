@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Lock, MousePointerClick, Zap } from "lucide-react";
 import { HeroSearch } from "@/components/hero-search";
 import { ToolCard } from "@/components/tool-card";
-import { CategoryTile } from "@/components/category-icon";
+import { CategoryTile, categoryTone } from "@/components/category-icon";
+import { CategoryArt } from "@/components/category-art";
 import { JsonLd } from "@/components/json-ld";
 import { categories } from "@/lib/tools/categories";
 import { liveTools, popularTools, recentlyAdded, toolCountByCategory } from "@/lib/tools/registry";
 import { siteConfig } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: `${siteConfig.name} — Free Online Tools for Everyday Work`,
-  description:
-    `${liveTools.length} free online tools that run in your browser: word counter, percentage calculator, JSON formatter, unit converter, password generator and more. No sign-up, no uploads.`,
-  alternates: { canonical: "/" },
-};
+export const metadata: Metadata = pageMetadata({
+  title: `${siteConfig.name} — ${liveTools.length} Free Online Tools That Run in Your Browser`,
+  description: `${liveTools.length} free online tools for text, numbers, images, PDFs and code — word counter, percentage calculator, JSON formatter, unit converter, password generator and more. Everything runs in your browser: no sign-up, no uploads.`,
+  path: "/",
+});
 
 const SITE_FAQS = [
   {
     q: "Are the tools really free?",
-    a: "Yes. Every tool on Toolora is free to use, with no account, no trial and no usage limit. The site is designed to be funded by advertising once it qualifies, which is why there is no paywall on the tools themselves.",
+    a: "Yes. Every tool here is free to use, with no account, no trial and no usage limit. The site is designed to be funded by advertising once it qualifies, which is why there is no paywall on the tools themselves.",
   },
   {
     q: "Is my data uploaded to a server?",
@@ -27,7 +28,7 @@ const SITE_FAQS = [
   },
   {
     q: "Do I need to install anything?",
-    a: "No. Toolora works in any modern browser on desktop or mobile. There is nothing to install and no extension to grant permissions to.",
+    a: "No. The site works in any modern browser on desktop or mobile. There is nothing to install and no extension to grant permissions to.",
   },
   {
     q: "Can I use the results in my own work?",
@@ -86,6 +87,33 @@ const QUICK_LINKS = [
 
 export default function HomePage() {
   const liveCategories = categories.filter((category) => category.status === "live");
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Tool categories",
+    numberOfItems: categories.length,
+    itemListElement: categories.map((category, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: category.name,
+      url: `${siteConfig.url}/categories/${category.id}/`,
+      description: category.tagline,
+    })),
+  };
+
+  const popularSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Most used tools",
+    numberOfItems: popularTools.slice(0, 9).length,
+    itemListElement: popularTools.slice(0, 9).map((tool, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: tool.name,
+      url: `${siteConfig.url}/tools/${tool.slug}/`,
+    })),
+  };
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -98,7 +126,7 @@ export default function HomePage() {
 
   return (
     <>
-      <JsonLd data={faqSchema} />
+      <JsonLd data={[collectionSchema, popularSchema, faqSchema]} />
 
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
@@ -165,10 +193,14 @@ export default function HomePage() {
                 <Link
                   key={category.id}
                   href={`/categories/${category.id}/`}
-                  className="card card-lift group flex items-start gap-3.5 p-4"
+                  className={`card card-lift group relative flex items-start gap-3.5 overflow-hidden p-4 ${categoryTone(category.id)}`}
                 >
+                  <CategoryArt
+                    id={category.id}
+                    className="pointer-events-none absolute -bottom-2 right-1 h-14 w-20 opacity-45 transition-opacity duration-200 group-hover:opacity-70"
+                  />
                   <CategoryTile id={category.id} size="md" />
-                  <span className="min-w-0 flex-1">
+                  <span className="relative min-w-0 flex-1 pr-14">
                     <span className="flex items-baseline justify-between gap-2">
                       <span className="font-display text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[var(--text)]">
                         {category.shortName}
@@ -219,7 +251,7 @@ export default function HomePage() {
               </h2>
               <p className="mt-4 max-w-md text-[0.98rem] leading-relaxed text-[var(--text-muted)]">
                 Most utility sites ask you to upload a file, create an account or accept three
-                cookie banners before you can count a word. Toolora does none of that. Each tool
+                cookie banners before you can count a word. This site does none of that. Each tool
                 is a small, focused page with an explanation of how the result is produced.
               </p>
               <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3.5 py-2">

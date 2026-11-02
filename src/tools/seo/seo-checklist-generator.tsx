@@ -66,7 +66,7 @@ export default function SeoChecklistGenerator() {
   return (
     <ChecklistTool
       id="seo-checklist"
-      storageKey="toolora.seo-checklist"
+      storageKey="tools.seo-checklist"
       intro="A working checklist for a content site or tool site: technical foundations first, then content quality, then measurement. Tick what is already true — the unticked items are the actual task list."
       sections={SECTIONS}
     />

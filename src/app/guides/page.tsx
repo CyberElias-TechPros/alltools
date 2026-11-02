@@ -1,20 +1,35 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { HeaderStat, PageHeader } from "@/components/page-header";
 import { guides } from "@/lib/guides";
+import { siteConfig } from "@/lib/site";
+import { JsonLd } from "@/components/json-ld";
+import { collectionSchema } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Guides",
-  description:
-    "Short, practical explanations of the maths and technology behind the tools: reading time, percentage change, encoding vs encryption and password strength.",
-  alternates: { canonical: "/guides/" },
-};
+  description: "Short, practical explanations of the maths and technology behind the tools: reading time, percentage change, encoding vs encryption and password strength.",
+  path: "/guides/",
+  keywords: ['guides', 'explanations', 'how it works', 'reference'],
+});
 
 export default function GuidesPage() {
+  const schema = collectionSchema({
+    name: "Guides — how the tools work",
+    description: "Short, practical explanations of the maths and technology behind the tools.",
+    path: "/guides/",
+    items: guides.map((guide) => ({
+      name: guide.title,
+      url: `${siteConfig.url}/guides/${guide.slug}/`,
+    })),
+  });
+
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
+      <JsonLd data={schema} />
       <Breadcrumbs items={[{ href: "/guides/", label: "Guides" }]} />
 
       <PageHeader

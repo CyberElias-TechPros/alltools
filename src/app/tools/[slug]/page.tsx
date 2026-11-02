@@ -11,6 +11,7 @@ import { liveTools, relatedTools, tools } from "@/lib/tools/registry";
 import { CategoryTile } from "@/components/category-icon";
 import { ToolCard } from "@/components/tool-card";
 import { siteConfig } from "@/lib/site";
+import { toolMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return liveTools.map((tool) => ({ slug: tool.slug }));
@@ -27,23 +28,7 @@ export async function generateMetadata({
   const tool = tools.find((candidate) => candidate.slug === slug);
   if (!tool) return {};
 
-  return {
-    title: tool.seoTitle,
-    description: tool.seoDescription,
-    keywords: tool.keywords,
-    alternates: { canonical: `/tools/${tool.slug}/` },
-    openGraph: {
-      type: "website",
-      title: tool.seoTitle,
-      description: tool.seoDescription,
-      url: `${siteConfig.url}/tools/${tool.slug}/`,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: tool.seoTitle,
-      description: tool.seoDescription,
-    },
-  };
+  return toolMetadata(tool);
 }
 
 export default async function ToolPage({ params }: { params: Promise<{ slug: string }> }) {

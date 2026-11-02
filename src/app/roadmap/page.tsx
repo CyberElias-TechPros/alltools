@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { HeaderStat, PageHeader } from "@/components/page-header";
@@ -6,12 +7,12 @@ import { categories } from "@/lib/tools/categories";
 import { liveTools, toolCountByCategory, tools } from "@/lib/tools/registry";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Roadmap",
-  description:
-    "What is live on Toolora, what is being built, and what is planned. An honest, public status page instead of placeholder tools.",
-  alternates: { canonical: "/roadmap/" },
-};
+  description: "What is live, what is being built, and what is planned. An honest, public status page instead of placeholder tools.",
+  path: "/roadmap/",
+  keywords: ['roadmap', 'upcoming tools', 'planned tools'],
+});
 
 const STAGES = [
   {

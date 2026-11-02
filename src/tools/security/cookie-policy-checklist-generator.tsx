@@ -7,7 +7,7 @@ export default function CookiePolicyChecklistGenerator() {
   return (
     <ChecklistTool
       id="cookie-checklist"
-      storageKey="toolora.cookie-checklist"
+      storageKey="tools.cookie-checklist"
       intro="A consent setup fails on details: analytics firing before the banner, a reject button that does not exist, a cookie policy listing three cookies when the browser shows eleven. Work through these in order — the inventory comes first because everything else depends on it."
       sections={[
         {

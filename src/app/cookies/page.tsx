@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Cookie Policy",
-  description:
-    "How Toolora uses cookies and local storage — and why the site works with none of them enabled.",
-  alternates: { canonical: "/cookies/" },
-};
+  description: "How Tools uses cookies and local storage — and why the site works with none of them enabled.",
+  path: "/cookies/",
+  keywords: ['cookie policy', 'cookies', 'privacy'],
+});
 
 export default function CookiesPage() {
   return (
@@ -27,15 +28,15 @@ export default function CookiesPage() {
       <h2>2. What is stored in your browser</h2>
       <ul>
         <li>
-          <strong>toolora:theme</strong> — your appearance choice (light, dark or system). Stored
+          <strong>tools:theme</strong> — your appearance choice (light, dark or system). Stored
           until you clear site data.
         </li>
         <li>
-          <strong>toolora:recent</strong> — the last six tool pages you opened, used to offer
+          <strong>tools:recent</strong> — the last six tool pages you opened, used to offer
           shortcuts in the search panel. Stored until cleared.
         </li>
         <li>
-          <strong>toolora:consent</strong> — your analytics choice, so we do not ask repeatedly. Only
+          <strong>tools:consent</strong> — your analytics choice, so we do not ask repeatedly. Only
           created if analytics are enabled and you make a choice.
         </li>
       </ul>

@@ -47,7 +47,7 @@ content requirements in Google Search's helpful-content guidance.
 | # | Requirement | Status | Evidence / action |
 | --- | --- | --- | --- |
 | 3.1 | About page explaining who runs the site and why | 🟡 | `/about/` exists and is substantive. It must be updated with the operator's real identity before applying. |
-| 3.2 | Contact method that reaches a human | ⛔ | `/contact/` composes a mailto link, but `siteConfig.email` is `hello@toolora.example.com`. Replace with a monitored mailbox (`src/lib/site.ts`) or the form has no destination. |
+| 3.2 | Contact method that reaches a human | ⛔ | `/contact/` composes a mailto link, but `siteConfig.email` is `hello@tools.example.com`. Replace with a monitored mailbox (`src/lib/site.ts`) or the form has no destination. |
 | 3.3 | Terms of service | 🟡 | `/terms/` written and dated; needs legal review for the operator's jurisdiction. |
 | 3.4 | Privacy policy covering analytics and ads | 🟡 | `/privacy-policy/` covers the current build (no ads, consent-gated analytics). **Must be updated before ads go live** to name Google, cookies, and the ad-serving purpose. |
 | 3.5 | Cookie policy | 🟡 | `/cookies/` accurate for today's build; extend with ad cookies when ads are enabled. |
@@ -127,12 +127,12 @@ them; adding more slots is a template change, not a rebuild.
 
 | Placeholder | Location | Replace with |
 | --- | --- | --- |
-| `https://toolora.example.com` | `src/lib/site.ts` fallback | Real origin via `NEXT_PUBLIC_SITE_URL` |
-| `hello@toolora.example.com` | `src/lib/site.ts` | A monitored mailbox |
+| `https://tools.example.com` | `src/lib/site.ts` fallback | Real origin via `NEXT_PUBLIC_SITE_URL` |
+| `hello@tools.example.com` | `src/lib/site.ts` | A monitored mailbox |
 | "pending legal review" notes | Policy pages | Confirmation after review |
 | Operator identity on `/about/` | About page | Real, verifiable details |
 | Empty/comment-only `ads.txt` | `public/ads.txt` | Google's exact seller line |
-| Toolora brand name | Site-wide | Only if the name is cleared, otherwise rewrite brand copy |
+| Tools brand name | Site-wide | Only if the name is cleared, otherwise rewrite brand copy |
 
 ## 9. Explicit non-goals
 

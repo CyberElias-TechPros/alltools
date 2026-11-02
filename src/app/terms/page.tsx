@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
 import { siteConfig } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Terms of Service",
-  description:
-    "The terms that apply when you use Toolora's free online tools, including acceptable use and the limits of our liability.",
-  alternates: { canonical: "/terms/" },
-};
+  description: "The terms that apply when you use the free tools on this site, including acceptable use and the limits of our liability.",
+  path: "/terms/",
+  keywords: ['terms of service', 'usage terms', 'licence'],
+});
 
 export default function TermsPage() {
   return (

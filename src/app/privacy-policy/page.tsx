@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
 import { siteConfig } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Privacy Policy",
-  description:
-    "What Toolora collects (very little), what stays in your browser, how analytics and advertising work, and how to exercise your rights.",
-  alternates: { canonical: "/privacy-policy/" },
-};
+  description: "What Tools collects (very little), what stays in your browser, how analytics and advertising work, and how to exercise your rights.",
+  path: "/privacy-policy/",
+  keywords: ['privacy policy', 'data protection', 'no uploads', 'gdpr'],
+});
 
 export default function PrivacyPolicyPage() {
   return (

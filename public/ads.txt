@@ -1,4 +1,4 @@
-# ads.txt — Toolora
+# ads.txt — Tools
 #
 # Do not add placeholder or invented seller records. An incorrect ads.txt can
 # invalidate authorised-seller status for real inventory.

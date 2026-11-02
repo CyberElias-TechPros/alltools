@@ -9,75 +9,147 @@ import { ToastProvider } from "@/components/ui";
 import { Analytics } from "@/components/analytics";
 import { JsonLd } from "@/components/json-ld";
 import { searchIndex } from "@/lib/tools/registry";
-import { siteConfig } from "@/lib/site";
+import { siteConfig, siteKeywords } from "@/lib/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} — ${siteConfig.tagline}`,
+    default: `${siteConfig.name} — 254 Free Online Tools That Run in Your Browser`,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  keywords: [...siteKeywords],
   applicationName: siteConfig.name,
   authors: [{ name: siteConfig.name, url: siteConfig.url }],
   creator: siteConfig.name,
   publisher: siteConfig.name,
-  alternates: { canonical: "/" },
+  category: "technology",
+  classification: "Utilities, Online Tools, Productivity",
+  alternates: {
+    canonical: "/",
+    languages: { "x-default": "/", en: "/" },
+    types: {
+      "application/rss+xml": [{ url: "/feed.xml", title: `${siteConfig.name} — guides` }],
+      "text/markdown": [{ url: "/llms.txt", title: "Tools — machine-readable index" }],
+    },
+  },
   openGraph: {
     type: "website",
     siteName: siteConfig.name,
     locale: siteConfig.locale,
     url: siteConfig.url,
-    title: `${siteConfig.name} — ${siteConfig.tagline}`,
+    title: `${siteConfig.name} — free online tools that run in your browser`,
     description: siteConfig.description,
+    images: [
+      {
+        url: "/og/tools.png",
+        width: 1200,
+        height: 630,
+        alt: `${siteConfig.name} — free online tools that run in your browser`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.name} — ${siteConfig.tagline}`,
+    title: `${siteConfig.name} — free online tools that run in your browser`,
     description: siteConfig.description,
+    images: ["/og/tools.png"],
   },
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
-  category: "technology",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, title: siteConfig.name, statusBarStyle: "default" },
+  formatDetection: { telephone: false, address: false, email: false },
+  referrer: "strict-origin-when-cross-origin",
+  ...(siteConfig.verification.google || siteConfig.verification.bing
+    ? {
+        verification: {
+          ...(siteConfig.verification.google ? { google: siteConfig.verification.google } : {}),
+          ...(siteConfig.verification.bing
+            ? { other: { "msvalidate.01": siteConfig.verification.bing } }
+            : {}),
+        },
+      }
+    : {}),
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#efede6" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b0b09" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f6f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0c0e" },
   ],
+  colorScheme: "light dark",
 };
 
-const themeScript = `(function(){try{var t=localStorage.getItem('toolora:theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var dark=t==='dark'||((!t||t==='system')&&d);document.documentElement.classList.toggle('dark',dark);document.documentElement.style.colorScheme=dark?'dark':'light';}catch(e){}})();`;
+const themeScript = `(function(){try{var t=localStorage.getItem('tools:theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var dark=t==='dark'||((!t||t==='system')&&d);document.documentElement.classList.toggle('dark',dark);document.documentElement.style.colorScheme=dark?'dark':'light';}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const websiteSchema = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    "@id": `${siteConfig.url}/#website`,
-    name: siteConfig.name,
-    url: siteConfig.url,
-    description: siteConfig.description,
-    inLanguage: "en",
-    publisher: {
-      "@type": "Organization",
-      "@id": `${siteConfig.url}/#organization`,
-      name: siteConfig.legalName,
-      url: siteConfig.url,
-    },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${siteConfig.url}/tools/?q={search_term_string}`,
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${siteConfig.url}/#website`,
+        name: siteConfig.name,
+        alternateName: ["Tools online", "Free tools online"],
+        url: siteConfig.url,
+        description: siteConfig.description,
+        inLanguage: siteConfig.language,
+        publisher: { "@id": `${siteConfig.url}/#organization` },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: `${siteConfig.url}/tools/?q={search_term_string}`,
+          },
+          "query-input": "required name=search_term_string",
+        },
       },
-      "query-input": "required name=search_term_string",
-    },
+      {
+        "@type": "Organization",
+        "@id": `${siteConfig.url}/#organization`,
+        name: siteConfig.legalName,
+        url: siteConfig.url,
+        slogan: siteConfig.slogan,
+        email: siteConfig.email,
+        logo: {
+          "@type": "ImageObject",
+          url: `${siteConfig.url}/icons/icon-512.png`,
+          width: 512,
+          height: 512,
+        },
+        knowsAbout: [...siteKeywords].slice(0, 20),
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${siteConfig.url}/#homepage`,
+        url: siteConfig.url,
+        name: `${siteConfig.name} — free online tools that run in your browser`,
+        isPartOf: { "@id": `${siteConfig.url}/#website` },
+        about: { "@id": `${siteConfig.url}/#organization` },
+        inLanguage: siteConfig.language,
+        primaryImageOfPage: { "@type": "ImageObject", url: `${siteConfig.url}/og/tools.png` },
+      },
+    ],
   };
 
   return (
@@ -87,7 +159,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLd data={websiteSchema} />
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:border focus:border-[var(--text)] focus:bg-[var(--text)] focus:px-4 focus:py-2 focus:font-mono focus:text-[0.7rem] focus:uppercase focus:tracking-[0.14em] focus:text-[var(--page)]"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-[var(--text)] focus:px-4 focus:py-2 focus:text-[0.85rem] focus:font-medium focus:text-[var(--page)]"
         >
           Skip to content
         </a>

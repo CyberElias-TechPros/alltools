@@ -1,20 +1,21 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
 import { liveTools } from "@/lib/tools/registry";
 import { siteConfig } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "About Toolora",
-  description:
-    "Who runs Toolora, why the tools exist, how they are built and tested, and what we will never do with your data.",
-  alternates: { canonical: "/about/" },
-};
+export const metadata: Metadata = pageMetadata({
+  title: "About Tools",
+  description: "Who runs Tools, why the tools exist, how they are built and tested, and what we will never do with your data.",
+  path: "/about/",
+  keywords: ['about tools', 'free online tools', 'privacy', 'how it works'],
+});
 
 export default function AboutPage() {
   return (
     <PageShell
-      title="About Toolora"
+      title="About Tools"
       intro="A small, independent tools platform built on a simple idea: a utility page should do one job well, explain itself, and get out of the way."
       breadcrumbs={[{ href: "/about/", label: "About" }]}
       updated="2 November 2025"

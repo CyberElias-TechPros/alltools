@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Disclaimer",
-  description:
-    "The limits of Toolora's calculators and converters: general information only, not financial, medical or legal advice.",
-  alternates: { canonical: "/disclaimer/" },
-};
+  description: "The limits of the calculators and converters on this site: general information only, not financial, medical or legal advice.",
+  path: "/disclaimer/",
+  keywords: ['disclaimer', 'accuracy', 'terms'],
+});
 
 export default function DisclaimerPage() {
   return (

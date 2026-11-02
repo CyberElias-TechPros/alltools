@@ -9,15 +9,15 @@ import { siteConfig } from "@/lib/site";
 const asksForConsent = Boolean(siteConfig.gaId || siteConfig.adsEnabled);
 
 function loadGoogleAnalytics(measurementId: string) {
-  if (document.getElementById("toolora-ga")) return;
+  if (document.getElementById("tools-ga")) return;
   const script = document.createElement("script");
-  script.id = "toolora-ga";
+  script.id = "tools-ga";
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
   document.head.appendChild(script);
 
   const inline = document.createElement("script");
-  inline.id = "toolora-ga-init";
+  inline.id = "tools-ga-init";
   inline.textContent = `
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -40,9 +40,9 @@ function loadGoogleAnalytics(measurementId: string) {
  * docs/ADSENSE_QA.md §4.5.
  */
 function loadAdSense(clientId: string) {
-  if (document.getElementById("toolora-adsense")) return;
+  if (document.getElementById("tools-adsense")) return;
   const script = document.createElement("script");
-  script.id = "toolora-adsense";
+  script.id = "tools-adsense";
   script.async = true;
   script.crossOrigin = "anonymous";
   script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(clientId)}`;
@@ -81,11 +81,11 @@ export function Analytics() {
         if (siteConfig.adsEnabled) loadAdSense(siteConfig.adsenseClient);
       }
     }
-    window.addEventListener("toolora:consent-open", onOpen);
-    window.addEventListener("toolora:consent", onConsent);
+    window.addEventListener("tools:consent-open", onOpen);
+    window.addEventListener("tools:consent", onConsent);
     return () => {
-      window.removeEventListener("toolora:consent-open", onOpen);
-      window.removeEventListener("toolora:consent", onConsent);
+      window.removeEventListener("tools:consent-open", onOpen);
+      window.removeEventListener("tools:consent", onConsent);
     };
   }, []);
 
@@ -150,7 +150,7 @@ export function CookieSettings() {
   return (
     <button
       type="button"
-      onClick={() => window.dispatchEvent(new Event("toolora:consent-open"))}
+      onClick={() => window.dispatchEvent(new Event("tools:consent-open"))}
       className="text-left text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
     >
       Cookie settings

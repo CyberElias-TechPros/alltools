@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Editorial Policy",
-  description:
-    "How Toolora tool pages and guides are researched, written, tested and corrected.",
-  alternates: { canonical: "/editorial-policy/" },
-};
+  description: "How Tools tool pages and guides are researched, written, tested and corrected.",
+  path: "/editorial-policy/",
+  keywords: ['editorial policy', 'how we write', 'accuracy', 'corrections'],
+});
 
 export default function EditorialPolicyPage() {
   return (
