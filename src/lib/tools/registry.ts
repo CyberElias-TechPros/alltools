@@ -1,4 +1,5 @@
 import { textTools } from "./data/text";
+import { textMoreTools } from "./data/text-more";
 import { calculatorTools } from "./data/calculators";
 import { financeTools } from "./data/finance";
 import { developerTools } from "./data/developer";
@@ -10,6 +11,7 @@ import type { SearchableTool } from "@/lib/search";
 
 export const tools: ToolDefinition[] = [
   ...textTools,
+  ...textMoreTools,
   ...calculatorTools,
   ...financeTools,
   ...developerTools,

@@ -414,3 +414,243 @@ export function generateLorem(
   }
   return paragraphs.join("\n\n");
 }
+
+/* ------------------------------------------------------------------ */
+/* Counters used by the dedicated counting tools                       */
+/* ------------------------------------------------------------------ */
+
+export type SentenceInfo = { text: string; words: number; characters: number };
+
+/** Sentence-level detail: length of each sentence plus summary figures. */
+export function sentenceStats(text: string): {
+  sentences: SentenceInfo[];
+  averageWords: number;
+  longest: SentenceInfo | null;
+  shortest: SentenceInfo | null;
+} {
+  const clean = text.replace(/\r\n/g, "\n").replace(/\s+/g, " ").trim();
+  if (!clean) {
+    return { sentences: [], averageWords: 0, longest: null, shortest: null };
+  }
+
+  const parts = clean
+    .replace(/([.!?…]+["'”’)\]]*)/g, "$1|")
+    .split("|")
+    .map((part) => part.trim())
+    .filter((part) => /[\p{L}\p{N}]/u.test(part));
+
+  const sentences = parts.map((part) => ({
+    text: part,
+    words: words(part).length,
+    characters: [...part].length,
+  }));
+
+  const total = sentences.reduce((sum, item) => sum + item.words, 0);
+  const sorted = [...sentences].sort((a, b) => b.words - a.words);
+
+  return {
+    sentences,
+    averageWords: sentences.length ? total / sentences.length : 0,
+    longest: sorted[0] ?? null,
+    shortest: sorted.length ? sorted[sorted.length - 1] : null,
+  };
+}
+
+export type ParagraphInfo = { text: string; words: number; sentences: number };
+
+/** Paragraph-level detail, split on blank lines. */
+export function paragraphStats(text: string): {
+  paragraphs: ParagraphInfo[];
+  averageWords: number;
+} {
+  const blocks = text
+    .replace(/\r\n/g, "\n")
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  const paragraphs = blocks.map((block) => ({
+    text: block,
+    words: words(block).length,
+    sentences: sentenceStats(block).sentences.length,
+  }));
+
+  const total = paragraphs.reduce((sum, item) => sum + item.words, 0);
+
+  return {
+    paragraphs,
+    averageWords: paragraphs.length ? total / paragraphs.length : 0,
+  };
+}
+
+/** Reading time with a caller-supplied pace (words per minute). */
+export function timeToRead(text: string, wordsPerMinute = WORDS_PER_MINUTE_READING): number {
+  const count = words(text).length;
+  if (!wordsPerMinute || wordsPerMinute <= 0) return 0;
+  return Math.ceil((count / wordsPerMinute) * 60);
+}
+
+/** Speaking time with a caller-supplied pace (words per minute). */
+export function timeToSpeak(text: string, wordsPerMinute = WORDS_PER_MINUTE_SPEAKING): number {
+  return timeToRead(text, wordsPerMinute);
+}
+
+/* ------------------------------------------------------------------ */
+/* Line handling                                                       */
+/* ------------------------------------------------------------------ */
+
+export type LineBreakMode = "space" | "nothing" | "double" | "single";
+
+/** Collapse (or normalise) line breaks between paragraphs and wrapped lines. */
+export function removeLineBreaks(input: string, mode: LineBreakMode = "space"): string {
+  const normalised = input.replace(/\r\n/g, "\n");
+  if (!normalised.trim()) return "";
+
+  if (mode === "nothing") return normalised.replace(/\n+/g, "");
+  if (mode === "single") return normalised.replace(/\n+/g, " ");
+  if (mode === "double") {
+    // Keep paragraph breaks, collapse single line breaks inside a paragraph.
+    return normalised
+      .split(/\n{2,}/)
+      .map((block) => block.replace(/\n/g, " ").replace(/[ \t]+/g, " ").trim())
+      .join("\n\n");
+  }
+  return normalised.replace(/\n+/g, " ").replace(/[ \t]+/g, " ").trim();
+}
+
+/* ------------------------------------------------------------------ */
+/* Slugs back to readable text                                         */
+/* ------------------------------------------------------------------ */
+
+/** Turn a URL slug back into readable text ("my-first-post" → "My First Post"). */
+export function slugToText(
+  slug: string,
+  options: { style?: "title" | "sentence" | "lower"; stripNumbers?: boolean } = {},
+): string {
+  const style = options.style ?? "title";
+  // A full URL or path is reduced to its last meaningful segment, so
+  // "https://site.com/blog/2024/07/my-post" reads as "My Post" rather than
+  // "Blog My Post".
+  const candidate = slug
+    .trim()
+    .replace(/^[a-z]+:\/\//i, "")
+    .replace(/[?#].*$/, "");
+  const segments = candidate
+    .split("/")
+    .map((segment) => segment.trim())
+    .filter((segment) => segment.length > 0 && !/^(?:\d+|www\.[^/]*|[a-z0-9-]+\.(?:com|net|org|io|dev|co|app|ai))$/i.test(segment));
+
+  const cleaned = (segments.length > 0 ? segments[segments.length - 1] : candidate)
+    .replace(/[/_+#?&=]+/g, "-")
+    .replace(/[^\p{L}\p{N}-]+/gu, "")
+    .replace(/-{2,}/g, "-")
+    .replace(/^-|-$/g, "");
+
+  if (!cleaned) return "";
+
+  const wordsOut = cleaned
+    .split("-")
+    .filter((part) => part.length > 0 && (!options.stripNumbers || !/^\d+$/.test(part)));
+
+  if (style === "lower") return wordsOut.join(" ").toLowerCase();
+
+  const joined = wordsOut.join(" ");
+  if (style === "sentence") {
+    const lower = joined.toLowerCase();
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+  }
+  return joined.replace(/\b[\p{L}]/gu, (char) => char.toUpperCase());
+}
+
+/* ------------------------------------------------------------------ */
+/* Random text                                                         */
+/* ------------------------------------------------------------------ */
+
+const RANDOM_WORD_BANK = [
+  "amber","basin","cobalt","delta","ember","fable","garnet","harbor","indigo","juniper",
+  "kestrel","lantern","meadow","nectar","orchid","pebble","quartz","ripple","summit","tundra",
+  "umber","velvet","willow","xenon","yarrow","zephyr","anchor","bramble","cinder","dune",
+  "echo","fjord","glade","hollow","island","jasper","kindle","lumen","marble","nimbus",
+  "ocean","prairie","quiver","ridge","saffron","thistle","unity","vessel","wander","yonder",
+];
+
+/** Generate random filler text (distinct from lorem ipsum). */
+export function randomText(options: {
+  paragraphs?: number;
+  sentencesPerParagraph?: number;
+  seed?: number;
+  capitalise?: boolean;
+} = {}): string {
+  const paragraphs = Math.min(Math.max(options.paragraphs ?? 2, 1), 20);
+  const perParagraph = Math.min(Math.max(options.sentencesPerParagraph ?? 3, 1), 12);
+  const random = mulberry32(options.seed ?? Math.floor(Math.random() * 1e9));
+  const capitalise = options.capitalise ?? true;
+
+  const sentence = () => {
+    const length = 6 + Math.floor(random() * 9);
+    const picked: string[] = [];
+    for (let index = 0; index < length; index += 1) {
+      picked.push(RANDOM_WORD_BANK[Math.floor(random() * RANDOM_WORD_BANK.length)]);
+    }
+    const text = picked.join(" ");
+    return `${capitalise ? text.charAt(0).toUpperCase() + text.slice(1) : text}.`;
+  };
+
+  return Array.from({ length: paragraphs }, () =>
+    Array.from({ length: perParagraph }, sentence).join(" "),
+  ).join("\n\n");
+}
+
+/* ------------------------------------------------------------------ */
+/* Unicode inspection                                                  */
+/* ------------------------------------------------------------------ */
+
+export type CharInfo = {
+  char: string;
+  codePoint: number;
+  hex: string;
+  decimal: number;
+  utf8: string;
+  utf16: string;
+  kind: string;
+};
+
+function describeChar(char: string): string {
+  if (/\p{Extended_Pictographic}/u.test(char)) return "emoji";
+  if (/\p{Lu}/u.test(char)) return "uppercase letter";
+  if (/\p{Ll}/u.test(char)) return "lowercase letter";
+  if (/\p{Lt}/u.test(char)) return "titlecase letter";
+  if (/\p{Nd}/u.test(char)) return "decimal digit";
+  if (/\p{N}/u.test(char)) return "number";
+  if (/\p{P}/u.test(char)) return "punctuation";
+  if (/\p{S}/u.test(char)) return "symbol";
+  if (/\p{Zs}/u.test(char)) return "space";
+  if (/\p{Cc}/u.test(char)) return "control";
+  if (/\p{M}/u.test(char)) return "combining mark";
+  return "other";
+}
+
+/** Code point, UTF-8 bytes, UTF-16 units and a category for each character. */
+export function inspectCharacters(text: string, limit = 200): CharInfo[] {
+  return [...text]
+    .slice(0, limit)
+    .map((char) => {
+      const codePoint = char.codePointAt(0) ?? 0;
+      const bytes = [...new TextEncoder().encode(char)]
+        .map((byte) => byte.toString(16).toUpperCase().padStart(2, "0"))
+        .join(" ");
+      const units = Array.from({ length: char.length }, (_, index) =>
+        char.charCodeAt(index).toString(16).toUpperCase().padStart(4, "0"),
+      ).join(" ");
+
+      return {
+        char,
+        codePoint,
+        hex: `U+${codePoint.toString(16).toUpperCase().padStart(4, "0")}`,
+        decimal: codePoint,
+        utf8: bytes,
+        utf16: units,
+        kind: describeChar(char),
+      };
+    });
+}

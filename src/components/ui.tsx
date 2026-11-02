@@ -254,13 +254,16 @@ export function Switch({
   onChange,
   label,
   description,
+  id: providedId,
 }: {
   checked: boolean;
   onChange: (next: boolean) => void;
   label: string;
   description?: string;
+  id?: string;
 }) {
-  const id = useId();
+  const generatedId = useId();
+  const id = providedId ?? generatedId;
   return (
     <div className="flex items-start justify-between gap-4 py-1.5">
       <div className="min-w-0">
