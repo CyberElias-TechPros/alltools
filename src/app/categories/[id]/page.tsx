@@ -127,11 +127,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
           ))}
         </ul>
         <p className="mt-3 text-xs text-[var(--text-subtle)]">
-          Planned tools have no pages yet. Follow the{" "}
+          Planned tools have no pages yet: most need a server-side check this static build cannot
+          make, and none of them is simulated. The{" "}
           <Link href="/roadmap/" className="link">
             public roadmap
           </Link>{" "}
-          to see what is being built next.
+          explains each one.
         </p>
       </section>
       )}

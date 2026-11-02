@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { HeaderStat, PageHeader } from "@/components/page-header";
 import { categories } from "@/lib/tools/categories";
-import { liveTools, toolCountByCategory } from "@/lib/tools/registry";
+import { liveTools, toolCountByCategory, tools } from "@/lib/tools/registry";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -20,9 +20,14 @@ const STAGES = [
     detail: "Design system, navigation, search, tool template, SEO, accessibility baseline.",
   },
   {
-    title: "First 40 tools",
+    title: "The full blueprint catalogue",
     status: "done" as const,
-    detail: "Text, calculators, finance, developer, everyday converters, SEO and security utilities.",
+    detail: "All twelve categories, 254 live tool pages, each with method, worked examples and FAQs.",
+  },
+  {
+    title: "Client-side only",
+    status: "done" as const,
+    detail: "Every live tool computes in the browser: no uploads, no backend, no third-party APIs, no keys.",
   },
   {
     title: "Content and trust pages",
@@ -32,7 +37,7 @@ const STAGES = [
   {
     title: "Test coverage and verification",
     status: "in-progress" as const,
-    detail: "Unit tests for every calculation module, plus a build-time catalogue validator.",
+    detail: "Unit tests for every calculation module, a render pass over every component, and a build-time catalogue validator. Manual device QA still outstanding.",
   },
   {
     title: "Launch and indexing",
@@ -40,19 +45,14 @@ const STAGES = [
     detail: "Custom domain, Search Console, sitemap submission, Core Web Vitals check.",
   },
   {
-    title: "Image and PDF tools",
-    status: "planned" as const,
-    detail: "On-device image compression and PDF merge/split, with explicit file-handling disclosures.",
-  },
-  {
     title: "Monetisation review",
     status: "planned" as const,
     detail: "Consent management platform, ad placement review, AdSense readiness audit.",
   },
   {
-    title: "Expansion",
+    title: "Tools that need a server",
     status: "planned" as const,
-    detail: "Education, internet and business utilities — added only when each one is finished.",
+    detail: "DNS, TLS, HTTP header, status and redirect checks, URL shortening and PDF encryption — they need networking or audited crypto this static build does not have.",
   },
 ];
 
@@ -64,8 +64,8 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export default function RoadmapPage() {
-  const nextUp = categories.filter((category) => category.status === "planned");
   const liveCategories = categories.filter((category) => category.status === "live");
+  const plannedTools = tools.filter((tool) => tool.status === "planned");
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
@@ -85,7 +85,7 @@ export default function RoadmapPage() {
           <div>
             <HeaderStat label="Live tools" value={String(liveTools.length)} />
             <HeaderStat label="Live categories" value={String(liveCategories.length)} />
-            <HeaderStat label="Planned categories" value={String(nextUp.length)} />
+            <HeaderStat label="Planned tools" value={String(plannedTools.length)} />
           </div>
         }
       />
@@ -166,31 +166,23 @@ export default function RoadmapPage() {
 
         <section>
           <div className="flex items-baseline justify-between border-b border-[var(--text)] pb-3">
-            <h2 className="section-title text-[var(--text)]">Next categories</h2>
+            <h2 className="section-title text-[var(--text)]">Not built yet</h2>
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--text-subtle)]">
-              {nextUp.length} planned
+              {plannedTools.length} planned
             </span>
           </div>
           <p className="mt-3 max-w-md text-sm leading-relaxed text-[var(--text-muted)]">
-            These open only when their first tools are complete and tested.
+            These are catalogued with their full editorial content but have no page and no route. Nine of them need to
+            make an outbound request and read a cross-origin response — which a static site cannot do for an arbitrary
+            host without a proxy server. The tenth needs audited PDF encryption. None of them is faked or simulated.
           </p>
-          <ul className="mt-2">
-            {nextUp.map((category) => (
-              <li key={category.id} className="border-b border-[var(--border)] py-4">
-                <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="font-display text-[1.02rem] font-semibold tracking-[-0.02em] text-[var(--text)]">
-                    {category.name}
-                  </h3>
-                  <span className="font-mono text-[0.58rem] uppercase tracking-[0.14em] text-[var(--text-subtle)]">
-                    Planned
-                  </span>
-                </div>
-                <p className="mt-1 text-[0.86rem] text-[var(--text-muted)]">{category.tagline}</p>
-                {category.plannedTools.length > 0 && (
-                  <p className="mt-2 font-mono text-[0.6rem] uppercase leading-relaxed tracking-[0.1em] text-[var(--text-subtle)]">
-                    {category.plannedTools.slice(0, 4).join(" · ")}
-                  </p>
-                )}
+          <ul className="mt-3">
+            {plannedTools.map((tool) => (
+              <li key={tool.slug} className="flex items-baseline justify-between gap-4 border-b border-[var(--border)] py-2.5">
+                <span className="text-sm text-[var(--text)]">{tool.name}</span>
+                <span className="shrink-0 font-mono text-[0.6rem] uppercase tracking-[0.12em] text-[var(--text-subtle)]">
+                  {categories.find((category) => category.id === tool.category)?.shortName ?? tool.category}
+                </span>
               </li>
             ))}
           </ul>
