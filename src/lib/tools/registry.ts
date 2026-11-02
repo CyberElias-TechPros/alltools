@@ -5,6 +5,7 @@ import { calculatorMoreTools } from "./data/calculators-more";
 import { financeTools } from "./data/finance";
 import { financeMoreTools } from "./data/finance-more";
 import { developerTools } from "./data/developer";
+import { developerMoreTools } from "./data/developer-more";
 import { everydayTools } from "./data/everyday";
 import { seoTools } from "./data/seo";
 import { securityTools } from "./data/security";
@@ -21,6 +22,7 @@ export const tools: ToolDefinition[] = [
   ...financeTools,
   ...financeMoreTools,
   ...developerTools,
+  ...developerMoreTools,
   ...everydayTools,
   ...seoTools,
   ...securityTools,
