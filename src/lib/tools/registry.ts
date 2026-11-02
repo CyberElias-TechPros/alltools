@@ -9,6 +9,7 @@ import { developerMoreTools } from "./data/developer-more";
 import { everydayTools } from "./data/everyday";
 import { seoTools } from "./data/seo";
 import { securityTools } from "./data/security";
+import { securityMoreTools } from "./data/security-more";
 import { imageTools } from "./data/images";
 import { pdfTools } from "./data/pdf";
 import { internetTools } from "./data/internet";
@@ -28,6 +29,7 @@ export const tools: ToolDefinition[] = [
   ...everydayTools,
   ...seoTools,
   ...securityTools,
+  ...securityMoreTools,
   ...imageTools,
   ...pdfTools,
   ...internetTools,

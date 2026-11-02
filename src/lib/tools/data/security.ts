@@ -3,7 +3,7 @@ import type { ToolDefinition } from "../types";
 export const securityTools: ToolDefinition[] = [
   {
     slug: "password-generator",
-    name: "Password Generator",
+    name: "Secure Password Generator",
     category: "security",
     tagline: "Create strong random passwords with a live entropy estimate.",
     intent: "generate a strong random password",

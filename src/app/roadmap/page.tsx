@@ -186,9 +186,11 @@ export default function RoadmapPage() {
                   </span>
                 </div>
                 <p className="mt-1 text-[0.86rem] text-[var(--text-muted)]">{category.tagline}</p>
-                <p className="mt-2 font-mono text-[0.6rem] uppercase leading-relaxed tracking-[0.1em] text-[var(--text-subtle)]">
-                  {category.plannedTools.slice(0, 4).join(" · ")}
-                </p>
+                {category.plannedTools.length > 0 && (
+                  <p className="mt-2 font-mono text-[0.6rem] uppercase leading-relaxed tracking-[0.1em] text-[var(--text-subtle)]">
+                    {category.plannedTools.slice(0, 4).join(" · ")}
+                  </p>
+                )}
               </li>
             ))}
           </ul>

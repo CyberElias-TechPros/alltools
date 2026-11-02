@@ -115,6 +115,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
         </div>
       )}
 
+      {category.plannedTools.length > 0 && (
       <section className="mt-12">
         <div className="flex items-baseline gap-3 border-b border-[var(--text)] pb-3">
           <Clock className="size-3.5 self-center text-[var(--text-subtle)]" aria-hidden />
@@ -133,6 +134,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
           to see what is being built next.
         </p>
       </section>
+      )}
 
       {related.length ? (
         <section className="mt-12 border-t border-[var(--text)] pt-5">

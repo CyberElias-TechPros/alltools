@@ -209,6 +209,17 @@ export const toolComponents: Record<string, ComponentType> = {
   "seo-checklist-generator": dynamic(() => import("./seo/seo-checklist-generator"), { loading }),
   "website-launch-checklist": dynamic(() => import("./seo/website-launch-checklist"), { loading }),
   "password-generator": dynamic(() => import("./security/password-generator"), { loading }),
+  "cookie-policy-checklist-generator": dynamic(() => import("./security/cookie-policy-checklist-generator"), { loading }),
+  "file-checksum-calculator": dynamic(() => import("./security/file-checksum-calculator"), { loading }),
+  "hash-calculator": dynamic(() => import("./security/hash-calculator"), { loading }),
+  "password-strength-checker": dynamic(() => import("./security/password-strength-checker"), { loading }),
+  "privacy-policy-generator": dynamic(() => import("./security/privacy-policy-generator"), { loading }),
+  "random-token-generator": dynamic(() => import("./security/random-token-generator"), { loading }),
+  "sha-256-generator": dynamic(() => import("./security/sha-256-generator"), { loading }),
+  "sha-512-generator": dynamic(() => import("./security/sha-512-generator"), { loading }),
+  "terms-conditions-generator": dynamic(() => import("./security/terms-conditions-generator"), { loading }),
+  "text-encryption-demo": dynamic(() => import("./security/text-encryption-demo"), { loading }),
+  "url-safety-syntax-checker": dynamic(() => import("./security/url-safety-syntax-checker"), { loading }),
 };
 
 export function ToolRunner({ slug }: { slug: string }) {
