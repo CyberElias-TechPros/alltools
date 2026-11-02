@@ -1,4 +1,12 @@
 import type { CategoryDefinition, CategoryId } from "./types";
+import { tools } from "./registry";
+
+/** The planned list is derived from the catalogue so it can never drift from the data. */
+const plannedFor = (id: CategoryId): string[] =>
+  tools
+    .filter((tool) => tool.category === id && tool.status === "planned")
+    .map((tool) => tool.name)
+    .sort();
 
 export const categories: CategoryDefinition[] = [
   {
@@ -14,20 +22,7 @@ export const categories: CategoryDefinition[] = [
     ],
     accent: "brand",
     status: "live",
-    plannedTools: [
-      "Character Counter",
-      "Sentence Counter",
-      "Paragraph Counter",
-      "Reading Time Calculator",
-      "Speaking Time Calculator",
-      "Line Break Remover",
-      "Text to Slug Converter",
-      "Text Frequency Analyzer",
-      "Random Text Generator",
-      "Markdown to HTML Converter",
-      "HTML to Markdown Converter",
-      "Unicode Character Inspector",
-    ],
+    plannedTools: plannedFor("text"),
   },
   {
     id: "calculators",
@@ -42,22 +37,7 @@ export const categories: CategoryDefinition[] = [
     ],
     accent: "amber",
     status: "live",
-    plannedTools: [
-      "Basic Calculator",
-      "Scientific Calculator",
-      "Sales Tax Calculator",
-      "Markup Calculator",
-      "Mean, Median and Mode Calculator",
-      "Fraction Calculator",
-      "Square Root Calculator",
-      "LCM & GCD Calculator",
-      "Prime Number Checker",
-      "Factorial Calculator",
-      "Random Number Generator",
-      "Time Duration Calculator",
-      "Probability Calculator",
-      "Matrix Calculator",
-    ],
+    plannedTools: plannedFor("calculators"),
   },
   {
     id: "finance",
@@ -72,20 +52,7 @@ export const categories: CategoryDefinition[] = [
     ],
     accent: "emerald",
     status: "live",
-    plannedTools: [
-      "Savings Calculator",
-      "Investment Growth Calculator",
-      "Break-Even Calculator",
-      "Invoice Generator",
-      "Mortgage Calculator",
-      "Debt Payoff Calculator",
-      "VAT Return Calculator",
-      "Freelance Rate Calculator",
-      "Salary Calculator",
-      "Budget Calculator",
-      "Currency Converter",
-      "Inflation Calculator",
-    ],
+    plannedTools: plannedFor("finance"),
   },
   {
     id: "developer",
@@ -101,7 +68,7 @@ export const categories: CategoryDefinition[] = [
     ],
     accent: "sky",
     status: "live",
-    plannedTools: [],
+    plannedTools: plannedFor("developer"),
   },
   {
     id: "everyday",
@@ -116,7 +83,7 @@ export const categories: CategoryDefinition[] = [
     ],
     accent: "violet",
     status: "live",
-    plannedTools: [],
+    plannedTools: plannedFor("everyday"),
   },
   {
     id: "seo",
@@ -131,7 +98,7 @@ export const categories: CategoryDefinition[] = [
     ],
     accent: "amber",
     status: "live",
-    plannedTools: ["Broken Link Checker"],
+    plannedTools: plannedFor("seo"),
   },
   {
     id: "security",
@@ -146,7 +113,7 @@ export const categories: CategoryDefinition[] = [
     ],
     accent: "slate",
     status: "live",
-    plannedTools: ["Passphrase Generator"],
+    plannedTools: plannedFor("security"),
   },
   {
     id: "images",
@@ -161,7 +128,7 @@ export const categories: CategoryDefinition[] = [
     ],
     accent: "cyan",
     status: "live",
-    plannedTools: [],
+    plannedTools: plannedFor("images"),
   },
   {
     id: "pdf",
@@ -176,7 +143,7 @@ export const categories: CategoryDefinition[] = [
     ],
     accent: "orange",
     status: "live",
-    plannedTools: ["PDF Password Protection Tool"],
+    plannedTools: plannedFor("pdf"),
   },
   {
     id: "education",
@@ -191,7 +158,7 @@ export const categories: CategoryDefinition[] = [
     ],
     accent: "amber",
     status: "live",
-    plannedTools: [],
+    plannedTools: plannedFor("education"),
   },
   {
     id: "internet",
@@ -206,16 +173,7 @@ export const categories: CategoryDefinition[] = [
     ],
     accent: "teal",
     status: "live",
-    plannedTools: [
-      "URL Shortener",
-      "IP Address Information Tool",
-      "DNS Record Lookup",
-      "HTTP Header Checker",
-      "SSL Certificate Expiry Checker",
-      "Website Status Checker",
-      "Website Response Time Checker",
-      "Redirect Checker",
-    ],
+    plannedTools: plannedFor("internet"),
   },
   {
     id: "business",
@@ -230,7 +188,7 @@ export const categories: CategoryDefinition[] = [
     ],
     accent: "teal",
     status: "live",
-    plannedTools: [],
+    plannedTools: plannedFor("business"),
   },
 ];
 

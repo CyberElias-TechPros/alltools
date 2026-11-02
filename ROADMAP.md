@@ -6,7 +6,9 @@ is done**, **why it exists**, **what it depends on / connects to**, and **how to
 - Source of truth for scope: [`docs/BLUEPRINT.md`](docs/BLUEPRINT.md) (the original plan and
   its 87-page PDF twin).
 - Live code: this repository. Counts quoted here are derived from the registry, not typed
-  by hand — `liveTools.length` is currently **41** across **7** live categories.
+  by hand — `liveTools.length` is currently **254** across **12** live categories.
+  Planned entries are likewise derived: `categories.ts` filters the registry for
+  `status === "planned"`, so the public roadmap cannot drift from the catalogue.
 - Status key: ✅ done · 🟡 partially done / needs a human pass · ⬜ not started ·
   ⛔ blocked on something outside the repo (owner, domain, third party).
 
@@ -67,7 +69,7 @@ FAQs).
 | 1.5 | Layout shell: header, ⌘K search trigger, footer, breadcrumbs | ✅ |
 | 1.6 | Site configuration module (URL, name, nav, footer, env flags) | ✅ |
 | 1.7 | Tool data model (`ToolDefinition`, `CategoryDefinition`) | ✅ |
-| 1.8 | Category taxonomy: 12 categories, 7 live + 5 planned | ✅ |
+| 1.8 | Category taxonomy: 12 categories, all 12 live | ✅ |
 | 1.9 | Registry with derived helpers (live, by category, popular, recent, related) | ✅ |
 | 1.10 | Tool page template (SEO, JSON-LD, sidebar, related tools, FAQ accordion) | ✅ |
 | 1.11 | Lazy-loading tool component registry (one bundle per tool) | ✅ |
@@ -367,14 +369,40 @@ Only categories that can run entirely in the browser without a paid API are elig
 
 | # | Step | Status |
 | --- | --- | --- |
-| 8.1 | Image tools (client-side canvas: compress, resize, convert, favicon) | ⬜ |
-| 8.2 | PDF tools — first spike a client-side library before promising anything | ⬜ |
-| 8.3 | Education tools (citation, reading level, study timers) | ⬜ |
-| 8.4 | Internet tools (IP/UA lookup — client-only, no third-party calls) | ⬜ |
-| 8.5 | Business tools (invoice totals, break-even, pricing) | ⬜ |
+| 8.1 | Image tools (client-side canvas: compress, resize, convert, favicon) — 20 live | ✅ |
+| 8.2 | PDF tools — pdf-lib spike, then 19 live tools | ✅ |
+| 8.3 | Education tools (citation, reading level, study timers) — 18 live | ✅ |
+| 8.4 | Internet tools (URL parsing, subnet maths, UA parsing — no third-party calls) — 10 live | ✅ |
+| 8.5 | Business tools (invoice totals, break-even, pricing, marketing) — 19 live | ✅ |
 | 8.6 | Bulk/batch workflows and keyboard-first power features | ⬜ |
 | 8.7 | Optional PWA offline caching of recently used tools | ⬜ |
 | 8.8 | Localisation (start with a single additional locale, reviewed by a native speaker) | ⬜ |
+
+### Blueprint coverage by section
+
+| Section | Theme | Blueprint slots | Live now | Notes |
+| --- | --- | --- | --- | --- |
+| A | Text and writing | 25 | 23 | Combined encoder/decoder and find-and-replace slugs cover two slots each |
+| B | Calculators and mathematics | 30 | 28 | Scientific, matrix, fraction and probability calculators all shipped |
+| C | Finance and business | 25 | 26 | Includes the offline currency converter, so this section runs one over |
+| D | Image tools | 20 | 20 | Canvas and WASM-free: compress, resize, convert, crop, EXIF, favicon |
+| E | PDF and documents | 20 | 19 | Password protection remains planned — pdf-lib cannot encrypt |
+| F | Developer and programming | 30 | 30 | Formatters, validators, hashes, JWT, regex, cron-free utilities |
+| G | Internet and networking | 20 | 10 | Eight live checks need a server; see the note below |
+| H | SEO and website management | 24 | 24 | Static audits plus the SERP/schema generators |
+| I | Education | 20 | 18 | Citations, GPA, flashcards, study planning |
+| J | Everyday and lifestyle | 23 | 25 | Cooking, fuel, sleep, dates, world clock |
+| K | Business, marketing, productivity | 21 | 19 | Break-even and sales commission already existed in finance |
+| L | Security and privacy | 12 | 12 | Hashing, passwords, passphrases, encoding, privacy policies |
+
+**What stays planned, and why.** Ten catalogue entries are `status: "planned"`: URL
+shortener, IP information, DNS lookup, HTTP header checker, TLS expiry, website status and
+response-time probes, redirect tracer (8), the broken-link checker and the PDF password
+tool. The first eight need to make an outbound request and read a response, which a static
+site served over HTTPS cannot do for arbitrary third-party hosts — browsers block those
+cross-origin reads and there is no backend to proxy them. The PDF password tool needs
+audited encryption that `pdf-lib` does not provide. They are catalogued, gated behind
+`notFound()`, and listed as planned; no page claims to perform a live check it cannot make.
 
 **8.2 — Why a spike first.** *Why:* PDF editing is the most common trap in this product
 category — the good libraries are not free for commercial use or blow up the bundle. No PDF
@@ -391,24 +419,24 @@ assets, network-first for HTML) so updates are not stuck behind an old service w
 
 **Completed (verifiable in the repo):** product definition and PRD; static Next.js
 foundation; design system with dark mode; header/footer/search/breadcrumb shell; data model
-and 12-category taxonomy; **184 live tools across 10 categories** (text 23, calculators 28,
-finance 25, developer 30, images 20, PDF 19, SEO 24, internet 10, everyday 4, security 1),
-each with editorial content; every tool runs client-side with no backend calls — including
-PDF editing (pdf-lib), DOCX text extraction, image processing, hashing, code formatting,
-QR generation and decoding; tool page template with JSON-LD; code-split tool registry;
-**480 automated tests across 19 suites**, including a render smoke test over every tool
-component; homepage, directory, category, guide, about, contact, roadmap and six policy
-pages; sitemap, robots, manifest, 404; consent-gated analytics; inert ad slots; public
-documentation (README, PRD, testing guide, AdSense audit).
+and 12-category taxonomy; **254 live tools across 12 live categories** (text 23, calculators
+28, finance 26, developer 30, everyday 25, SEO 24, images 20, PDF 19, education 18, security
+12, internet 10, business 19), each with editorial content; every tool runs client-side with
+no backend calls and no third-party APIs — including PDF editing (pdf-lib), DOCX text
+extraction, image processing, hashing, code formatting, QR generation and decoding, and an
+offline currency converter that uses rates the visitor supplies; tool page template with
+JSON-LD; code-split tool registry; **685 automated tests across 24 suites**, including a
+render smoke test over every tool component and unit tests for every logic module; homepage,
+directory, category, guide, about, contact, roadmap and six policy pages; sitemap, robots,
+manifest, 404; consent-gated analytics; inert ad slots; public documentation (README, PRD,
+testing guide, AdSense audit).
 
-**Pending (code work, no external dependency):** manual browser QA of all 184 tools;
+**Pending (code work, no external dependency):** manual browser QA of all 254 tools;
 Lighthouse/CWV measurement; screen-reader pass; Playwright smoke tests; visual regression
-baselines; certified CMP integration; the remaining blueprint sections — education (I, 20
-tools), everyday (J, 23), business (K, 21) and security (L, 12); PWA offline caching;
-localisation. Eight network tools (URL shortener, IP lookup, DNS, header checker, TLS
-expiry, status and response-time probes, redirect tracer) and the broken-link checker stay
-catalogued as planned because they genuinely require a server; the PDF password tool stays
-planned until an audited encryption path exists.
+baselines; certified CMP integration; PWA offline caching; localisation; bulk/batch
+workflows. The ten planned entries above stay planned until the site gains a server-side
+component or an audited client-side encryption path — flipping them to `live` without that
+would mean either a fake check or a third-party API, both of which the blueprint forbids.
 
 **Blocked (needs an owner decision or an external account):** real domain and
 `NEXT_PUBLIC_SITE_URL`; monitored contact mailbox; legal review of the policy pages;

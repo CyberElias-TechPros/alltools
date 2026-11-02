@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Live: 41 tools, 7 categories, 4 guides |
+| **Status** | Live: 254 tools, 12 categories, 4 guides |
 | **Owner** | Site operator (see `src/lib/site.ts`) |
 | **Last updated** | Phase 5 of [`ROADMAP.md`](../ROADMAP.md) |
 | **Source plan** | [`BLUEPRINT.md`](./BLUEPRINT.md) |
@@ -82,7 +82,8 @@ arrival, without a tutorial.
 
 ### In scope (built)
 
-- 41 tools across text, calculators, developer, finance, everyday, SEO and security.
+- 254 tools across all twelve categories: text, calculators, finance, developer, everyday,
+  SEO, security, images, PDF, internet, education and business.
 - Homepage with search, popular and recent tools, category grid, FAQ.
 - Tools directory with client-side search and category filters.
 - Category index and per-category pages.

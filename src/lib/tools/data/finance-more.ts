@@ -1057,4 +1057,71 @@ export const financeMoreTools: ToolDefinition[] = [
       ],
     },
   },
+  {
+    slug: "currency-converter",
+    name: "Currency Converter",
+    category: "finance",
+    tagline: "Convert with the exact rate you were quoted.",
+    intent: "convert currency",
+    keywords: ["currency converter", "exchange rate calculator", "convert usd to eur", "money conversion", "travel money calculator", "fx rate"],
+    status: "live",
+    actions: ["copy"],
+    effort: "instant",
+    popularity: 80,
+    addedAt: "2025-03-08",
+    seoTitle: "Currency Converter — Convert at Your Own Rate",
+    seoDescription:
+      "Convert between sixteen currencies using the rate you enter or paste, see the inverse and cross rates, and record the date the rate applied. No feed, no account.",
+    content: {
+      intro: [
+        "Most currency converters hide the rate that produced the number. This one does the opposite: it shows the rate applied, its inverse, and the date you recorded it, and you can edit every rate in the table. That matters because the rate a bank or card gives you is almost never the one published on a rate feed.",
+        "Rates are expressed as units per 1 US dollar, which makes cross rates between any two currencies a single division. Nothing is fetched over the network — the numbers on screen are the numbers you supplied.",
+      ],
+      howTo: [
+        "Enter the amount and pick the two currencies.",
+        "Check the rate table — replace the defaults with your quoted rates.",
+        "Record the date the rate applied.",
+        "Paste a rate list if your bank gave you several at once.",
+      ],
+      method: {
+        title: "One base, every pair",
+        paragraphs: [
+          "Each currency has a rate in units per 1 USD. Converting from A to B is amount × (rate B ÷ rate A), which handles every pair without storing separate cross rates.",
+          "The inverse rate is 1 ÷ rate, and the full table shows the same amount in every currency that has a usable rate. Zero or blank rates are excluded rather than producing an infinity.",
+        ],
+        formula: "amount in B = amount × (rate B ÷ rate A)",
+      },
+      examples: [
+        {
+          title: "Dollars to euros",
+          steps: ["100 USD, EUR rate 0.92 per USD."],
+          result: "92.00 EUR, with an inverse of 1.087 USD per euro",
+        },
+        {
+          title: "A cross rate",
+          steps: ["Convert 50 EUR to GBP with EUR 0.92 and GBP 0.79 per USD."],
+          result: "About 42.93 GBP — no dollar figure appears in the calculation",
+        },
+      ],
+      limitations: [
+        "No live rates: the defaults are approximate and go stale, which is why the date field exists.",
+        "It uses one rate per currency, so it cannot model buy and sell spreads or card fees — apply those yourself.",
+        "Cryptocurrencies and precious metals are not included; their pricing is not a simple quoted pair.",
+      ],
+      faqs: [
+        {
+          q: "Why not fetch live exchange rates?",
+          a: "Live rates need a third-party API. This site processes everything in your browser with no backend and no keys, so you supply the rate — which is also the rate that actually applies to your transaction.",
+        },
+        {
+          q: "Why is my bank's amount different?",
+          a: "Banks and card networks apply a margin of roughly 0.5–3% and often use a different snapshot time. Enter the rate from your statement to see exactly what you paid.",
+        },
+        {
+          q: "Can I convert several amounts at once?",
+          a: "Change the amount — every row in the table recalculates. For a batch, paste each amount in turn or use the date field to keep track of which rates you used.",
+        },
+      ],
+    },
+  },
 ];

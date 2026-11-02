@@ -1,7 +1,7 @@
 # Testing & QA
 
 Toolora's value is a **correct number or string**. Every tool's maths and parsing lives in a
-pure TypeScript module under `src/lib/`, which is why 139 tests can cover 41 tools without a
+pure TypeScript module under `src/lib/`, which is why 685 tests can cover 254 tools without a
 browser, a DOM or a network.
 
 ```bash

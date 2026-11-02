@@ -88,6 +88,7 @@ export const toolComponents: Record<string, ComponentType> = {
   "budget-calculator": dynamic(() => import("./finance/budget-calculator"), { loading }),
   "expense-split-calculator": dynamic(() => import("./finance/expense-split-calculator"), { loading }),
   "inflation-calculator": dynamic(() => import("./finance/inflation-calculator"), { loading }),
+  "currency-converter": dynamic(() => import("./finance/currency-converter"), { loading }),
   "mortgage-calculator": dynamic(() => import("./finance/mortgage-calculator"), { loading }),
   "debt-payoff-calculator": dynamic(() => import("./finance/debt-payoff-calculator"), { loading }),
   "rental-yield-calculator": dynamic(() => import("./finance/rental-yield-calculator"), { loading }),

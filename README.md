@@ -67,23 +67,26 @@ src/
 │  └─ analytics.tsx         Consent banner + consent-gated GA4 loader
 ├─ lib/
 │  ├─ text.ts calc.ts finance.ts units.ts dev.ts regex.ts timezone.ts diff.ts
+│  ├─ image.ts pdf.ts docx.ts format.ts tabular.ts xml.ts web.ts http.ts
+│  ├─ passwords.ts security.ts education.ts everyday.ts business.ts currency.ts
 │  │                        Pure, dependency-free logic — the part tests cover
 │  ├─ search.ts            Scoring/ranking for the command palette
 │  ├─ guides.ts             Editorial articles as structured data
 │  ├─ site.ts               Site config, nav, footer links, env flags
 │  └─ tools/
 │     ├─ types.ts           ToolDefinition / CategoryDefinition models
-│     ├─ categories.ts      12 categories (7 live, 5 planned)
+│     ├─ categories.ts      12 categories; live and planned counts derived from the registry
 │     ├─ registry.ts        Concatenates data files, derived helpers
 │     └─ data/*.ts          Editorial content for each tool (SEO copy, examples, FAQs)
 └─ tools/
    ├─ registry.tsx          slug → lazily imported React component
-   └─ text/ calculators/ finance/ developer/ everyday/ seo/ security/
-                            One file per tool: inputs, state, live result
+   ├─ text/ calculators/ finance/ developer/ everyday/ seo/ security/
+   ├─ images/ pdf/ internet/ education/ business/
+   └─                        One file per tool: inputs, state, live result
 ```
 
 **Rule of thumb:** logic lives in `src/lib`, copy lives in `src/lib/tools/data`, and
-`src/tools/*` only wires the two together. That is why the test suite can cover 41 tools
+`src/tools/*` only wires the two together. That is why the test suite can cover 254 tools
 with no DOM or browser needed.
 
 ### Design system — "Instrument"
