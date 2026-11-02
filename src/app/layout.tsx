@@ -1,4 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import "@fontsource-variable/bricolage-grotesque/standard.css";
+import "@fontsource-variable/inter-tight/wght.css";
+import "@fontsource-variable/jetbrains-mono/wght.css";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -45,8 +48,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbfbfd" },
-    { media: "(prefers-color-scheme: dark)", color: "#080a12" },
+    { media: "(prefers-color-scheme: light)", color: "#efede6" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b09" },
   ],
 };
 
@@ -84,7 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLd data={websiteSchema} />
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-[var(--text)] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[var(--page)]"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:border focus:border-[var(--text)] focus:bg-[var(--text)] focus:px-4 focus:py-2 focus:font-mono focus:text-[0.7rem] focus:uppercase focus:tracking-[0.14em] focus:text-[var(--page)]"
         >
           Skip to content
         </a>

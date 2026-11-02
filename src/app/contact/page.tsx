@@ -21,23 +21,26 @@ export default function ContactPage() {
       updated="2 November 2025"
     >
       <div className="not-prose grid gap-5 sm:grid-cols-[1.2fr_1fr]">
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-          <h2 className="text-sm font-semibold text-[var(--text)]">Send a message</h2>
-          <p className="mt-1 text-xs text-[var(--text-muted)]">
-            This form opens your own email app with the message ready to send — there is no server
-            collecting form data.
-          </p>
-          <div className="mt-3">
-            <ContactForm />
+        <div className="border border-[var(--border-strong)] bg-[var(--surface)]">
+          <div className="panel-head">
+            <span>Send a message</span>
+            <span>No server</span>
+          </div>
+          <div className="p-4 sm:p-5">
+            <p className="text-xs leading-relaxed text-[var(--text-muted)]">
+              This form opens your own email app with the message ready to send — there is no
+              server collecting form data.
+            </p>
+            <div className="mt-3">
+              <ContactForm />
+            </div>
           </div>
         </div>
 
         <div>
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] p-4">
+          <div className="border border-[var(--border)] bg-[var(--surface-muted)] p-4">
             <Mail className="size-4 text-[var(--text-subtle)]" aria-hidden />
-            <p className="mt-2 text-[0.72rem] font-bold uppercase tracking-[0.08em] text-[var(--text-subtle)]">
-              Email
-            </p>
+            <p className="eyebrow mt-2">Email</p>
             <a href={`mailto:${siteConfig.email}`} className="mt-1 block break-all text-sm font-medium link">
               {siteConfig.email}
             </a>
@@ -47,7 +50,7 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="mt-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--text-muted)]">
+          <div className="mt-3 border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--text-muted)]">
             <p className="font-semibold text-[var(--text)]">What to include</p>
             <ul className="mt-2 ml-4 list-disc space-y-1 text-xs">
               <li>The tool name and the values you entered</li>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Check, Circle, Clock, Loader } from "lucide-react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { HeaderStat, PageHeader } from "@/components/page-header";
 import { categories } from "@/lib/tools/categories";
 import { liveTools, toolCountByCategory } from "@/lib/tools/registry";
 import { cn } from "@/lib/utils";
@@ -56,124 +56,157 @@ const STAGES = [
   },
 ];
 
+const STATUS_LABEL: Record<string, string> = {
+  done: "Shipped",
+  "in-progress": "In progress",
+  next: "Next",
+  planned: "Planned",
+};
+
 export default function RoadmapPage() {
   const nextUp = categories.filter((category) => category.status === "planned");
+  const liveCategories = categories.filter((category) => category.status === "live");
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
       <Breadcrumbs items={[{ href: "/roadmap/", label: "Roadmap" }]} />
-      <h1 className="text-3xl font-bold tracking-[-0.03em] text-[var(--text)] sm:text-[2.2rem]">
-        Roadmap
-      </h1>
-      <p className="mt-2 max-w-2xl text-[0.98rem] leading-relaxed text-[var(--text-muted)]">
-        {liveTools.length} tools are live today. This page shows what has shipped and what is next,
-        so nothing has to pretend to be finished. Planned tools have no pages and no fake
-        functionality.
-      </p>
 
-      <ol className="mt-8 space-y-2">
-        {STAGES.map((stage) => {
-          const Icon =
-            stage.status === "done"
-              ? Check
-              : stage.status === "in-progress"
-                ? Loader
-                : stage.status === "next"
-                  ? Clock
-                  : Circle;
+      <PageHeader
+        label="Status"
+        title={
+          <>
+            Built in public,
+            <br />
+            published when true<span className="text-[var(--accent-text)]">.</span>
+          </>
+        }
+        lede={`${liveTools.length} tools are live today. This page shows what has shipped and what is next, so nothing has to pretend to be finished. Planned tools have no pages and no fake functionality.`}
+        meta={
+          <div>
+            <HeaderStat label="Live tools" value={String(liveTools.length)} />
+            <HeaderStat label="Live categories" value={String(liveCategories.length)} />
+            <HeaderStat label="Planned categories" value={String(nextUp.length)} />
+          </div>
+        }
+      />
+
+      <ol className="mt-2 border-t border-[var(--border)]">
+        {STAGES.map((stage, index) => {
+          const done = stage.status === "done";
+          const active = stage.status === "in-progress";
           return (
             <li
               key={stage.title}
               className={cn(
-                "flex items-start gap-3 rounded-xl border p-4",
-                stage.status === "done"
-                  ? "border-emerald-300/60 bg-emerald-50/60 dark:border-emerald-500/25 dark:bg-emerald-500/5"
-                  : stage.status === "in-progress"
-                    ? "border-brand-300 bg-brand-50/60 dark:border-brand-500/30 dark:bg-brand-500/10"
-                    : "border-[var(--border)] bg-[var(--surface)]",
+                "grid grid-cols-[2rem_1fr] items-start gap-4 border-b border-[var(--border)] py-5 sm:grid-cols-[2rem_2.5rem_1fr_8rem] sm:items-baseline sm:px-2",
+                active && "bg-[var(--surface-muted)]",
               )}
             >
+              <span className="font-mono text-[0.62rem] tracking-[0.1em] text-[var(--text-subtle)]">
+                {String(index + 1).padStart(2, "0")}
+              </span>
               <span
                 className={cn(
-                  "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full",
-                  stage.status === "done"
-                    ? "bg-emerald-600 text-white"
-                    : stage.status === "in-progress"
-                      ? "bg-brand-600 text-white"
-                      : "bg-[var(--surface-muted)] text-[var(--text-subtle)]",
+                  "mt-1 hidden size-2.5 sm:block",
+                  done ? "bg-[var(--text)]" : active ? "bg-[var(--ring)]" : "border border-[var(--border-strong)]",
                 )}
-              >
-                <Icon className="size-3.5" aria-hidden />
-              </span>
-              <div>
-                <p className="flex flex-wrap items-center gap-2 text-[0.95rem] font-semibold text-[var(--text)]">
+                aria-hidden
+              />
+              <div className="col-start-2 sm:col-start-3">
+                <p className="font-display text-[1.15rem] font-semibold leading-tight tracking-[-0.03em] text-[var(--text)]">
                   {stage.title}
-                  <span className="chip !text-[0.62rem]">
-                    {stage.status === "done"
-                      ? "done"
-                      : stage.status === "in-progress"
-                        ? "in progress"
-                        : stage.status === "next"
-                          ? "next"
-                          : "planned"}
-                  </span>
                 </p>
-                <p className="mt-0.5 text-sm leading-relaxed text-[var(--text-muted)]">
+                <p className="mt-1 max-w-2xl text-[0.86rem] leading-relaxed text-[var(--text-muted)]">
                   {stage.detail}
                 </p>
               </div>
+              <span
+                className={cn(
+                  "col-start-2 mt-1 font-mono text-[0.6rem] uppercase tracking-[0.14em] sm:col-start-4 sm:mt-0",
+                  done
+                    ? "text-[var(--text)]"
+                    : active
+                      ? "text-[var(--accent-text)]"
+                      : "text-[var(--text-subtle)]",
+                )}
+              >
+                {STATUS_LABEL[stage.status]}
+              </span>
             </li>
           );
         })}
       </ol>
 
-      <h2 className="mt-10 text-lg font-bold text-[var(--text)]">Live tools by category</h2>
-      <div className="mt-3 grid gap-2 sm:grid-cols-2">
-        {categories
-          .filter((category) => (toolCountByCategory[category.id] ?? 0) > 0)
-          .map((category) => (
-            <div
-              key={category.id}
-              className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
-            >
-              <span className="text-[var(--text)]">{category.shortName}</span>
-              <span className="font-mono text-xs text-[var(--text-subtle)]">
-                {toolCountByCategory[category.id]} live
-              </span>
-            </div>
-          ))}
-      </div>
-
-      <h2 className="mt-10 text-lg font-bold text-[var(--text)]">Next categories</h2>
-      <p className="mt-1 text-sm text-[var(--text-muted)]">
-        These open only when their first tools are complete and tested.
-      </p>
-      <div className="mt-3 space-y-3">
-        {nextUp.map((category) => (
-          <div key={category.id} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="text-sm font-semibold text-[var(--text)]">{category.name}</h3>
-              <span className="chip !text-[0.62rem]">planned</span>
-            </div>
-            <p className="mt-1 text-sm text-[var(--text-muted)]">{category.tagline}</p>
-            <p className="mt-2 text-xs text-[var(--text-subtle)]">
-              {category.plannedTools.slice(0, 4).join(" · ")}
-            </p>
+      <div className="mt-14 grid gap-12 lg:grid-cols-2">
+        <section>
+          <div className="flex items-baseline justify-between border-b border-[var(--text)] pb-3">
+            <h2 className="section-title text-[var(--text)]">Live by category</h2>
+            <span className="font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--text-subtle)]">
+              {liveTools.length} tools
+            </span>
           </div>
-        ))}
+          <ul className="mt-1">
+            {liveCategories.map((category) => (
+              <li key={category.id}>
+                <Link
+                  href={`/categories/${category.id}/`}
+                  className="group flex items-center justify-between border-b border-[var(--border)] py-2.5"
+                >
+                  <span className="text-sm text-[var(--text)] transition-colors group-hover:text-[var(--accent-text)]">
+                    {category.shortName}
+                  </span>
+                  <span className="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-[var(--text-subtle)]">
+                    {toolCountByCategory[category.id] ?? 0} live
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section>
+          <div className="flex items-baseline justify-between border-b border-[var(--text)] pb-3">
+            <h2 className="section-title text-[var(--text)]">Next categories</h2>
+            <span className="font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--text-subtle)]">
+              {nextUp.length} planned
+            </span>
+          </div>
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-[var(--text-muted)]">
+            These open only when their first tools are complete and tested.
+          </p>
+          <ul className="mt-2">
+            {nextUp.map((category) => (
+              <li key={category.id} className="border-b border-[var(--border)] py-4">
+                <div className="flex items-baseline justify-between gap-3">
+                  <h3 className="font-display text-[1.02rem] font-semibold tracking-[-0.02em] text-[var(--text)]">
+                    {category.name}
+                  </h3>
+                  <span className="font-mono text-[0.58rem] uppercase tracking-[0.14em] text-[var(--text-subtle)]">
+                    Planned
+                  </span>
+                </div>
+                <p className="mt-1 text-[0.86rem] text-[var(--text-muted)]">{category.tagline}</p>
+                <p className="mt-2 font-mono text-[0.6rem] uppercase leading-relaxed tracking-[0.1em] text-[var(--text-subtle)]">
+                  {category.plannedTools.slice(0, 4).join(" · ")}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
 
-      <div className="mt-10 rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] p-4 text-sm leading-relaxed text-[var(--text-muted)]">
+      <p className="mt-12 max-w-2xl border-l-2 border-[var(--ring)] pl-4 text-sm leading-relaxed text-[var(--text-muted)]">
         Have a tool you need?{" "}
         <Link href="/contact/" className="link">
           Request it
         </Link>{" "}
-        — requests that solve a recurring, specific problem move to the top of the list. See also the{" "}
+        — requests that solve a recurring, specific problem move to the top of the list. See also
+        the{" "}
         <Link href="/tools/" className="link">
           full tool directory
         </Link>
         .
-      </div>
+      </p>
     </div>
   );
 }

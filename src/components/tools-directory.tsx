@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Search, X } from "lucide-react";
 import { ToolCard } from "@/components/tool-card";
-import { CategoryIcon, categoryTone } from "@/components/category-icon";
+import { CategoryIcon } from "@/components/category-icon";
 import { searchTools } from "@/lib/search";
 import { cn } from "@/lib/utils";
 import type { ToolDefinition, CategoryId } from "@/lib/tools/types";
@@ -60,46 +60,49 @@ export function ToolsDirectory({
 
   return (
     <div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <Search
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--text-subtle)]"
-            aria-hidden
-          />
+      <div className="flex flex-col gap-px border border-[var(--border-strong)] bg-[var(--border)] sm:flex-row sm:items-stretch">
+        <div className="relative flex flex-1 items-center bg-[var(--surface)]">
+          <span className="flex w-12 shrink-0 items-center justify-center self-stretch border-r border-[var(--border)] text-[var(--text-subtle)]">
+            <Search className="size-4" aria-hidden />
+          </span>
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Filter by name, task or keyword…"
             aria-label="Filter tools"
-            className="input !pl-9 !pr-9"
+            className="w-full bg-transparent px-3 py-3 font-mono text-[0.78rem] tracking-[0.02em] text-[var(--text)] outline-none placeholder:text-[var(--text-subtle)]"
           />
           {query ? (
             <button
               type="button"
               onClick={() => setQuery("")}
               aria-label="Clear filter"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded p-1 text-[var(--text-subtle)] hover:text-[var(--text)]"
+              className="mr-2 p-1.5 text-[var(--text-subtle)] transition-colors hover:text-[var(--accent-text)]"
             >
               <X className="size-3.5" aria-hidden />
             </button>
           ) : null}
         </div>
-        <p className="shrink-0 text-sm text-[var(--text-muted)]" aria-live="polite">
-          {results.length} {results.length === 1 ? "tool" : "tools"}
+        <p
+          className="flex shrink-0 items-center justify-between gap-2 bg-[var(--surface-muted)] px-4 py-3 font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--text-muted)] sm:justify-start"
+          aria-live="polite"
+        >
+          <span className="text-[var(--text)]">{String(results.length).padStart(2, "0")}</span>
+          {results.length === 1 ? "tool" : "tools"}
         </p>
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-1.5">
+      <div className="mt-4 flex flex-wrap gap-1.5">
         <button
           type="button"
           onClick={() => setCategory("all")}
           aria-pressed={category === "all"}
           className={cn(
-            "rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
+            "border px-2.5 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.12em] transition-colors",
             category === "all"
-              ? "border-brand-500 bg-brand-600 text-white"
-              : "border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:border-[var(--border-strong)]",
+              ? "border-[var(--text)] bg-[var(--text)] text-[var(--page)]"
+              : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-strong)] hover:text-[var(--text)]",
           )}
         >
           All categories
@@ -113,15 +116,20 @@ export function ToolsDirectory({
               onClick={() => setCategory(item.id)}
               aria-pressed={category === item.id}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
+                "inline-flex items-center gap-1.5 border px-2.5 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.12em] transition-colors",
                 category === item.id
-                  ? "border-brand-500 bg-brand-600 text-white"
-                  : "border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:border-[var(--border-strong)]",
+                  ? "border-[var(--text)] bg-[var(--text)] text-[var(--page)]"
+                  : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-strong)] hover:text-[var(--text)]",
               )}
             >
               <CategoryIcon id={item.id} className="size-3" />
               {item.shortName}
-              <span className={cn("text-[0.65rem]", category === item.id ? "text-white/70" : "text-[var(--text-subtle)]")}>
+              <span
+                className={cn(
+                  "text-[0.55rem]",
+                  category === item.id ? "text-[var(--page)]/60" : "text-[var(--text-subtle)]",
+                )}
+              >
                 {count}
               </span>
             </button>
@@ -130,13 +138,18 @@ export function ToolsDirectory({
       </div>
 
       {results.length ? (
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {results.map((tool) => (
-            <ToolCard key={tool.slug} tool={tool} showCategory />
+        <ol className="mt-6 border-t border-[var(--border)]">
+          {results.map((tool, index) => (
+            <ToolCard
+              key={tool.slug}
+              tool={tool}
+              variant="row"
+              index={index + 1}
+            />
           ))}
-        </div>
+        </ol>
       ) : (
-        <div className="mt-6 rounded-xl border border-dashed border-[var(--border-strong)] p-10 text-center">
+        <div className="mt-6 border border-dashed border-[var(--border-strong)] p-10 text-center">
           <p className="text-sm font-semibold text-[var(--text)]">No tools match “{query}”</p>
           <p className="mx-auto mt-1 max-w-sm text-sm text-[var(--text-muted)]">
             Try a shorter word, or{" "}
@@ -148,11 +161,10 @@ export function ToolsDirectory({
         </div>
       )}
 
-      <p className="mt-6 text-xs text-[var(--text-subtle)]">
-        Tip: press <kbd className="kbd">⌘</kbd> <kbd className="kbd">K</kbd> anywhere on the site to
-        search without leaving the page.
+      <p className="mt-8 flex flex-wrap items-center gap-2 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-[var(--text-subtle)]">
+        Tip: press <kbd className="kbd">⌘</kbd> <kbd className="kbd">K</kbd> anywhere to search
+        without leaving the page.
       </p>
-      <div className={cn("hidden", categoryTone("brand"))} aria-hidden />
     </div>
   );
 }

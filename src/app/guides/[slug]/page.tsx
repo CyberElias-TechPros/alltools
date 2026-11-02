@@ -56,9 +56,9 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
       <JsonLd data={articleSchema} />
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_17rem]">
         <article>
           <Breadcrumbs
             items={[
@@ -66,17 +66,19 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               { href: `/guides/${guide.slug}/`, label: "Article" },
             ]}
           />
-          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-[var(--text-subtle)]">
-            {guide.readingMinutes} min read · updated {guide.updated}
-          </p>
-          <h1 className="mt-2 text-3xl font-bold tracking-[-0.03em] text-[var(--text)] sm:text-[2.3rem] sm:leading-[1.15]">
-            {guide.title}
-          </h1>
-          <p className="mt-3 text-[1.02rem] leading-relaxed text-[var(--text-muted)]">
-            {guide.intro}
-          </p>
+          <div className="border-b border-[var(--text)] pb-6">
+            <p className="eyebrow">
+              Guide · {guide.readingMinutes} min read · updated {guide.updated}
+            </p>
+            <h1 className="display mt-3 text-[clamp(2rem,4.6vw,3.4rem)] text-[var(--text)]">
+              {guide.title}
+            </h1>
+            <p className="mt-4 max-w-2xl text-[1.05rem] leading-relaxed text-[var(--text-muted)]">
+              {guide.intro}
+            </p>
+          </div>
 
-          <div className="prose-tool mt-7">
+          <div className="prose-tool mt-8">
             {guide.sections.map((section) => (
               <section key={section.heading}>
                 <h2>{section.heading}</h2>
@@ -94,15 +96,18 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             ))}
           </div>
 
-          <div className="mt-10 rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] p-4">
-            <h2 className="text-sm font-semibold text-[var(--text)]">Try the related tools</h2>
-            <ul className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-12 border border-[var(--border)] bg-[var(--surface)]">
+            <div className="panel-head">
+              <span>Try the related tools</span>
+              <span>Free · local</span>
+            </div>
+            <ul className="flex flex-wrap gap-2 p-4">
               {tools.map((tool) =>
                 tool ? (
                   <li key={tool.slug}>
                     <Link
                       href={`/tools/${tool.slug}/`}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:border-[var(--border-strong)] hover:text-[var(--text)]"
+                      className="inline-flex items-center gap-1.5 border border-[var(--border-strong)] px-3 py-2 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-[var(--text-muted)] transition-colors hover:border-[var(--text)] hover:text-[var(--text)]"
                     >
                       {tool.name}
                       <ArrowRight className="size-3" aria-hidden />
@@ -114,19 +119,19 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
           </div>
         </article>
 
-        <aside className="lg:sticky lg:top-24 lg:self-start">
-          <h2 className="text-[0.72rem] font-bold uppercase tracking-[0.09em] text-[var(--text-subtle)]">
-            More guides
-          </h2>
-          <ul className="mt-3 space-y-3">
+        <aside className="lg:sticky lg:top-28 lg:self-start">
+          <h2 className="eyebrow border-b border-[var(--text)] py-3">More guides</h2>
+          <ul>
             {more.map((item) => (
               <li key={item.slug}>
                 <Link
                   href={`/guides/${item.slug}/`}
-                  className="block rounded-lg border border-[var(--border)] bg-[var(--surface)] p-3 text-sm hover:border-[var(--border-strong)]"
+                  className="group block border-b border-[var(--border)] py-3"
                 >
-                  <span className="font-medium text-[var(--text)]">{item.title}</span>
-                  <span className="mt-1 block text-xs text-[var(--text-subtle)]">
+                  <span className="font-display text-[0.98rem] font-semibold leading-tight tracking-[-0.02em] text-[var(--text)] transition-colors group-hover:text-[var(--accent-text)]">
+                    {item.title}
+                  </span>
+                  <span className="mt-1 block font-mono text-[0.58rem] uppercase tracking-[0.14em] text-[var(--text-subtle)]">
                     {item.readingMinutes} min read
                   </span>
                 </Link>
@@ -134,9 +139,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             ))}
           </ul>
 
-          <h2 className="mt-6 text-[0.72rem] font-bold uppercase tracking-[0.09em] text-[var(--text-subtle)]">
-            Tools used here
-          </h2>
+          <h2 className="eyebrow mt-8 border-b border-[var(--text)] py-3">Tools used here</h2>
           <div className="mt-3 grid gap-2">
             {tools.map((tool) => (tool ? <ToolCard key={tool.slug} tool={tool} compact /> : null))}
           </div>

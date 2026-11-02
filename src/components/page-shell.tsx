@@ -17,18 +17,16 @@ export function PageShell({
   narrow?: boolean;
 }) {
   return (
-    <div className={`mx-auto px-4 py-8 sm:px-6 ${narrow ? "max-w-3xl" : "max-w-6xl"}`}>
+    <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
       <Breadcrumbs items={breadcrumbs} />
-      <h1 className="text-3xl font-bold tracking-[-0.03em] text-[var(--text)] sm:text-[2.2rem]">
-        {title}
-      </h1>
-      {intro ? (
-        <p className="mt-2 text-[1rem] leading-relaxed text-[var(--text-muted)]">{intro}</p>
-      ) : null}
-      {updated ? (
-        <p className="mt-2 text-xs text-[var(--text-subtle)]">Last reviewed {updated}</p>
-      ) : null}
-      <div className="prose-tool mt-6">{children}</div>
+      <header className="max-w-3xl border-b border-[var(--text)] pb-6">
+        <h1 className="display text-[clamp(2.1rem,4.6vw,3.35rem)] text-[var(--text)]">{title}</h1>
+        {intro ? <p className="lede mt-4">{intro}</p> : null}
+        {updated ? (
+          <p className="eyebrow mt-5">Last reviewed — {updated}</p>
+        ) : null}
+      </header>
+      <div className={`prose-tool mt-8 ${narrow ? "max-w-3xl" : ""}`}>{children}</div>
     </div>
   );
 }

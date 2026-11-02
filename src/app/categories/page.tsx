@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { CategoryIcon, categoryTone } from "@/components/category-icon";
+import { HeaderStat, PageHeader } from "@/components/page-header";
+import { CategoryIcon } from "@/components/category-icon";
 import { categories } from "@/lib/tools/categories";
 import { toolCountByCategory } from "@/lib/tools/registry";
 
@@ -14,50 +15,87 @@ export const metadata: Metadata = {
 };
 
 export default function CategoriesPage() {
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <Breadcrumbs items={[{ href: "/categories/", label: "Categories" }]} />
-      <h1 className="text-3xl font-bold tracking-[-0.03em] text-[var(--text)] sm:text-[2.35rem]">
-        Browse by category
-      </h1>
-      <p className="mt-2 max-w-2xl text-[0.98rem] leading-relaxed text-[var(--text-muted)]">
-        Every category has a clear scope and an honest status. Live categories contain working,
-        tested tools; planned categories show what is coming and are never presented as finished.
-      </p>
+  const liveCount = categories.filter((category) => category.status === "live").length;
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {categories.map((category) => {
+  return (
+    <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
+      <Breadcrumbs items={[{ href: "/categories/", label: "Categories" }]} />
+
+      <PageHeader
+        label="Shelf"
+        title={
+          <>
+            Twelve shelves.
+            <br />
+            No filler<span className="text-[var(--accent-text)]">.</span>
+          </>
+        }
+        lede="Every category has a clear scope and an honest status. Live categories contain working, tested tools; planned categories show what is coming and are never presented as finished."
+        meta={
+          <div>
+            <HeaderStat label="Live" value={`${liveCount} categories`} />
+            <HeaderStat label="Planned" value={`${categories.length - liveCount} categories`} />
+            <HeaderStat
+              label="Tools"
+              value={String(Object.values(toolCountByCategory).reduce((a, b) => a + b, 0))}
+            />
+          </div>
+        }
+      />
+
+      <ul className="mt-2 border-t border-[var(--border)]">
+        {categories.map((category, index) => {
           const count = toolCountByCategory[category.id] ?? 0;
+          const planned = count === 0;
           return (
-            <Link
-              key={category.id}
-              href={`/categories/${category.id}/`}
-              className="group flex flex-col rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 transition-all hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-soft)]"
-            >
-              <div className="flex items-start gap-3">
-                <span className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${categoryTone(category.accent)}`}>
-                  <CategoryIcon id={category.id} className="size-5" />
+            <li key={category.id} className="border-b border-[var(--border)]">
+              <Link
+                href={`/categories/${category.id}/`}
+                className="group grid grid-cols-[2rem_1fr_auto] items-baseline gap-x-4 gap-y-1 py-5 transition-colors hover:bg-[var(--surface-muted)] sm:grid-cols-[2.5rem_1.5rem_1fr_8rem_auto] sm:px-2"
+              >
+                <span className="font-mono text-[0.62rem] tracking-[0.1em] text-[var(--text-subtle)]">
+                  {String(index + 1).padStart(2, "0")}
                 </span>
-                <div className="min-w-0 flex-1">
-                  <h2 className="text-[1rem] font-semibold text-[var(--text)]">{category.name}</h2>
-                  <p className="mt-1 text-[0.85rem] leading-relaxed text-[var(--text-muted)]">
+                <span
+                  className={`col-start-2 hidden sm:block ${planned ? "text-[var(--text-subtle)]" : "text-[var(--text)]"}`}
+                >
+                  <CategoryIcon id={category.id} className="size-[1.05rem]" />
+                </span>
+                <span className="col-start-2 min-w-0 sm:col-start-3">
+                  <span
+                    className={`block font-display text-[1.2rem] font-semibold leading-tight tracking-[-0.03em] transition-colors ${
+                      planned
+                        ? "text-[var(--text-subtle)]"
+                        : "text-[var(--text)] group-hover:text-[var(--accent-text)]"
+                    }`}
+                  >
+                    {category.name}
+                  </span>
+                  <span className="mt-1 block max-w-2xl text-[0.86rem] leading-relaxed text-[var(--text-muted)]">
                     {category.tagline}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-3 flex items-center justify-between">
-                <span className="chip">
-                  {count > 0 ? `${count} live` : "planned"}
+                  </span>
                 </span>
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 dark:text-brand-300">
-                  View category
-                  <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" aria-hidden />
+                <span
+                  className={`hidden font-mono text-[0.6rem] uppercase tracking-[0.12em] sm:block ${
+                    planned ? "text-[var(--text-subtle)]" : "text-[var(--accent-text)]"
+                  }`}
+                >
+                  {planned ? "Planned" : `${count} live`}
                 </span>
-              </div>
-            </Link>
+                <span className="col-start-3 flex items-center gap-3 self-center sm:col-start-5">
+                  <span className="font-mono text-[0.6rem] uppercase tracking-[0.12em] text-[var(--text-subtle)] sm:hidden">
+                    {planned ? "Planned" : `${count} live`}
+                  </span>
+                  <ArrowUpRight
+                    className="size-4 text-[var(--text-subtle)] transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[var(--accent-text)]"
+                    aria-hidden
+                  />
+                </span>
+              </Link>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </div>
   );
 }

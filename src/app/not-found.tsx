@@ -5,34 +5,38 @@ import { ToolCard } from "@/components/tool-card";
 
 export default function NotFound() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-      <p className="font-mono text-sm font-semibold text-brand-600 dark:text-brand-300">404</p>
-      <h1 className="mt-2 text-3xl font-bold tracking-[-0.03em] text-[var(--text)]">
-        That page does not exist
-      </h1>
-      <p className="mt-2 max-w-lg text-[0.98rem] leading-relaxed text-[var(--text-muted)]">
-        The link may be outdated, or the tool may not have shipped yet. Everything we have published
-        is listed in the directory — nothing is hidden behind a placeholder.
-      </p>
-      <div className="mt-5 flex flex-wrap gap-2">
-        <Link href="/tools/" className="btn btn-primary">
-          <Search className="size-4" aria-hidden />
-          Browse all tools
-        </Link>
-        <Link href="/" className="btn btn-secondary">
-          <ArrowLeft className="size-4" aria-hidden />
-          Back to home
-        </Link>
+    <div className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6">
+      <p className="outline-numeral text-[28vw] leading-none sm:text-[16rem]">404</p>
+      <div className="-mt-4 border-t border-[var(--text)] pt-6">
+        <h1 className="display text-[clamp(1.9rem,4.4vw,3rem)] text-[var(--text)]">
+          That page does not exist
+        </h1>
+        <p className="lede mt-3">
+          The link may be outdated, or the tool may not have shipped yet. Everything we have
+          published is listed in the directory — nothing is hidden behind a placeholder.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-2">
+          <Link href="/tools/" className="btn btn-primary">
+            <Search className="size-3.5" aria-hidden />
+            Browse all tools
+          </Link>
+          <Link href="/" className="btn btn-secondary">
+            <ArrowLeft className="size-3.5" aria-hidden />
+            Back to home
+          </Link>
+        </div>
       </div>
 
-      <h2 className="mt-10 text-sm font-bold uppercase tracking-[0.08em] text-[var(--text-subtle)]">
-        Popular tools
-      </h2>
-      <div className="mt-3 grid gap-3 sm:grid-cols-2">
-        {popularTools.slice(0, 4).map((tool) => (
-          <ToolCard key={tool.slug} tool={tool} showCategory />
-        ))}
-      </div>
+      <section className="mt-14">
+        <div className="border-b border-[var(--text)] pb-3">
+          <h2 className="eyebrow">Popular tools</h2>
+        </div>
+        <ol className="mt-2">
+          {popularTools.slice(0, 4).map((tool, index) => (
+            <ToolCard key={tool.slug} tool={tool} variant="row" index={index + 1} />
+          ))}
+        </ol>
+      </section>
     </div>
   );
 }

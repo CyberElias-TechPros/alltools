@@ -168,12 +168,12 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="group flex h-10 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 text-sm text-[var(--text-subtle)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text-muted)] md:min-w-56 md:justify-between"
+        className="group flex h-10 items-center gap-2 border border-[var(--border-strong)] bg-[var(--surface)] px-2.5 font-mono text-[0.64rem] uppercase tracking-[0.12em] text-[var(--text-muted)] transition-colors hover:border-[var(--text)] hover:text-[var(--text)] md:min-w-56 md:justify-between"
         aria-label="Search tools"
       >
         <span className="flex items-center gap-2">
-          <Search className="size-4" aria-hidden />
-          <span className="hidden md:inline">Search tools…</span>
+          <Search className="size-3.5" aria-hidden />
+          <span className="hidden md:inline">Search</span>
         </span>
         <span className="hidden items-center gap-1 md:flex">
           <kbd className="kbd">⌘</kbd>
@@ -183,7 +183,7 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
 
       {open ? (
         <div
-          className="fixed inset-0 z-[90] flex items-start justify-center bg-black/40 p-3 pt-[8vh] backdrop-blur-sm sm:pt-[12vh]"
+          className="fixed inset-0 z-[90] flex items-start justify-center bg-[#0b0b09]/45 p-3 pt-[8vh] sm:pt-[12vh]"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) close();
           }}
@@ -193,16 +193,18 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
             aria-modal="true"
             aria-label="Search tools"
             onKeyDown={handleKeyDown}
-            className="animate-in w-full max-w-xl overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--page-elevated)] shadow-2xl"
+            className="animate-in w-full max-w-2xl border border-[var(--text)] bg-[var(--page)]"
           >
-            <div className="flex items-center gap-3 border-b border-[var(--border)] px-4">
-              <Search className="size-4 shrink-0 text-[var(--text-subtle)]" aria-hidden />
+            <div className="flex items-stretch border-b border-[var(--border)]">
+              <span className="flex w-12 shrink-0 items-center justify-center border-r border-[var(--border)] text-[var(--text-subtle)]">
+                <Search className="size-4" aria-hidden />
+              </span>
               <input
                 ref={inputRef}
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder={`Search ${index.length} tools — try “json”, “percent”, “password”…`}
-                className="h-14 w-full bg-transparent text-[0.95rem] text-[var(--text)] outline-none placeholder:text-[var(--text-subtle)]"
+                className="h-14 w-full bg-transparent px-4 font-mono text-[0.82rem] tracking-[0.02em] text-[var(--text)] outline-none placeholder:text-[var(--text-subtle)]"
                 aria-label="Search query"
                 aria-controls="search-results"
                 aria-activedescendant={results[active] ? `search-${results[active].slug}` : undefined}
@@ -214,7 +216,7 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
               <button
                 type="button"
                 onClick={close}
-                className="shrink-0 rounded-md border border-[var(--border)] px-1.5 py-0.5 text-[0.68rem] font-semibold text-[var(--text-subtle)]"
+                className="my-auto mr-3 shrink-0 border border-[var(--border-strong)] px-1.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-[var(--text-subtle)] transition-colors hover:border-[var(--text)] hover:text-[var(--text)]"
                 aria-label="Close search"
               >
                 ESC
@@ -229,7 +231,7 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
               className="max-h-[min(60vh,26rem)] overflow-y-auto p-2"
             >
               {results.length === 0 ? (
-                <li className="px-3 py-8 text-center text-sm text-[var(--text-muted)]">
+                <li className="px-3 py-10 text-center text-sm text-[var(--text-muted)]">
                   No tools match “{query}”. Try a shorter word, or{" "}
                   <Link href="/tools/" className="link" onClick={close}>
                     browse all tools
@@ -247,27 +249,48 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
                       onMouseEnter={() => setActive(position)}
                       onClick={() => go(tool.slug)}
                       className={cn(
-                        "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors",
-                        position === active ? "bg-[var(--surface-muted)]" : "",
+                        "flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors",
+                        position === active
+                          ? "bg-[var(--text)] text-[var(--page)]"
+                          : "hover:bg-[var(--surface-muted)]",
                       )}
                     >
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[var(--surface-muted)] text-[var(--text-muted)]">
+                      <span
+                        className={cn(
+                          "flex size-8 shrink-0 items-center justify-center border",
+                          position === active
+                            ? "border-[var(--page)]/30 text-[var(--page)]"
+                            : "border-[var(--border)] text-[var(--text-subtle)]",
+                        )}
+                      >
                         <CategoryIcon
                           id={tool.category as CategoryId}
-                          className="size-[1.05rem]"
+                          className="size-[0.95rem]"
                         />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-semibold text-[var(--text)]">
+                        <span
+                          className={cn(
+                            "block truncate font-display text-[0.98rem] font-semibold tracking-[-0.02em]",
+                            position === active ? "text-[var(--page)]" : "text-[var(--text)]",
+                          )}
+                        >
                           {tool.name}
                         </span>
-                        <span className="block truncate text-xs text-[var(--text-subtle)]">
+                        <span
+                          className={cn(
+                            "block truncate text-xs",
+                            position === active
+                              ? "text-[var(--page)]/65"
+                              : "text-[var(--text-subtle)]",
+                          )}
+                        >
                           {tool.tagline}
                         </span>
                       </span>
                       {position === active ? (
                         <CornerDownLeft
-                          className="size-4 shrink-0 text-[var(--text-subtle)]"
+                          className="size-4 shrink-0 text-[var(--accent-text)]"
                           aria-hidden
                         />
                       ) : null}
@@ -277,10 +300,11 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
               )}
             </ul>
 
-            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--border)] px-4 py-2.5 text-[0.7rem] text-[var(--text-subtle)]">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--border)] bg-[var(--surface-muted)] px-3 py-2 font-mono text-[0.6rem] uppercase tracking-[0.12em] text-[var(--text-subtle)]">
               <span className="flex items-center gap-3">
-                <span>↑↓ to move</span>
-                <span>↵ to open</span>
+                <span>↑↓ move</span>
+                <span>↵ open</span>
+                <span>esc close</span>
               </span>
               <Link
                 href="/tools/"

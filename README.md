@@ -86,6 +86,38 @@ src/
 `src/tools/*` only wires the two together. That is why the test suite can cover 41 tools
 with no DOM or browser needed.
 
+### Design system — "Instrument"
+
+The interface is an editorial/industrial catalogue rather than a generic SaaS dashboard:
+warm paper, ink, one signal colour, hairline rules, square geometry and a mechanical type
+pairing. Everything is defined once in `src/app/globals.css`.
+
+| Token | Value (light / dark) | Used for |
+| --- | --- | --- |
+| `--page` | `#efede6` / `#0b0b09` | Page background (warm bone / near-black) |
+| `--surface` | `#f6f4ee` / `#141412` | Cards, panels, inputs |
+| `--border`, `--border-strong` | hairline warm greys | Every rule and divider |
+| `--text`, `--text-muted`, `--text-subtle` | ink → grey | Body, secondary, mono metadata |
+| `--ring` | `#ff4b00` / `#ff6a2b` | Signal: focus rings, fills, marks |
+| `--accent-text` | `#b83500` / `#ff8452` | The same signal, darkened to pass 4.5:1 as *text* |
+| `--invert-bg` / `--invert-text` | ink on paper | Hover-inverted rows and the CTA band |
+
+- **Type:** Bricolage Grotesque (`.display`, headings), Inter Tight (body), JetBrains Mono
+  (`.eyebrow`, `.mono`, labels, counts). Self-hosted via `@fontsource-variable`, so there
+  is no third-party font request.
+- **Geometry:** radius 2 px maximum (`--radius-*` in `@theme`), shadows disabled
+  (`--shadow-*: 0`), depth expressed with rules and type weight instead of blur.
+- **Signature components:** `.index-row` (the numbered, hover-inverting tool list),
+  `.panel-head` (mono caption strip on a framed panel), `.outline-numeral` (the outlined
+  hero count), `.eyebrow` (mono section labels), and a numbering scheme `01 — Index`,
+  `02 — Categories`, … across the site.
+- **Motion:** colour and 1–2 px translations only, all of it disabled under
+  `prefers-reduced-motion`.
+
+Contrast is checked against the token pairs above: body text is 15.8:1 on paper, secondary
+text 7:1, mono metadata 4.7:1, and the signal colour is never used for small text without
+the `--accent-text` variant.
+
 ### Data model
 
 A tool is a single `ToolDefinition` object (`src/lib/tools/types.ts`):

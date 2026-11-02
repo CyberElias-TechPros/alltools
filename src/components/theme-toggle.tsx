@@ -52,7 +52,7 @@ export function ThemeToggle() {
       aria-label={label}
       title={label}
       className={cn(
-        "inline-flex size-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] transition-colors hover:text-[var(--text)]",
+        "inline-flex size-10 items-center justify-center border border-[var(--border-strong)] text-[var(--text-muted)] transition-colors hover:bg-[var(--text)] hover:text-[var(--page)]",
       )}
     >
       {mounted ? <Icon className="size-[1.05rem]" aria-hidden /> : <span className="size-[1.05rem]" />}

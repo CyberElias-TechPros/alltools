@@ -72,6 +72,7 @@ FAQs).
 | 1.10 | Tool page template (SEO, JSON-LD, sidebar, related tools, FAQ accordion) | ✅ |
 | 1.11 | Lazy-loading tool component registry (one bundle per tool) | ✅ |
 | 1.12 | Dark/light theme toggle with system preference and persistence | ✅ |
+| 1.13 | Visual identity: editorial "Instrument" design system (type pairing, paper/ink/signal palette, hairline catalogue language) | ✅ |
 
 **1.1 — Stack.** *Why:* the blueprint's stack is Next.js + TypeScript + Tailwind. Strict
 TypeScript catches tool-logic bugs (unit unions, discriminated results) at compile time.
@@ -123,6 +124,19 @@ skeleton fallback), enforced by the catalogue test's slug↔component bijection.
 
 **1.12 — Theme toggle.** *Why:* long working sessions in front of text tools; respects
 `prefers-color-scheme` and persists the choice in `localStorage`.
+
+**1.13 — Visual identity.** *Why:* a utility site is judged in the first two seconds, and a
+generic dashboard look signals "template" before anyone reads a word. The site is therefore
+art-directed as an editorial catalogue: warm paper stock, ink, a single signal orange,
+hairline rules, 2 px corners, no shadows, and a self-hosted three-family type system
+(Bricolage Grotesque for display, Inter Tight for text, JetBrains Mono for metadata).
+Numbered sections and the hover-inverting tool index give it a contents-page rhythm.
+*Connects to:* `src/app/globals.css` (tokens and signature components), `next/font`-free
+`@fontsource-variable` imports in `layout.tsx`, and every route, since the old component
+classes (`.card`, `.btn`, `.input`, `.chip`) were redefined rather than removed.
+*Verify:* token contrast passes WCAG AA (body 15.8:1, muted 7:1, mono 4.7:1); fonts are
+bundled in `out/_next/static/media` (16 woff2 files, no third-party request); build and
+tests unchanged.
 
 ---
 

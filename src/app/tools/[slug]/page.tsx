@@ -1,23 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ArrowRight,
-  BookOpen,
-  CheckCircle2,
-  Info,
-  Layers,
-  ShieldCheck,
-  Zap,
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight, CheckCircle2, Info } from "lucide-react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { JsonLd } from "@/components/json-ld";
-import { ToolCard } from "@/components/tool-card";
 import { AdSlot } from "@/components/ad-slot";
 import { ToolRunner } from "@/tools/registry";
 import { getCategory } from "@/lib/tools/categories";
-import { liveTools, relatedTools, requireTool, tools } from "@/lib/tools/registry";
-import { CategoryIcon, categoryTone } from "@/components/category-icon";
+import { liveTools, relatedTools, tools } from "@/lib/tools/registry";
+import { CategoryIcon } from "@/components/category-icon";
 import { siteConfig } from "@/lib/site";
 
 export function generateStaticParams() {
@@ -109,7 +100,8 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   return (
     <>
       <JsonLd data={[breadcrumbSchema, appSchema, faqSchema]} />
-      <div className="mx-auto max-w-6xl px-4 pb-6 pt-6 sm:px-6">
+
+      <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
         <Breadcrumbs
           items={[
             { href: "/tools/", label: "All tools" },
@@ -118,43 +110,56 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           ]}
         />
 
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_17rem]">
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <Link
-                href={`/categories/${category.id}/`}
-                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.72rem] font-semibold ${categoryTone(category.accent)}`}
-              >
-                <CategoryIcon id={category.id} className="size-3" />
-                {category.name}
-              </Link>
-              <span className="chip">
-                <Zap className="size-3" aria-hidden /> Instant
-              </span>
-              <span className="chip">
-                <ShieldCheck className="size-3" aria-hidden /> Runs in your browser
-              </span>
+            <header>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <Link
+                  href={`/categories/${category.id}/`}
+                  className="inline-flex items-center gap-1.5 font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--accent-text)] transition-opacity hover:opacity-70"
+                >
+                  <CategoryIcon id={category.id} className="size-3.5" />
+                  {category.name}
+                </Link>
+                <span className="tag">
+                  <span className="size-[5px] bg-[var(--text-subtle)]" aria-hidden /> Instant result
+                </span>
+                <span className="tag">
+                  <span className="size-[5px] bg-[var(--text-subtle)]" aria-hidden /> Runs in your
+                  browser
+                </span>
+              </div>
+
+              <h1 className="display mt-4 text-[clamp(2.2rem,5vw,3.6rem)] text-[var(--text)]">
+                {tool.name}
+              </h1>
+              <p className="mt-3 max-w-2xl text-[1.06rem] leading-relaxed text-[var(--text-muted)]">
+                {tool.tagline}
+              </p>
+            </header>
+
+            {/* Tool console */}
+            <div className="mt-8 border border-[var(--border-strong)] bg-[var(--surface)]">
+              <div className="panel-head">
+                <span className="flex items-center gap-2">
+                  <span className="size-[6px] bg-[var(--ring)]" aria-hidden />
+                  Live tool
+                </span>
+                <span className="hidden sm:inline">Local only · no upload</span>
+              </div>
+              <div className="p-4 sm:p-5">
+                <ToolRunner slug={tool.slug} />
+              </div>
             </div>
 
-            <h1 className="mt-3 text-3xl font-bold tracking-[-0.03em] text-[var(--text)] sm:text-[2.35rem] sm:leading-[1.1]">
-              {tool.name}
-            </h1>
-            <p className="mt-2 max-w-2xl text-base leading-relaxed text-[var(--text-muted)] sm:text-[1.05rem]">
-              {tool.tagline}
-            </p>
-
-            <div className="mt-6">
-              <ToolRunner slug={tool.slug} />
-            </div>
-
-            <p className="mt-2.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[0.75rem] text-[var(--text-subtle)]">
+            <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[0.6rem] uppercase tracking-[0.12em] text-[var(--text-subtle)]">
               <Info className="size-3.5 shrink-0" aria-hidden />
-              Nothing you type is uploaded or stored. Calculations run locally in this tab.
+              Nothing you type is uploaded or stored ·{" "}
               <Link
                 href={`/contact/?tool=${tool.slug}`}
-                className="font-medium text-brand-600 hover:underline dark:text-brand-300"
+                className="text-[var(--accent-text)] transition-opacity hover:opacity-70"
               >
-                Spotted a wrong result? Tell us.
+                Spotted a wrong result? Tell us
               </Link>
             </p>
 
@@ -180,7 +185,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                     <p key={paragraph.slice(0, 24)}>{paragraph}</p>
                   ))}
                   {tool.content.method.formula ? (
-                    <pre className="my-4 overflow-x-auto rounded-xl border border-[var(--border)] bg-[var(--code-bg)] p-4 font-mono text-[0.82rem] leading-relaxed text-[var(--text)]">
+                    <pre className="my-4 overflow-x-auto border border-[var(--border)] bg-[var(--code-bg)] p-4 font-mono text-[0.82rem] leading-relaxed text-[var(--text)]">
                       <code>{tool.content.method.formula}</code>
                     </pre>
                   ) : null}
@@ -188,13 +193,10 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
               ) : null}
 
               <h2 id="examples">Worked examples</h2>
-              <div className="not-prose space-y-4">
+              <div className="not-prose mt-4 space-y-px bg-[var(--border)]">
                 {tool.content.examples.map((example) => (
-                  <div
-                    key={example.title}
-                    className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4"
-                  >
-                    <h3 className="text-[0.98rem] font-semibold text-[var(--text)]">
+                  <div key={example.title} className="bg-[var(--surface)] p-4 sm:p-5">
+                    <h3 className="font-display text-[1.02rem] font-semibold tracking-[-0.02em] text-[var(--text)]">
                       {example.title}
                     </h3>
                     <ol className="mt-2 ml-4 list-decimal space-y-1 text-sm text-[var(--text-muted)]">
@@ -202,9 +204,9 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                         <li key={step.slice(0, 24)}>{step}</li>
                       ))}
                     </ol>
-                    <p className="mt-2.5 flex items-start gap-1.5 rounded-lg bg-[var(--surface-muted)] px-3 py-2 font-mono text-[0.82rem] text-[var(--text)]">
+                    <p className="mt-3 flex items-start gap-2 border-l-2 border-[var(--ring)] bg-[var(--surface-muted)] px-3 py-2 font-mono text-[0.78rem] text-[var(--text)]">
                       <CheckCircle2
-                        className="mt-0.5 size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400"
+                        className="mt-0.5 size-3.5 shrink-0 text-[var(--accent-text)]"
                         aria-hidden
                       />
                       <span>{example.result}</span>
@@ -221,28 +223,33 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
               </ul>
 
               <h2 id="faq">Frequently asked questions</h2>
-              <div className="not-prose divide-y divide-[var(--border)] overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+              <div className="not-prose mt-4 border-t border-[var(--border)]">
                 {tool.content.faqs.map((faq) => (
-                  <details key={faq.q} className="group px-4 py-3 [&_summary::-webkit-details-marker]:hidden">
-                    <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-[0.92rem] font-semibold text-[var(--text)]">
-                      {faq.q}
-                      <span className="text-[var(--text-subtle)] transition-transform group-open:rotate-45">
+                  <details key={faq.q} className="group border-b border-[var(--border)]">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-3.5 [&::-webkit-details-marker]:hidden">
+                      <span className="font-display text-[1rem] font-semibold tracking-[-0.02em] text-[var(--text)]">
+                        {faq.q}
+                      </span>
+                      <span
+                        className="font-mono text-base leading-none text-[var(--text-subtle)] transition-transform group-open:rotate-45"
+                        aria-hidden
+                      >
                         +
                       </span>
                     </summary>
-                    <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">{faq.a}</p>
+                    <p className="max-w-2xl pb-4 text-sm leading-relaxed text-[var(--text-muted)]">
+                      {faq.a}
+                    </p>
                   </details>
                 ))}
               </div>
             </div>
           </div>
 
-          <aside className="lg:sticky lg:top-24 lg:self-start">
-            <div className="card p-4">
-              <h2 className="flex items-center gap-1.5 text-[0.72rem] font-bold uppercase tracking-[0.09em] text-[var(--text-subtle)]">
-                <BookOpen className="size-3.5" aria-hidden /> On this page
-              </h2>
-              <nav aria-label="On this page" className="mt-2.5 flex flex-col gap-1 text-sm">
+          <aside className="lg:sticky lg:top-28 lg:self-start">
+            <div className="border-t border-[var(--text)]">
+              <h2 className="eyebrow py-3">On this page</h2>
+              <nav aria-label="On this page" className="flex flex-col">
                 {[
                   { id: "about", label: "About this tool" },
                   { id: "how-to-use", label: "How to use it" },
@@ -254,7 +261,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                   <a
                     key={item.id}
                     href={`#${item.id}`}
-                    className="rounded-md px-2 py-1.5 text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-muted)] hover:text-[var(--text)]"
+                    className="border-b border-[var(--border)] py-2 text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--accent-text)]"
                   >
                     {item.label}
                   </a>
@@ -262,33 +269,31 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
               </nav>
             </div>
 
-            <div className="card mt-4 p-4">
-              <h2 className="flex items-center gap-1.5 text-[0.72rem] font-bold uppercase tracking-[0.09em] text-[var(--text-subtle)]">
-                <Layers className="size-3.5" aria-hidden /> Related tools
-              </h2>
-              <ul className="mt-3 flex flex-col gap-2.5">
+            <div className="mt-8">
+              <h2 className="eyebrow border-b border-[var(--text)] py-3">Related tools</h2>
+              <ul>
                 {related.map((item) => (
                   <li key={item.slug}>
                     <Link
                       href={`/tools/${item.slug}/`}
-                      className="group flex items-start justify-between gap-2 text-sm"
+                      className="group flex items-baseline justify-between gap-3 border-b border-[var(--border)] py-2.5"
                     >
-                      <span>
-                        <span className="block font-medium text-[var(--text)] group-hover:text-brand-600 dark:group-hover:text-brand-300">
+                      <span className="min-w-0">
+                        <span className="block font-display text-[0.95rem] font-semibold leading-tight tracking-[-0.02em] text-[var(--text)] transition-colors group-hover:text-[var(--accent-text)]">
                           {item.name}
                         </span>
-                        <span className="mt-0.5 block text-xs text-[var(--text-subtle)]">
-                          {item.tagline}
-                        </span>
                       </span>
-                      <ArrowRight className="mt-1 size-3.5 shrink-0 text-[var(--text-subtle)]" aria-hidden />
+                      <ArrowUpRight
+                        className="size-3.5 shrink-0 text-[var(--text-subtle)] transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[var(--accent-text)]"
+                        aria-hidden
+                      />
                     </Link>
                   </li>
                 ))}
               </ul>
               <Link
                 href={`/categories/${category.id}/`}
-                className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-brand-600 hover:underline dark:text-brand-300"
+                className="mt-4 inline-flex items-center gap-1.5 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--text)] transition-colors hover:text-[var(--accent-text)]"
               >
                 All {category.shortName.toLowerCase()} tools
                 <ArrowRight className="size-3" aria-hidden />
@@ -297,21 +302,41 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           </aside>
         </div>
 
-        <section className="mt-14">
-          <div className="mb-4 flex items-end justify-between gap-3">
-            <h2 className="text-lg font-bold text-[var(--text)]">More {category.shortName.toLowerCase()} tools</h2>
+        <section className="mt-16 border-t border-[var(--text)] pt-6">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 className="section-title text-[var(--text)]">
+              More {category.shortName.toLowerCase()} tools
+            </h2>
             <Link
               href="/tools/"
-              className="text-sm font-semibold text-brand-600 hover:underline dark:text-brand-300"
+              className="inline-flex items-center gap-1.5 font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--text)] transition-colors hover:text-[var(--accent-text)]"
             >
               Browse all
+              <ArrowRight className="size-3.5" aria-hidden />
             </Link>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {related.slice(0, 4).map((item) => (
-              <ToolCard key={item.slug} tool={item} />
+          <ol className="mt-4">
+            {related.slice(0, 4).map((item, index) => (
+              <li key={item.slug}>
+                <Link
+                  href={`/tools/${item.slug}/`}
+                  className="index-row grid-cols-[1.75rem_1fr_auto] sm:grid-cols-[2.25rem_1fr_9rem_auto]"
+                >
+                  <span className="index-row-num">{String(index + 1).padStart(2, "0")}</span>
+                  <span className="min-w-0">
+                    <span className="index-row-title block">{item.name}</span>
+                    <span className="index-row-desc mt-1 block truncate text-[0.84rem]">
+                      {item.tagline}
+                    </span>
+                  </span>
+                  <span className="index-row-meta hidden sm:block">
+                    {getCategory(item.category).shortName}
+                  </span>
+                  <ArrowUpRight className="index-row-arrow size-4" aria-hidden />
+                </Link>
+              </li>
             ))}
-          </div>
+          </ol>
         </section>
       </div>
     </>

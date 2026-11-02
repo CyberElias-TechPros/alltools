@@ -36,7 +36,7 @@ export function Button({
         variant === "primary" && "btn-primary",
         variant === "secondary" && "btn-secondary",
         variant === "ghost" && "btn-ghost",
-        size === "sm" && "!min-h-9 !px-3 !py-1.5 !text-[0.8rem]",
+        size === "sm" && "!min-h-8 !px-2.5 !py-1.5 !text-[0.6rem] !tracking-[0.1em]",
         className,
       )}
       {...props}
@@ -74,7 +74,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         className="pointer-events-none fixed inset-x-0 bottom-5 z-[80] flex justify-center px-4"
       >
         {message ? (
-          <div className="animate-in flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--text)] px-4 py-2 text-sm font-medium text-[var(--page)] shadow-lg">
+          <div className="animate-in flex items-center gap-2 border border-[var(--text)] bg-[var(--text)] px-4 py-2 font-mono text-[0.64rem] uppercase tracking-[0.12em] text-[var(--page)]">
             <Check className="size-4" aria-hidden />
             {message}
           </div>
@@ -287,7 +287,7 @@ export function Switch({
       >
         <span
           className={cn(
-            "inline-block size-4 rounded-full bg-white shadow-sm transition-transform",
+            "inline-block size-4 rounded-full bg-[var(--page)] transition-transform",
             checked ? "translate-x-6" : "translate-x-1",
           )}
         />

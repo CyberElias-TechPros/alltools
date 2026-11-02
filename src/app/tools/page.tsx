@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { HeaderStat, PageHeader } from "@/components/page-header";
 import { ToolsDirectory } from "@/components/tools-directory";
 import { JsonLd } from "@/components/json-ld";
 import { categories } from "@/lib/tools/categories";
@@ -27,18 +28,33 @@ export default function ToolsPage() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
       <JsonLd data={itemList} />
       <Breadcrumbs items={[{ href: "/tools/", label: "All tools" }]} />
-      <h1 className="text-3xl font-bold tracking-[-0.03em] text-[var(--text)] sm:text-[2.35rem]">
-        All tools
-      </h1>
-      <p className="mt-2 max-w-2xl text-[0.98rem] leading-relaxed text-[var(--text-muted)]">
-        {liveTools.length} working tools, every one free and processed in your browser. Filter by
-        category or search for the task you need — nothing here is a placeholder.
-      </p>
 
-      <div className="mt-7">
+      <PageHeader
+        label="The index"
+        title={
+          <>
+            Every tool,
+            <br />
+            one page away<span className="text-[var(--accent-text)]">.</span>
+          </>
+        }
+        lede={`${liveTools.length} working tools, every one free and processed in your browser. Filter by category or search for the task you need — nothing here is a placeholder.`}
+        meta={
+          <div>
+            <HeaderStat label="Tools live" value={String(liveTools.length)} />
+            <HeaderStat
+              label="Categories"
+              value={String(categories.filter((item) => item.status === "live").length)}
+            />
+            <HeaderStat label="Uploads" value="0" />
+          </div>
+        }
+      />
+
+      <div className="mt-8">
         <ToolsDirectory tools={liveTools} categories={categories} />
       </div>
     </div>
