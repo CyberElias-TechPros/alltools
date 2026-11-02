@@ -425,8 +425,9 @@ and 12-category taxonomy; **254 live tools across 12 live categories** (text 23,
 no backend calls and no third-party APIs — including PDF editing (pdf-lib), DOCX text
 extraction, image processing, hashing, code formatting, QR generation and decoding, and an
 offline currency converter that uses rates the visitor supplies; tool page template with
-JSON-LD; code-split tool registry; **687 automated tests across 24 suites**, including a
-render smoke test over every tool component and unit tests for every logic module; homepage,
+JSON-LD; code-split tool registry; **971 automated tests across 27 suites**, including an interaction sweep that types into every
+field and clicks every button in all 254 tools, known-answer checks through the real UI, a render
+smoke test over every tool component and unit tests for every logic module; homepage,
 directory, category, guide, about, contact, roadmap and six policy pages; sitemap, robots,
 manifest, 404; consent-gated analytics; inert ad slots; public documentation (README, PRD,
 testing guide, AdSense audit).

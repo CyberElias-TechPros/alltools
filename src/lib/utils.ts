@@ -51,10 +51,14 @@ export function parseNumber(input: string): number {
   return Number.isFinite(value) ? value : Number.NaN;
 }
 
-/** Round to a fixed number of decimal places without floating-point noise. */
+/**
+ * Round to a fixed number of decimal places without floating-point noise.
+ * Halves go away from zero, so -2.345 → -2.35 just as 2.345 → 2.35.
+ */
 export function round(value: number, digits = 2): number {
   const factor = 10 ** digits;
-  return Math.round((value + Number.EPSILON) * factor) / factor;
+  const sign = value < 0 ? -1 : 1;
+  return (sign * Math.round((Math.abs(value) + Number.EPSILON) * factor)) / factor;
 }
 
 export function pluralize(count: number, singular: string, plural?: string) {
@@ -182,5 +186,5 @@ export function formatBytes(bytes: number, decimals = 1): string {
     value /= 1024;
     unit += 1;
   }
-  return `${value.toFixed(decimals)} ${units[unit]}`;
+  return `${Number(value.toFixed(decimals))} ${units[unit]}`;
 }

@@ -121,7 +121,7 @@ export const footerLinkGroups = [
   {
     title: "Company",
     links: [
-      { href: "/about/", label: "About Tools" },
+      { href: "/about/", label: "About" },
       { href: "/contact/", label: "Contact" },
       { href: "/editorial-policy/", label: "Editorial policy" },
       { href: "/accessibility/", label: "Accessibility" },

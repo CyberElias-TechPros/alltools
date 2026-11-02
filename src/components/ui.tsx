@@ -504,9 +504,9 @@ export function SimpleTable({
         {caption ? <caption className="sr-only">{caption}</caption> : null}
         <thead>
           <tr className="bg-[var(--surface-muted)]">
-            {head.map((cell) => (
+            {head.map((cell, headIndex) => (
               <th
-                key={cell}
+                key={`${headIndex}-${cell}`}
                 scope="col"
                 className="border-b border-[var(--border)] px-3 py-2 text-left text-[0.72rem] font-semibold uppercase tracking-[0.07em] text-[var(--text-subtle)]"
               >

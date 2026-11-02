@@ -8,8 +8,8 @@ uploads and no server-side processing. Every tool is a pure TypeScript function 
 a React component, so results are instant, work offline after first load, and can be
 verified by automated tests.
 
-- **Live tools:** 41 across 7 categories
-- **Test suite:** 139 tests in 7 files (`npm test`)
+- **Live tools:** 254 across 12 categories (plus 10 honestly labelled as planned)
+- **Test suite:** 971 tests in 27 files (`npm test`) — logic, catalogue rules, a render smoke test over every tool, an interaction sweep that types/clicks through all 254, and known-answer checks through the real UI
 - **First-load JS:** one route's worth of code per tool (each tool is code-split)
 - **Hosting:** any static host — output is plain HTML/CSS/JS in `out/`
 

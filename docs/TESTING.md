@@ -1,11 +1,12 @@
 # Testing & QA
 
 The site's value is a **correct number or string**. Every tool's maths and parsing lives in a
-pure TypeScript module under `src/lib/`, which is why 685 tests can cover 254 tools without a
-browser, a DOM or a network.
+pure TypeScript module under `src/lib/`, which is why the bulk of the 971 tests can cover 254
+tools without a browser, a network, or a real device — and why the rest can mount every tool in
+jsdom and type through it.
 
 ```bash
-npm test             # vitest run — 7 files, 139 tests
+npm test             # vitest run — 27 files, 971 tests
 npm run test:watch   # watch mode while developing
 npm run typecheck    # tsc --noEmit (strict)
 npm run check        # typecheck → test → production build
@@ -26,6 +27,10 @@ Run `npm run check` before every commit. It is the same gate a CI job would run.
 | `tests/units.test.ts` | 13 | length, mass, temperature (including the offset conversions), volume, speed, data sizes, time zones |
 | `tests/search.test.ts` | 9 | ranking, exact vs partial matches, keyword hits, case-insensitivity, empty query, planned tools excluded |
 | `tests/catalogue.test.ts` | 14 | editorial + structural guardrails for all tools and guides |
+| `tests/render.test.tsx` | 258 | mounts every tool component and asserts it produces markup and at least one control |
+| `tests/interaction.test.tsx` | 255 | jsdom sweep: types into every field, picks an option in every select, toggles every checkbox, attaches a file to every file input and clicks every enabled button in all 254 tools — any exception or React console error fails the run |
+| `tests/known-answers.test.tsx` | 10 | known answers through the real UI (25% of 200, VAT 100→120, BMI 22.9, Base64, MCMXCIV, 1 kg→2.2046 lb, SHA-256 of "abc", word counts, JSON formatting) |
+| `tests/core.test.ts` | 19 | the shared helpers: rounding, number/byte/duration formatting, parsing, ISO dates, time-zone offsets across DST, SEO metadata builders, site-config invariants |
 
 ### What each suite was written to catch
 
@@ -76,13 +81,24 @@ This suite is the editorial immune system. It fails the build if any of these br
 Adding a tool without content, or removing a component, is a test failure — not a
 "we'll fix it later".
 
-## 3. Why there are no component tests (yet)
+## 3. Component and interaction tests
 
-The React layer is intentionally thin: it formats inputs, calls a pure function, and renders
-`{ value }` or `{ error }`. Testing it with a DOM would mostly test React. The higher-value
-next step is end-to-end coverage of the actual user path (type → result → copy), which is
-listed in [`ROADMAP.md`](../ROADMAP.md) as an open item because browser binaries are not
-available in this build environment. Until then, section 4 is the compensating control.
+The React layer stays thin — format input, call a pure function, render `{ value }` or
+`{ error }` — but "thin" is not "untested". Three suites cover it without a browser binary:
+
+- **`render.test.tsx`** mounts every component with `react-dom/server`: a broken import, a
+  conditional hook or a crash on empty state fails the build.
+- **`interaction.test.tsx`** mounts every component in jsdom and uses it: typing into each
+  text/number/date field, choosing the last option of each select, toggling each checkbox and
+  radio, attaching a synthetic file to each file input, then clicking every enabled button.
+  It fails on any thrown exception **or any `console.error`** — which is how a duplicate React
+  key in `SimpleTable` (two columns sharing a header label, e.g. converting m → m) was found.
+- **`known-answers.test.tsx`** pins the whole path — field → function → rendered answer — for
+  one tool per interaction style, with numbers taken from outside the codebase.
+
+What jsdom cannot do: no canvas backend, no real PDF rendering, no layout engine. Image and
+PDF *processing* is therefore covered by the logic suites (`pdf`, `exif`, `ico`, `docx`) and by
+hand on a real device (section 4); the *wiring* is covered here.
 
 ## 4. Manual QA script
 
@@ -103,7 +119,7 @@ Run on every release, in a **private window** (so `localStorage` starts empty).
 8. No ad frame anywhere (ads are inert by default).
 9. Zoom the browser to 200%: no clipped text, no horizontal scroll on a 320 px viewport.
 
-### 4.2 Per tool (repeat for each of the 41)
+### 4.2 Per tool (spot-check across all 254; the interaction suite already exercises each one)
 
 1. Page title, H1 and tagline match the tool.
 2. The tool is the first interactive element — above all prose and any ad slot.
@@ -195,7 +211,7 @@ Checks that differ per browser: clipboard copy feedback, number input spinners, 
 
 | Gap | Consequence | Next step |
 | --- | --- | --- |
-| No browser in the build environment | Interactive behaviour verified structurally, not by clicking | Manual pass (§4) on a real device; add Playwright once browsers are available |
+| No browser binary in the build environment | jsdom covers wiring and crashes, but not layout, canvas output or real file decoding | Manual pass (§4) on a real device; add Playwright once browsers are available |
 | No visual regression baselines | A CSS change can silently break a layout | Add screenshot tests per template (home, directory, tool, guide, policy) |
 | No automated accessibility scan | Missed contrast/label regressions | Add axe-core to the E2E suite |
 | No load/soak testing | Not applicable to a static site with no backend | — |
