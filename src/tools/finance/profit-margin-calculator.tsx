@@ -1,106 +1,115 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CopyButton, Field, ResultCard, Segmented, StatGrid, TextInput, ToolPanel } from "@/components/ui";
+import { CopyButton, Field, TextInput, ToolPanel } from "@/components/ui";
+import { ModeCard, ModeHub, ModeResult } from "@/components/tools/mode-hub";
 import { priceForMargin, profitMetrics } from "@/lib/finance";
 import { formatCurrency, parseNumber } from "@/lib/utils";
 
 export default function ProfitMarginCalculator() {
-  const [mode, setMode] = useState<"cost-price" | "target">("cost-price");
   const [cost, setCost] = useState("60");
   const [price, setPrice] = useState("90");
   const [target, setTarget] = useState("40");
 
-  type MarginData =
-    | { error: string }
-    | {
-        error?: undefined;
-        sellingPrice: number;
-        profit: number;
-        margin: number;
-        markup: number;
-        target?: number;
-      };
-
-  const data: MarginData = useMemo(() => {
+  const fromPrice = useMemo(() => {
     const c = parseNumber(cost);
-    if (!Number.isFinite(c) || c <= 0) return { error: "Enter a unit cost greater than zero." };
-
-    if (mode === "target") {
-      const t = parseNumber(target);
-      if (!Number.isFinite(t) || t < 0 || t >= 100) {
-        return { error: "Enter a target margin between 0% and 99%." };
-      }
-      const suggested = priceForMargin(c, t);
-      const metrics = profitMetrics(c, suggested);
-      return { sellingPrice: suggested, ...metrics, target: t };
-    }
-
     const p = parseNumber(price);
+    if (!Number.isFinite(c) || c <= 0) return { error: "Enter a unit cost greater than zero." };
     if (!Number.isFinite(p) || p <= 0) return { error: "Enter a selling price greater than zero." };
-    return { sellingPrice: p, ...profitMetrics(c, p) };
-  }, [mode, cost, price, target]);
+    return { ...profitMetrics(c, p), sellingPrice: p };
+  }, [cost, price]);
 
-  const summary =
-    data.error === undefined
-      ? `Price ${formatCurrency(data.sellingPrice)} · profit ${formatCurrency(data.profit)} · margin ${data.margin.toFixed(2)}% · markup ${data.markup.toFixed(2)}%`
-      : "";
+  const fromTarget = useMemo(() => {
+    const c = parseNumber(cost);
+    const t = parseNumber(target);
+    if (!Number.isFinite(c) || c <= 0) return { error: "Enter a unit cost greater than zero." };
+    if (!Number.isFinite(t) || t < 0 || t >= 100) return { error: "Enter a target margin between 0% and 99%." };
+    const suggested = priceForMargin(c, t);
+    return { ...profitMetrics(c, suggested), sellingPrice: suggested, target: t };
+  }, [cost, target]);
 
   return (
     <ToolPanel>
-      <Segmented
-        label="What do you want to work out?"
-        value={mode}
-        onChange={setMode}
-        options={[
-          { value: "cost-price", label: "Margin from cost & price" },
-          { value: "target", label: "Price for a target margin" },
-        ]}
-      />
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <Field label="Unit cost" htmlFor="pm-cost">
-          <TextInput id="pm-cost" inputMode="decimal" value={cost} onChange={(event) => setCost(event.target.value)} />
-        </Field>
-        {mode === "cost-price" ? (
-          <Field label="Selling price" htmlFor="pm-price">
-            <TextInput id="pm-price" inputMode="decimal" value={price} onChange={(event) => setPrice(event.target.value)} />
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)]/45 p-4 sm:p-5">
+        <div className="grid gap-3 sm:grid-cols-[14rem_1fr] sm:items-end">
+          <Field label="Unit cost" htmlFor="pm-cost" hint="What one unit costs you, all in.">
+            <TextInput
+              id="pm-cost"
+              inputMode="decimal"
+              value={cost}
+              onChange={(event) => setCost(event.target.value)}
+              className="font-mono"
+            />
           </Field>
-        ) : (
-          <Field label="Target margin (%)" htmlFor="pm-target">
-            <TextInput id="pm-target" inputMode="decimal" value={target} onChange={(event) => setTarget(event.target.value)} />
-          </Field>
-        )}
+          <p className="pb-1 text-xs leading-relaxed text-[var(--text-subtle)]">
+            One cost, both directions: what margin a price gives you, and what price a target margin
+            needs. The two cards are live at the same time.
+          </p>
+        </div>
       </div>
 
       <div className="mt-4">
-        {data.error !== undefined ? (
-          <ResultCard label="Result" value="—" tone="neutral" sub={data.error} />
-        ) : (
-          <ResultCard
-            label={mode === "target" ? "Recommended selling price" : "Profit margin"}
-            value={
-              mode === "target"
-                ? formatCurrency(data.sellingPrice)
-                : `${data.margin.toFixed(2)}%`
-            }
-            sub={
-              mode === "target"
-                ? `At a ${data.target}% margin your price must be ${formatCurrency(data.sellingPrice)} to make ${formatCurrency(data.profit)} per unit.`
-                : `A ${data.margin.toFixed(2)}% margin is a ${data.markup.toFixed(2)}% markup.`
-            }
-            actions={<CopyButton text={summary} />}
-          >
-            <StatGrid
-              columns={3}
-              items={[
-                { label: "Profit per unit", value: formatCurrency(data.profit) },
-                { label: "Margin", value: `${data.margin.toFixed(2)}%` },
-                { label: "Markup", value: `${data.markup.toFixed(2)}%` },
-              ]}
+        <ModeHub columns={2}>
+          <ModeCard title="Margin from cost & price" hint="The percentage you actually keep." badge="Margin">
+            <Field label="Selling price" htmlFor="pm-price">
+              <TextInput
+                id="pm-price"
+                inputMode="decimal"
+                value={price}
+                onChange={(event) => setPrice(event.target.value)}
+                className="font-mono"
+              />
+            </Field>
+            <ModeResult
+              label="Profit margin"
+              value={"margin" in fromPrice ? `${fromPrice.margin.toFixed(2)}%` : "—"}
+              detail={
+                "margin" in fromPrice
+                  ? `${formatCurrency(fromPrice.profit)} profit per unit · markup ${fromPrice.markup.toFixed(2)}%`
+                  : undefined
+              }
+              error={"error" in fromPrice ? fromPrice.error : undefined}
             />
-          </ResultCard>
-        )}
+            {"margin" in fromPrice ? (
+              <div className="mt-2">
+                <CopyButton
+                  text={`Price ${formatCurrency(fromPrice.sellingPrice)} · profit ${formatCurrency(fromPrice.profit)} · margin ${fromPrice.margin.toFixed(2)}% · markup ${fromPrice.markup.toFixed(2)}%`}
+                  label="Copy result"
+                />
+              </div>
+            ) : null}
+          </ModeCard>
+
+          <ModeCard title="Price for a target margin" hint="Work backwards to the price you need." badge="Target">
+            <Field label="Target margin (%)" htmlFor="pm-target">
+              <TextInput
+                id="pm-target"
+                inputMode="decimal"
+                value={target}
+                onChange={(event) => setTarget(event.target.value)}
+                className="font-mono"
+              />
+            </Field>
+            <ModeResult
+              label="Recommended selling price"
+              value={"sellingPrice" in fromTarget ? formatCurrency(fromTarget.sellingPrice) : "—"}
+              detail={
+                "sellingPrice" in fromTarget
+                  ? `${formatCurrency(fromTarget.profit)} profit per unit · markup ${fromTarget.markup.toFixed(2)}%`
+                  : undefined
+              }
+              error={"error" in fromTarget ? fromTarget.error : undefined}
+            />
+            {"sellingPrice" in fromTarget ? (
+              <div className="mt-2">
+                <CopyButton
+                  text={`Price ${formatCurrency(fromTarget.sellingPrice)} · profit ${formatCurrency(fromTarget.profit)} · margin ${fromTarget.margin.toFixed(2)}% · markup ${fromTarget.markup.toFixed(2)}%`}
+                  label="Copy result"
+                />
+              </div>
+            ) : null}
+          </ModeCard>
+        </ModeHub>
       </div>
 
       <p className="mt-3 text-xs text-[var(--text-subtle)]">

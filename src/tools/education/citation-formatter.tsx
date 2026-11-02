@@ -1,14 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Callout, CopyButton, Field, ResultCard, Segmented, TextArea, TextInput, ToolPanel } from "@/components/ui";
+import { Callout, CopyButton, Field, TextInput, ToolPanel } from "@/components/ui";
+import { ModeCard, ModeHub } from "@/components/tools/mode-hub";
 import { formatCitation, type CitationStyle } from "@/lib/education";
 
-const STYLE_LABELS: { value: CitationStyle; label: string }[] = [
-  { value: "apa", label: "APA 7" },
-  { value: "mla", label: "MLA 9" },
-  { value: "chicago", label: "Chicago" },
-  { value: "harvard", label: "Harvard" },
+const STYLE_LABELS: { value: CitationStyle; label: string; note: string }[] = [
+  { value: "apa", label: "APA 7", note: "Initials first, year in brackets." },
+  { value: "mla", label: "MLA 9", note: "Full names, title in quotation marks." },
+  { value: "chicago", label: "Chicago", note: "Notes-bibliography flavour." },
+  { value: "harvard", label: "Harvard", note: "Author–date, common in the UK." },
 ];
 
 const EXAMPLE = {
@@ -23,17 +24,21 @@ const EXAMPLE = {
 };
 
 export default function CitationFormatter() {
-  const [style, setStyle] = useState<CitationStyle>("apa");
   const [fields, setFields] = useState(EXAMPLE);
-
-  const citation = useMemo(() => formatCitation(fields, style), [fields, style]);
   const update = (patch: Partial<typeof EXAMPLE>) => setFields((current) => ({ ...current, ...patch }));
+
+  const citations = useMemo(
+    () =>
+      STYLE_LABELS.map((style) => ({
+        ...style,
+        text: formatCitation(fields, style.value) || "",
+      })),
+    [fields],
+  );
 
   return (
     <ToolPanel>
-      <Segmented label="Style" value={style} onChange={setStyle} options={STYLE_LABELS} />
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Authors" htmlFor="cite-authors" hint="Separate with commas or “and”, e.g. Jane Doe, John Smith.">
           <TextInput id="cite-authors" value={fields.authors} onChange={(event) => update({ authors: event.target.value })} />
         </Field>
@@ -60,31 +65,34 @@ export default function CitationFormatter() {
         </Field>
       </div>
 
-      <div className="mt-6">
-        {citation ? (
-          <ResultCard label={`${STYLE_LABELS.find((item) => item.value === style)?.label} reference`} value={<span className="text-base leading-relaxed">{citation}</span>} sub="Hanging indent is applied by your word processor" tone="brand" actions={<CopyButton text={citation} label="Copy citation" />}>
-            <fieldset className="mt-2">
-              <legend className="label">All four styles</legend>
-              <div className="space-y-2">
-                {STYLE_LABELS.map((item) => (
-                  <div key={item.value} className="border-l-2 border-[var(--border)] pl-3">
-                    <p className="font-mono text-[0.58rem] uppercase tracking-[0.12em] text-[var(--text-subtle)]">{item.label}</p>
-                    <p className="mt-1 text-sm text-[var(--text-muted)]">{formatCitation(fields, item.value)}</p>
-                  </div>
-                ))}
-              </div>
-            </fieldset>
-          </ResultCard>
+      <div className="mt-5">
+        {citations.some((item) => item.text) ? (
+          <ModeHub columns={2}>
+            {citations.map((item) => (
+              <ModeCard key={item.value} title={item.label} hint={item.note} badge="Reference">
+                <p
+                  aria-live="polite"
+                  className="flex-1 rounded-xl border border-[var(--result-border)] bg-[var(--result-bg)] px-3.5 py-3 text-[0.92rem] leading-relaxed text-[var(--text)]"
+                >
+                  {item.text || <span className="text-[var(--text-subtle)]">Add a title to build this reference.</span>}
+                </p>
+                <div className="mt-2 flex justify-end">
+                  <CopyButton text={item.text} label="Copy" />
+                </div>
+              </ModeCard>
+            ))}
+          </ModeHub>
         ) : (
           <Callout tone="info">Add at least a title to build a reference.</Callout>
         )}
       </div>
 
       <p className="mt-4 text-xs leading-relaxed text-[var(--text-subtle)]">
-        Styles differ in ways that matter: APA initials the given names and puts the year in brackets; MLA spells names out
-        and uses quotation marks for the title; Chicago and Harvard sit between them. This formatter follows the common
-        forms, but exact punctuation for unusual sources — an edited chapter, a translated work, a podcast episode — needs
-        the official style manual.
+        All four styles are built at the same time, so you can compare them side by side. They differ
+        in ways that matter: APA initials the given names and puts the year in brackets; MLA spells
+        names out and uses quotation marks for the title; Chicago and Harvard sit between them. This
+        formatter follows the common forms, but exact punctuation for unusual sources — an edited
+        chapter, a translated work, a podcast episode — needs the official style manual.
       </p>
     </ToolPanel>
   );

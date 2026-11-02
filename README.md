@@ -121,8 +121,26 @@ of them behind a segmented control. `src/components/tools/mode-hub.tsx` provides
 - `ModeCard` — a titled card with an optional badge and one-line hint.
 - `ModeResult` — the live answer inside a card, with `aria-live` and an error tone.
 
-`percentage-calculator.tsx`, `vat-calculator.tsx` and `product-pricing-calculator.tsx` are the
-reference implementations: shared inputs live above the grid, each card owns its own state.
+Twelve tools now use it — the pattern fits any tool whose modes are separate questions rather
+than separate outputs:
+
+| Tool | Cards |
+| --- | --- |
+| Percentage calculator | What is X% of Y · X is what % of Y · percentage change |
+| VAT calculator | Add VAT · remove VAT, on one shared rate |
+| Product pricing | Price from margin · price from markup · margin at a fixed price |
+| Profit margin | Margin from cost & price · price for a target margin |
+| Standard deviation | Population (÷ n) · sample (÷ n − 1) |
+| BMI | Metric · imperial |
+| Roman numerals | Number → Roman · Roman → number |
+| Base64 | Text → Base64 · Base64 → text |
+| URL encoder | Value · full URL · form data · decoded |
+| HTML entities | Text → entities · entities → text |
+| Text reverser | Characters · words · lines |
+| Hash generator | SHA-1 · SHA-256 · SHA-384 · SHA-512, all four at once |
+
+Tools whose segmented control picks one output format (JSON indent, gradient type, sort order)
+keep the switch — there the modes are settings, not separate questions.
 
 ### Design system — "Studio"
 
@@ -227,6 +245,8 @@ Everything is optional for development; see [`.env.example`](.env.example).
 | Variable | Purpose | Default |
 | --- | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | Canonical origin for canonicals, sitemap, robots, JSON-LD | `https://tools.example.com` (placeholder) |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console meta token | unset (tag omitted) |
+| `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Bing Webmaster `msvalidate.01` token | unset (tag omitted) |
 | `NEXT_PUBLIC_GA_ID` | GA4 measurement ID; analytics also requires cookie consent | empty — no analytics |
 | `NEXT_PUBLIC_ADSENSE_CLIENT` | Publisher ID from Google after approval | empty — no ad script |
 | `NEXT_PUBLIC_ADSENSE_SLOT_TOOL` | Ad unit id for the tool-page slot | empty — slot renders nothing |

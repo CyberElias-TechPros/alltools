@@ -1,115 +1,119 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowLeftRight } from "lucide-react";
-import { Callout, CopyButton, Segmented, TextArea, ToolPanel } from "@/components/ui";
-import { cn } from "@/lib/utils";
+import { CopyButton, TextArea, ToolPanel } from "@/components/ui";
+import { ModeCard, ModeHub } from "@/components/tools/mode-hub";
 
-type Context = "component" | "url" | "form";
+const SAMPLE = "red shoes & socks? café=true";
 
+function ResultPane({ text, error }: { text: string; error?: string }) {
+  return (
+    <div
+      aria-live="polite"
+      className="min-h-16 overflow-auto whitespace-pre-wrap break-all rounded-xl border border-[var(--border)] bg-[var(--code-bg)] p-2.5 font-mono text-[0.78rem] text-[var(--text)]"
+    >
+      {error ? (
+        <span className="text-rose-700 dark:text-rose-300">{error}</span>
+      ) : text ? (
+        text
+      ) : (
+        <span className="text-[var(--text-subtle)]">Result appears here.</span>
+      )}
+    </div>
+  );
+}
+
+/**
+ * One string, four readings: the escaped value, the escaped full URL, the
+ * form-encoded variant and the decoded string. Nobody has to pick a mode before
+ * they can see the answer they came for.
+ */
 export default function UrlEncoderDecoder() {
   const [input, setInput] = useState("");
-  const [context, setContext] = useState<Context>("component");
-  const [direction, setDirection] = useState<"encode" | "decode">("encode");
 
-  const { output, error } = useMemo(() => {
-    if (!input) return { output: "", error: "" };
-    try {
-      if (direction === "decode") {
-        const decoded =
-          context === "form"
-            ? decodeURIComponent(input.replace(/\+/g, " "))
-            : decodeURIComponent(input);
-        return { output: decoded, error: "" };
+  const results = useMemo(() => {
+    const safe = (fn: () => string) => {
+      try {
+        return { value: fn(), error: "" };
+      } catch {
+        return {
+          value: "",
+          error: "Invalid percent-escape — check for a lone % or an incomplete hex pair.",
+        };
       }
-      const encoded =
-        context === "url"
-          ? encodeURI(input)
-          : context === "form"
-            ? encodeURIComponent(input).replace(/%20/g, "+")
-            : encodeURIComponent(input);
-      return { output: encoded, error: "" };
-    } catch {
-      return {
-        output: "",
-        error: "That string contains an invalid percent-escape (for example a lone % or incomplete hex pair).",
-      };
-    }
-  }, [input, context, direction]);
+    };
+    if (!input) return { value: "", url: "", form: "", decoded: "", error: "" };
+    return {
+      value: safe(() => encodeURIComponent(input)).value,
+      url: safe(() => encodeURI(input)).value,
+      form: safe(() => encodeURIComponent(input).replace(/%20/g, "+")).value,
+      decoded: safe(() => decodeURIComponent(input.replace(/\+/g, " "))).value,
+      error: safe(() => encodeURIComponent(input)).error,
+    };
+  }, [input]);
 
   return (
     <ToolPanel>
-      <div className="mb-3 flex flex-wrap items-center gap-3">
-        <Segmented
-          label="Direction"
-          value={direction}
-          onChange={setDirection}
-          options={[
-            { value: "encode", label: "Encode" },
-            { value: "decode", label: "Decode" },
-          ]}
-          className="min-w-52"
-        />
-        <Segmented
-          label="Context"
-          value={context}
-          onChange={setContext}
-          options={[
-            { value: "component", label: "Value" },
-            { value: "url", label: "Full URL" },
-            { value: "form", label: "Form data" },
-          ]}
-          className="min-w-64"
-        />
+      <label htmlFor="url-input" className="label">
+        Text or URL
+      </label>
+      <TextArea
+        id="url-input"
+        value={input}
+        onChange={(event) => setInput(event.target.value)}
+        placeholder={SAMPLE}
+        className="min-h-28 font-mono text-[0.85rem]"
+        spellCheck={false}
+      />
+      <div className="mt-2 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          className="text-xs font-medium text-brand-600 hover:underline dark:text-brand-300"
+          onClick={() => setInput(SAMPLE)}
+        >
+          Load sample
+        </button>
+        <span className="text-xs text-[var(--text-subtle)]">
+          All four outputs update as you type — no mode switch.
+        </span>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <div>
-          <label htmlFor="url-input" className="label">
-            Input
-          </label>
-          <TextArea
-            id="url-input"
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            placeholder={direction === "encode" ? "red shoes & socks" : "red%20shoes%20%26%20socks"}
-            className="min-h-40 font-mono text-[0.85rem]"
-            spellCheck={false}
-          />
-        </div>
-        <div>
-          <div className="mb-2 flex items-center justify-between">
-            <span className="label !mb-0 flex items-center gap-1.5">
-              <ArrowLeftRight className="size-3.5" aria-hidden /> Result
-            </span>
-            <CopyButton text={output} />
-          </div>
-          <div
-            aria-live="polite"
-            className="min-h-40 overflow-auto whitespace-pre-wrap break-all rounded-xl border border-[var(--border)] bg-[var(--code-bg)] p-3 font-mono text-[0.85rem] text-[var(--text)]"
-          >
-            {output || <span className="text-[var(--text-subtle)]">Result appears here.</span>}
-          </div>
-        </div>
+      <div className="mt-4">
+        <ModeHub columns={2}>
+          <ModeCard title="Value" hint="Everything reserved is escaped: / ? & = # space." badge="Component">
+            <div className="mb-2 flex justify-end">
+              <CopyButton text={results.value} />
+            </div>
+            <ResultPane text={results.value} error={results.error || undefined} />
+          </ModeCard>
+
+          <ModeCard title="Full URL" hint="Keeps ://, /, ? and & intact — only the unsafe parts change.">
+            <div className="mb-2 flex justify-end">
+              <CopyButton text={results.url} />
+            </div>
+            <ResultPane text={results.url} error={results.error || undefined} />
+          </ModeCard>
+
+          <ModeCard title="Form data" hint="Spaces become +, as an HTML form submits them.">
+            <div className="mb-2 flex justify-end">
+              <CopyButton text={results.form} />
+            </div>
+            <ResultPane text={results.form} error={results.error || undefined} />
+          </ModeCard>
+
+          <ModeCard title="Decoded" hint="Turn %20, %26 and + back into readable text.">
+            <div className="mb-2 flex justify-end">
+              <CopyButton text={results.decoded} />
+            </div>
+            <ResultPane text={results.decoded} error={results.error || undefined} />
+          </ModeCard>
+        </ModeHub>
       </div>
 
-      {error ? (
-        <div className="mt-3">
-          <Callout tone="warning">{error}</Callout>
-        </div>
-      ) : null}
-
-      <div className="mt-3 grid gap-2 text-xs text-[var(--text-subtle)] sm:grid-cols-3">
-        <p className={cn("rounded-lg border border-[var(--border)] p-2.5", context === "url" && "border-brand-400")}>
-          <strong className="text-[var(--text-muted)]">Full URL</strong> — keeps ://, /, ?, &amp; intact.
-        </p>
-        <p className={cn("rounded-lg border border-[var(--border)] p-2.5", context === "component" && "border-brand-400")}>
-          <strong className="text-[var(--text-muted)]">Value</strong> — escapes everything reserved. Use for query values and path segments.
-        </p>
-        <p className={cn("rounded-lg border border-[var(--border)] p-2.5", context === "form" && "border-brand-400")}>
-          <strong className="text-[var(--text-muted)]">Form data</strong> — spaces become +.
-        </p>
-      </div>
+      <p className="mt-3 text-xs text-[var(--text-subtle)]">
+        Encoding a URL is not sanitising it. Validate the scheme and host before you use a
+        visitor-supplied URL in an <code>href</code>.
+      </p>
     </ToolPanel>
   );
 }

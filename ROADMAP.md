@@ -433,8 +433,9 @@ testing guide, AdSense audit).
 
 **Since the rebrand to "Tools":** the site name, copy, storage keys and docs all use "Tools";
 the twelve category cards carry hand-drawn inline SVG vignettes; multi-mode calculators are
-moving to the hub layout (`src/components/tools/mode-hub.tsx`) so every answer is visible at
-once — percentage, VAT and product pricing are converted; and the discovery layer is complete:
+use the hub layout (`src/components/tools/mode-hub.tsx`) so every answer is visible at once;
+twelve tools are converted, including percentage, VAT, product pricing, profit margin, standard
+deviation, BMI, base64, URL encoding, HTML entities, Roman numerals, text reversal and hashing; and the discovery layer is complete:
 `pageMetadata()`/`toolMetadata()` helpers with per-page keyword clusters, absolute canonicals,
 hreflang plus RSS/markdown alternates, 1200×630 OG images per category, a registry-driven
 `sitemap.xml` with image entries, `robots.txt` that allows CSS/JS and names the AI crawlers,
