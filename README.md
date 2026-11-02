@@ -57,12 +57,17 @@ src/
 │  ├─ about/ contact/       Trust pages
 │  ├─ privacy-policy/ terms/ disclaimer/ cookies/ accessibility/ editorial-policy/
 │  ├─ sitemap.ts robots.ts manifest.ts not-found.tsx
+│  ├─ llms.txt/route.ts     Plain-text index of every page (for AI assistants)
+│  ├─ feed.xml/route.ts     RSS 2.0 feed of the guides
 │  └─ globals.css           Design system: CSS variables, dark mode, components
 ├─ components/              Presentation only (no business logic)
 │  ├─ ui.tsx                Button, Field, inputs, StatGrid, ResultCard, CopyButton…
 │  ├─ site-header.tsx       Sticky nav + ⌘K search trigger
 │  ├─ search-dialog.tsx     Client search, keyboard-driven, recents in localStorage
 │  ├─ tool-card.tsx         Directory/category card
+│  ├─ category-art.tsx      Inline SVG vignette per category (12 drawings)
+│  ├─ tools/mode-hub.tsx    ModeHub/ModeCard/ModeResult — the "several calculators in one" grid
+│  ├─ json-ld.tsx           Renders one or many schema.org graphs
 │  ├─ ad-slot.tsx           Renders nothing unless ads are explicitly enabled
 │  └─ analytics.tsx         Consent banner + consent-gated GA4 loader
 ├─ lib/
@@ -73,6 +78,7 @@ src/
 │  ├─ search.ts            Scoring/ranking for the command palette
 │  ├─ guides.ts             Editorial articles as structured data
 │  ├─ site.ts               Site config, nav, footer links, env flags
+│  ├─ seo.ts                pageMetadata/toolMetadata, keyword clusters, schema builders
 │  └─ tools/
 │     ├─ types.ts           ToolDefinition / CategoryDefinition models
 │     ├─ categories.ts      12 categories; live and planned counts derived from the registry
@@ -88,6 +94,35 @@ src/
 **Rule of thumb:** logic lives in `src/lib`, copy lives in `src/lib/tools/data`, and
 `src/tools/*` only wires the two together. That is why the test suite can cover 254 tools
 with no DOM or browser needed.
+
+### SEO layer
+
+Everything a crawler needs is derived from `src/lib/site.ts` and `src/lib/tools/registry.ts`:
+
+| Surface | Where | Contents |
+| --- | --- | --- |
+| Per-page metadata | `src/lib/seo.ts` → `pageMetadata()` / `toolMetadata()` | Title, description, canonical (absolute), keyword cluster, Open Graph, Twitter card, hreflang, RSS + `llms.txt` alternates |
+| OG images | `public/og/*.png` | 1200×630 card per category, shared by every tool in it |
+| Structured data | `layout.tsx` `@graph` + page-level `JsonLd` | WebSite (with SearchAction), Organization, WebPage, BreadcrumbList, CollectionPage/ItemList, SoftwareApplication + Offer, FAQPage, Article |
+| `/sitemap.xml` | `src/app/sitemap.ts` | 13 static pages, 12 categories, every live tool, guides — with image entries and real last-modified dates |
+| `/robots.txt` | `src/app/robots.ts` | Allows everything (including CSS/JS for rendering) and names the AI crawlers explicitly |
+| `/llms.txt` | `src/app/llms.txt/route.ts` | Machine-readable summary: about, categories with counts, all 254 tools with taglines, guides, policies |
+| `/feed.xml` | `src/app/feed.xml/route.ts` | RSS 2.0 of the guides, linked via `<link rel="alternate">` |
+
+Set `NEXT_PUBLIC_SITE_URL` before deploying: canonicals, the sitemap, `robots.txt` and every
+JSON-LD `@id` are built from it.
+
+### Hub layouts for multi-mode tools
+
+When a tool answers more than one question, show every answer at once instead of hiding two
+of them behind a segmented control. `src/components/tools/mode-hub.tsx` provides:
+
+- `ModeHub` — the grid (`columns={2}` or `{3}`), stacking to one column on phones.
+- `ModeCard` — a titled card with an optional badge and one-line hint.
+- `ModeResult` — the live answer inside a card, with `aria-live` and an error tone.
+
+`percentage-calculator.tsx`, `vat-calculator.tsx` and `product-pricing-calculator.tsx` are the
+reference implementations: shared inputs live above the grid, each card owns its own state.
 
 ### Design system — "Studio"
 
@@ -220,6 +255,7 @@ npm run build        # emits out/
   upgrade before enabling AdSense.
 
 Checklist after the first deploy: `https://your-domain/sitemap.xml`, `/robots.txt`,
+`/llms.txt`, `/feed.xml`,
 `/manifest.webmanifest` and a handful of tool pages all return 200, and canonicals point
 at the real origin (view source and search for `example.com`).
 

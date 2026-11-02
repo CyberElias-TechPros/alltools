@@ -425,11 +425,21 @@ and 12-category taxonomy; **254 live tools across 12 live categories** (text 23,
 no backend calls and no third-party APIs — including PDF editing (pdf-lib), DOCX text
 extraction, image processing, hashing, code formatting, QR generation and decoding, and an
 offline currency converter that uses rates the visitor supplies; tool page template with
-JSON-LD; code-split tool registry; **685 automated tests across 24 suites**, including a
+JSON-LD; code-split tool registry; **687 automated tests across 24 suites**, including a
 render smoke test over every tool component and unit tests for every logic module; homepage,
 directory, category, guide, about, contact, roadmap and six policy pages; sitemap, robots,
 manifest, 404; consent-gated analytics; inert ad slots; public documentation (README, PRD,
 testing guide, AdSense audit).
+
+**Since the rebrand to "Tools":** the site name, copy, storage keys and docs all use "Tools";
+the twelve category cards carry hand-drawn inline SVG vignettes; multi-mode calculators are
+moving to the hub layout (`src/components/tools/mode-hub.tsx`) so every answer is visible at
+once — percentage, VAT and product pricing are converted; and the discovery layer is complete:
+`pageMetadata()`/`toolMetadata()` helpers with per-page keyword clusters, absolute canonicals,
+hreflang plus RSS/markdown alternates, 1200×630 OG images per category, a registry-driven
+`sitemap.xml` with image entries, `robots.txt` that allows CSS/JS and names the AI crawlers,
+`/llms.txt`, `/feed.xml`, and JSON-LD for WebSite, Organization, WebPage, CollectionPage,
+ItemList, SoftwareApplication + Offer, FAQPage, Article and BreadcrumbList.
 
 **Pending (code work, no external dependency):** manual browser QA of all 254 tools;
 Lighthouse/CWV measurement; screen-reader pass; Playwright smoke tests; visual regression
@@ -482,7 +492,7 @@ decision if traffic grows past static-hosting limits.
 for p in / /tools/ /categories/ /guides/ /roadmap/ /about/ /contact/ /privacy-policy/ \
          /terms/ /disclaimer/ /cookies/ /accessibility/ /editorial-policy/ \
          /tools/word-counter/ /tools/percentage-calculator/ /tools/json-formatter/ \
-         /sitemap.xml /robots.txt /manifest.webmanifest; do
+         /sitemap.xml /robots.txt /manifest.webmanifest /llms.txt /feed.xml; do
   printf "%s  %s\n" "$(curl -s -o /dev/null -w '%{http_code}' https://YOUR-DOMAIN$p)" "$p"
 done
 ```

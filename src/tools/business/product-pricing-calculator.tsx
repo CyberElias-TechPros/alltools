@@ -1,91 +1,144 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Callout, CopyButton, Field, ResultCard, Segmented, SimpleTable, StatGrid, TextInput, ToolPanel } from "@/components/ui";
+import { Callout, Field, SimpleTable, TextInput, ToolPanel } from "@/components/ui";
+import { ModeCard, ModeHub, ModeResult } from "@/components/tools/mode-hub";
 import { formatMoney, productPricing } from "@/lib/business";
 
-type Mode = "margin" | "markup" | "price";
+const pct = (value: number, digits = 1) => (Number.isFinite(value) ? `${value.toFixed(digits)}%` : "—");
 
+/**
+ * Three questions, one cost base: what should I charge for a target margin, what
+ * should I charge for a markup, and what margin am I making at a fixed price.
+ */
 export default function ProductPricingCalculator() {
   const [cost, setCost] = useState("24");
-  const [mode, setMode] = useState<Mode>("margin");
-  const [value, setValue] = useState("60");
+  const [marginInput, setMarginInput] = useState("60");
+  const [markupInput, setMarkupInput] = useState("60");
+  const [priceInput, setPriceInput] = useState("60");
 
-  const result = useMemo(() => productPricing({ cost: Number(cost), mode, value: Number(value) }), [cost, mode, value]);
-  const text = `Price ${formatMoney(result.price)} · margin ${Number.isFinite(result.margin) ? result.margin.toFixed(1) : "—"}% · markup ${Number.isFinite(result.markup) ? result.markup.toFixed(0) : "—"}%`;
+  const costValue = Number(cost);
+  const marginValue = Number(marginInput);
+  const markupValue = Number(markupInput);
+  const priceValue = Number(priceInput);
 
-  const valueLabels: Record<Mode, string> = {
-    margin: "Target margin %",
-    markup: "Markup %",
-    price: "Selling price",
-  };
+  const fromMargin = useMemo(
+    () => productPricing({ cost: costValue, mode: "margin", value: marginValue }),
+    [costValue, marginValue],
+  );
+  const fromMarkup = useMemo(
+    () => productPricing({ cost: costValue, mode: "markup", value: markupValue }),
+    [costValue, markupValue],
+  );
+  const fromPrice = useMemo(
+    () => productPricing({ cost: costValue, mode: "price", value: priceValue }),
+    [costValue, priceValue],
+  );
+
+  const issues = fromMargin.issues.length ? fromMargin.issues : fromPrice.issues;
 
   return (
     <ToolPanel>
-      <div className="grid gap-3 sm:grid-cols-3">
-        <Field label="Unit cost" htmlFor="price-cost" hint="Including packaging, fees and shipping to you.">
-          <TextInput id="price-cost" type="number" min={0} step="0.01" value={cost} onChange={(event) => setCost(event.target.value)} className="font-mono" />
-        </Field>
-        <div className="sm:col-span-2">
-          <Segmented
-            label="Calculate from"
-            value={mode}
-            onChange={setMode}
-            options={[
-              { value: "margin", label: "Margin" },
-              { value: "markup", label: "Markup" },
-              { value: "price", label: "Set price" },
-            ]}
-          />
-        </div>
-        <Field label={valueLabels[mode]} htmlFor="price-value">
-          <TextInput id="price-value" type="number" min={0} step="0.01" value={value} onChange={(event) => setValue(event.target.value)} className="font-mono" />
-        </Field>
-      </div>
-
-      <div className="mt-6">
-        <ResultCard
-          label="Selling price"
-          value={formatMoney(result.price)}
-          sub={`${formatMoney(result.profit)} profit per unit · margin ${Number.isFinite(result.margin) ? `${result.margin.toFixed(1)}%` : "—"}`}
-          tone="brand"
-          actions={<CopyButton text={text} label="Copy" />}
-        >
-          <StatGrid
-            columns={3}
-            items={[
-              { label: "Gross margin", value: Number.isFinite(result.margin) ? `${result.margin.toFixed(1)}%` : "—" },
-              { label: "Markup", value: Number.isFinite(result.markup) ? `${result.markup.toFixed(0)}%` : "—" },
-              { label: "Profit per unit", value: formatMoney(result.profit) },
-            ]}
-          />
-          <div className="mt-4">
-            <SimpleTable
-              head={["Cost", "Price", "Margin"]}
-              caption="What the same margin looks like across price points"
-              rows={[0.8, 1, 1.25, 1.5].map((multiple) => {
-                const scaled = productPricing({ cost: Number(cost) * multiple, mode, value: Number(value) });
-                return [formatMoney(Number(cost) * multiple), formatMoney(scaled.price), Number.isFinite(scaled.margin) ? `${scaled.margin.toFixed(1)}%` : "—"];
-              })}
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)]/45 p-4 sm:p-5">
+        <div className="grid gap-3 sm:grid-cols-[14rem_1fr] sm:items-end">
+          <Field
+            label="Unit cost"
+            htmlFor="price-cost"
+            hint="Everything it costs you to put one unit in a customer's hands."
+          >
+            <TextInput
+              id="price-cost"
+              inputMode="decimal"
+              value={cost}
+              onChange={(event) => setCost(event.target.value)}
+              className="font-mono"
             />
-          </div>
-        </ResultCard>
+          </Field>
+          <p className="pb-1 text-xs leading-relaxed text-[var(--text-subtle)]">
+            One cost, three answers below — each card keeps its own numbers, so you can compare a
+            60% margin against a 60% markup without switching modes.
+          </p>
+        </div>
       </div>
 
-      {result.issues.map((issue) => (
-        <Callout key={issue} tone="warning">
-          {issue}
-        </Callout>
+      <div className="mt-4">
+        <ModeHub columns={3}>
+          <ModeCard title="Price from margin" hint="The share of the sale price you keep." badge="Margin">
+            <Field label="Target margin (%)" htmlFor="price-margin">
+              <TextInput
+                id="price-margin"
+                inputMode="decimal"
+                value={marginInput}
+                onChange={(event) => setMarginInput(event.target.value)}
+                className="font-mono"
+              />
+            </Field>
+            <ModeResult
+              label="Selling price"
+              value={formatMoney(fromMargin.price)}
+              detail={`Profit ${formatMoney(fromMargin.profit)} · markup ${pct(fromMargin.markup, 0)}`}
+            />
+          </ModeCard>
+
+          <ModeCard title="Price from markup" hint="The percentage added on top of cost." badge="Markup">
+            <Field label="Markup on cost (%)" htmlFor="price-markup">
+              <TextInput
+                id="price-markup"
+                inputMode="decimal"
+                value={markupInput}
+                onChange={(event) => setMarkupInput(event.target.value)}
+                className="font-mono"
+              />
+            </Field>
+            <ModeResult
+              label="Selling price"
+              value={formatMoney(fromMarkup.price)}
+              detail={`Profit ${formatMoney(fromMarkup.profit)} · margin ${pct(fromMarkup.margin)}`}
+            />
+          </ModeCard>
+
+          <ModeCard title="Margin at a price" hint="Work backwards from what you charge." badge="Fixed price">
+            <Field label="Selling price" htmlFor="price-fixed">
+              <TextInput
+                id="price-fixed"
+                inputMode="decimal"
+                value={priceInput}
+                onChange={(event) => setPriceInput(event.target.value)}
+                className="font-mono"
+              />
+            </Field>
+            <ModeResult
+              label="Gross margin"
+              value={pct(fromPrice.margin)}
+              detail={`Markup ${pct(fromPrice.markup, 0)} · profit ${formatMoney(fromPrice.profit)}`}
+            />
+          </ModeCard>
+        </ModeHub>
+      </div>
+
+      <div className="mt-5">
+        <SimpleTable
+          head={["Cost", "Price at 60% margin", "Margin at 60% price"]}
+          caption={`How the same numbers move when unit cost changes`}
+          rows={[0.8, 1, 1.25, 1.5].map((multiple) => {
+            const scaledCost = costValue * multiple;
+            const scaled = productPricing({ cost: scaledCost, mode: "margin", value: marginValue });
+            const fixed = productPricing({ cost: scaledCost, mode: "price", value: priceValue });
+            return [formatMoney(scaledCost), formatMoney(scaled.price), pct(fixed.margin)];
+          })}
+        />
+      </div>
+
+      {issues.map((issue) => (
+        <div key={issue} className="mt-3">
+          <Callout tone="warning">{issue}</Callout>
+        </div>
       ))}
 
-      <Callout tone="info" title="Margin and markup are not interchangeable">
-        A 50% markup on a 40 cost gives 60 — a 33% margin. Confusing the two is how businesses end up profitable on
-        paper and short of cash, because payment fees and returns are charged on the price, not the cost.
-      </Callout>
-
       <p className="mt-4 text-xs leading-relaxed text-[var(--text-subtle)]">
-        Add payment processing (typically 1.5–4%), marketplace commission, fulfilment and a returns allowance to the unit
-        cost before setting a price — otherwise the margin you calculate is not the margin you keep.
+        Margin is profit divided by price; markup is profit divided by cost. A 60% markup is only a
+        37.5% margin, which is why the two numbers never match. Use margin for pricing decisions and
+        markup for quoting, and keep card fees and shipping inside the unit cost.
       </p>
     </ToolPanel>
   );
