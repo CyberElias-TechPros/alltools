@@ -70,11 +70,9 @@ export function ToolCard({
         <h3 className="font-display text-[1.02rem] font-semibold leading-snug tracking-[-0.025em] text-[var(--text)]">
           {tool.name}
         </h3>
-        {!compact ? (
-          <p className="mt-1.5 line-clamp-2 text-[0.82rem] leading-relaxed text-[var(--text-muted)]">
-            {tool.tagline}
-          </p>
-        ) : null}
+        <p className="mt-1.5 line-clamp-2 text-[0.82rem] leading-relaxed text-[var(--text-muted)]">
+          {tool.tagline}
+        </p>
       </div>
     </Link>
   );
