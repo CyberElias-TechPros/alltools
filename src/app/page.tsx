@@ -94,7 +94,7 @@ export default function HomePage() {
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="border-b border-[var(--border)]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="grid gap-10 pb-12 pt-12 sm:pt-16 lg:grid-cols-12 lg:gap-0">
+          <div className="grid gap-10 pb-14 pt-14 sm:pb-20 sm:pt-20 lg:grid-cols-12 lg:gap-0">
             <div className="lg:col-span-8 lg:pr-12">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="eyebrow">{liveTools.length} tools live</span>
@@ -184,7 +184,7 @@ export default function HomePage() {
 
       {/* ── 01 · Selected tools ──────────────────────────────── */}
       <section className="border-b border-[var(--border)]">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-[var(--text)] pb-4">
             <div>
               <p className="eyebrow">01 — Index</p>
@@ -209,7 +209,7 @@ export default function HomePage() {
 
       {/* ── 02 · Categories ──────────────────────────────────── */}
       <section className="border-b border-[var(--border)] bg-[var(--page-elevated)]">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-[var(--text)] pb-4">
             <div>
               <p className="eyebrow">02 — Categories</p>
@@ -270,7 +270,7 @@ export default function HomePage() {
 
       {/* ── 03 · Standard ────────────────────────────────────── */}
       <section className="border-b border-[var(--border)]">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
             <div className="lg:col-span-5">
               <p className="eyebrow">03 — Standard</p>
@@ -319,7 +319,7 @@ export default function HomePage() {
 
       {/* ── 04 · Recently added ─────────────────────────────── */}
       <section className="border-b border-[var(--border)]">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-[var(--text)] pb-4">
             <div>
               <p className="eyebrow">04 — Latest</p>
@@ -346,7 +346,7 @@ export default function HomePage() {
 
       {/* ── 05 · Guides ──────────────────────────────────────── */}
       <section className="border-b border-[var(--border)] bg-[var(--page-elevated)]">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-[var(--text)] pb-4">
             <div>
               <p className="eyebrow">05 — Guides</p>
@@ -389,7 +389,7 @@ export default function HomePage() {
 
       {/* ── 06 · FAQ ─────────────────────────────────────────── */}
       <section>
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
           <div className="grid gap-10 lg:grid-cols-12">
             <div className="lg:col-span-4">
               <p className="eyebrow">06 — Questions</p>
@@ -439,7 +439,7 @@ export default function HomePage() {
 
       {/* ── CTA ──────────────────────────────────────────────── */}
       <section className="border-y border-[var(--text)] bg-[var(--text)] text-[var(--page)]">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
           <div className="grid items-end gap-8 md:grid-cols-[1.4fr_auto]">
             <div>
               <p className="font-mono text-[0.64rem] uppercase tracking-[0.18em] text-[var(--page)]/60">
