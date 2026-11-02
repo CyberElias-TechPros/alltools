@@ -3,6 +3,7 @@ import { textMoreTools } from "./data/text-more";
 import { calculatorTools } from "./data/calculators";
 import { calculatorMoreTools } from "./data/calculators-more";
 import { financeTools } from "./data/finance";
+import { financeMoreTools } from "./data/finance-more";
 import { developerTools } from "./data/developer";
 import { everydayTools } from "./data/everyday";
 import { seoTools } from "./data/seo";
@@ -16,6 +17,7 @@ export const tools: ToolDefinition[] = [
   ...calculatorTools,
   ...calculatorMoreTools,
   ...financeTools,
+  ...financeMoreTools,
   ...developerTools,
   ...everydayTools,
   ...seoTools,
