@@ -36,7 +36,7 @@ export function Button({
         variant === "primary" && "btn-primary",
         variant === "secondary" && "btn-secondary",
         variant === "ghost" && "btn-ghost",
-        size === "sm" && "!min-h-8 !px-2.5 !py-1.5 !text-[0.6rem] !tracking-[0.1em]",
+        size === "sm" && "!min-h-[2.05rem] !px-3 !py-1.5 !text-[0.78rem]",
         className,
       )}
       {...props}
@@ -74,7 +74,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         className="pointer-events-none fixed inset-x-0 bottom-5 z-[80] flex justify-center px-4"
       >
         {message ? (
-          <div className="animate-in flex items-center gap-2 border border-[var(--text)] bg-[var(--text)] px-4 py-2 font-mono text-[0.64rem] uppercase tracking-[0.12em] text-[var(--page)]">
+          <div className="animate-in flex items-center gap-2 rounded-full border border-[var(--text)] bg-[var(--text)] px-4 py-2 text-[0.8rem] font-medium text-[var(--page)] shadow-[var(--shadow-lg)]">
             <Check className="size-4" aria-hidden />
             {message}
           </div>
@@ -373,18 +373,23 @@ export function ResultCard({
     <div
       aria-live="polite"
       className={cn(
-        "rounded-xl border p-4 sm:p-5",
+        "rounded-2xl border p-4 sm:p-5",
         tone === "brand"
-          ? "border-brand-200 bg-brand-50/60 dark:border-brand-800/60 dark:bg-brand-900/15"
+          ? "border-[var(--result-border)] bg-[var(--result-bg)]"
           : "border-[var(--border)] bg-[var(--surface-muted)]",
       )}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.09em] text-[var(--text-subtle)]">
+          <p className="font-mono text-[0.64rem] font-medium uppercase tracking-[0.12em] text-[var(--text-subtle)]">
             {label}
           </p>
-          <p className="mt-1 break-words font-mono text-2xl font-bold leading-tight text-[var(--text)] sm:text-[1.75rem]">
+          <p
+            className={cn(
+              "mt-1.5 break-words font-mono text-[1.7rem] font-bold leading-tight sm:text-[2rem]",
+              tone === "brand" ? "stat-number" : "text-[var(--text)]",
+            )}
+          >
             {value}
           </p>
           {sub ? <div className="mt-1.5 text-sm text-[var(--text-muted)]">{sub}</div> : null}
@@ -414,7 +419,7 @@ export function StatGrid({
     >
       {items.map((item) => (
         <div key={item.label} className="bg-[var(--surface)] px-3.5 py-3">
-          <dt className="text-[0.7rem] font-semibold uppercase tracking-[0.07em] text-[var(--text-subtle)]">
+          <dt className="font-mono text-[0.62rem] font-medium uppercase tracking-[0.1em] text-[var(--text-subtle)]">
             {item.label}
           </dt>
           <dd className="mt-1 font-mono text-lg font-semibold text-[var(--text)]">
@@ -442,7 +447,7 @@ export function Callout({
   return (
     <div
       className={cn(
-        "flex gap-3 rounded-xl border p-3.5 text-sm leading-relaxed",
+        "flex gap-3 rounded-2xl border p-4 text-sm leading-relaxed",
         tone === "info" &&
           "border-[var(--border)] bg-[var(--surface-muted)] text-[var(--text-muted)]",
         tone === "warning" &&

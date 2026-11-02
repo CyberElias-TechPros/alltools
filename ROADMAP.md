@@ -74,7 +74,7 @@ FAQs).
 | 1.10 | Tool page template (SEO, JSON-LD, sidebar, related tools, FAQ accordion) | ✅ |
 | 1.11 | Lazy-loading tool component registry (one bundle per tool) | ✅ |
 | 1.12 | Dark/light theme toggle with system preference and persistence | ✅ |
-| 1.13 | Visual identity: editorial "Instrument" design system (type pairing, paper/ink/signal palette, hairline catalogue language) | ✅ |
+| 1.13 | Visual identity: "Studio" design system (Bricolage/Inter Tight/JetBrains Mono pairing, colour-coded category tiles, white cards on warm canvas, soft depth) | ✅ |
 
 **1.1 — Stack.** *Why:* the blueprint's stack is Next.js + TypeScript + Tailwind. Strict
 TypeScript catches tool-logic bugs (unit unions, discriminated results) at compile time.

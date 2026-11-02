@@ -66,7 +66,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               { href: `/guides/${guide.slug}/`, label: "Article" },
             ]}
           />
-          <div className="border-b border-[var(--text)] pb-6">
+          <div className="border-b border-[var(--border)] pb-6">
             <p className="eyebrow">
               Guide · {guide.readingMinutes} min read · updated {guide.updated}
             </p>
@@ -107,7 +107,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                   <li key={tool.slug}>
                     <Link
                       href={`/tools/${tool.slug}/`}
-                      className="inline-flex items-center gap-1.5 border border-[var(--border-strong)] px-3 py-2 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-[var(--text-muted)] transition-colors hover:border-[var(--text)] hover:text-[var(--text)]"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3.5 py-2 text-[0.8rem] text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text)]"
                     >
                       {tool.name}
                       <ArrowRight className="size-3" aria-hidden />
@@ -120,7 +120,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         </article>
 
         <aside className="lg:sticky lg:top-28 lg:self-start">
-          <h2 className="eyebrow border-b border-[var(--text)] py-3">More guides</h2>
+          <h2 className="eyebrow border-b border-[var(--border)] py-3">More guides</h2>
           <ul>
             {more.map((item) => (
               <li key={item.slug}>
@@ -139,7 +139,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             ))}
           </ul>
 
-          <h2 className="eyebrow mt-8 border-b border-[var(--text)] py-3">Tools used here</h2>
+          <h2 className="eyebrow mt-8 border-b border-[var(--border)] py-3">Tools used here</h2>
           <div className="mt-3 grid gap-2">
             {tools.map((tool) => (tool ? <ToolCard key={tool.slug} tool={tool} compact /> : null))}
           </div>

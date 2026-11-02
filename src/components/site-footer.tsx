@@ -10,22 +10,19 @@ export function SiteFooter() {
   const liveCategories = categories.filter((category) => category.status === "live").length;
 
   return (
-    <footer className="mt-24 border-t border-[var(--border)]">
+    <footer className="mt-24 border-t border-[var(--border)] bg-[var(--page)]">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* Spec strip */}
-        <div className="grid grid-cols-2 divide-x divide-[var(--border)] border-b border-[var(--border)] sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 border-b border-[var(--border)] py-8 sm:grid-cols-4">
           {[
             { label: "Tools live", value: String(liveTools.length) },
             { label: "Categories", value: String(liveCategories) },
             { label: "Uploads", value: "0" },
             { label: "Accounts", value: "0" },
-          ].map((item, index) => (
-            <div
-              key={item.label}
-              className={`py-6 ${index === 0 ? "pr-4" : "px-4"} ${index === 3 ? "sm:pr-0" : ""}`}
-            >
+          ].map((item) => (
+            <div key={item.label} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
               <p className="eyebrow">{item.label}</p>
-              <p className="mt-1 font-display text-3xl font-bold tracking-[-0.04em] text-[var(--text)]">
+              <p className="mt-1 font-display text-2xl font-bold tracking-[-0.04em] text-[var(--text)]">
                 {item.value}
               </p>
             </div>
@@ -93,7 +90,7 @@ export function SiteFooter() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <p
             aria-hidden
-            className="select-none whitespace-nowrap pt-6 text-center font-display text-[19vw] font-extrabold leading-[0.78] tracking-[-0.06em] text-[var(--text)] opacity-[0.07]"
+            className="select-none whitespace-nowrap pt-6 text-center font-display text-[19vw] font-extrabold leading-[0.78] tracking-[-0.06em] text-[var(--text)] opacity-[0.05]"
           >
             TOOLORA
           </p>

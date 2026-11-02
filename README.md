@@ -89,37 +89,42 @@ src/
 `src/tools/*` only wires the two together. That is why the test suite can cover 254 tools
 with no DOM or browser needed.
 
-### Design system — "Instrument"
+### Design system — "Studio"
 
-The interface is an editorial/industrial catalogue rather than a generic SaaS dashboard:
-warm paper, ink, one signal colour, hairline rules, square geometry and a mechanical type
-pairing. Everything is defined once in `src/app/globals.css`.
+A calm, modern catalogue with an editorial spine: warm off-white canvas, white cards with
+soft depth, generous radii, colour-coded category tiles, and one signal orange reserved for
+actions and results. Everything is defined once in `src/app/globals.css`.
 
 | Token | Value (light / dark) | Used for |
 | --- | --- | --- |
-| `--page` | `#efede6` / `#0b0b09` | Page background (warm bone / near-black) |
-| `--surface` | `#f6f4ee` / `#141412` | Cards, panels, inputs |
-| `--border`, `--border-strong` | hairline warm greys | Every rule and divider |
+| `--page` | `#f7f6f2` / `#0b0c0e` | Page canvas (warm off-white / near-black) |
+| `--surface` | `#ffffff` / `#15171a` | Cards, panels, inputs |
+| `--surface-muted` | `#f2f1eb` / `#1d2024` | Inset rows, segmented controls, metadata |
+| `--border`, `--border-strong` | hairline warm greys | Card rims and dividers |
 | `--text`, `--text-muted`, `--text-subtle` | ink → grey | Body, secondary, mono metadata |
-| `--ring` | `#ff4b00` / `#ff6a2b` | Signal: focus rings, fills, marks |
-| `--accent-text` | `#b83500` / `#ff8452` | The same signal, darkened to pass 4.5:1 as *text* |
-| `--invert-bg` / `--invert-text` | ink on paper | Hover-inverted rows and the CTA band |
+| `--ring` | `#ff4b00` / `#ff7a3d` | Signal: focus rings, fills, marks |
+| `--accent-text` | `#b83500` / `#ff9166` | The same signal, darkened to pass 4.5:1 as *text* |
+| `--result-bg` / `--result-border` | tinted signal | Live result cards |
+| `--invert-bg` / `--invert-text` | ink on paper | Primary buttons and the CTA band |
 
 - **Type:** Bricolage Grotesque (`.display`, headings), Inter Tight (body), JetBrains Mono
   (`.eyebrow`, `.mono`, labels, counts). Self-hosted via `@fontsource-variable`, so there
   is no third-party font request.
-- **Geometry:** radius 2 px maximum (`--radius-*` in `@theme`), shadows disabled
-  (`--shadow-*: 0`), depth expressed with rules and type weight instead of blur.
-- **Signature components:** `.index-row` (the numbered, hover-inverting tool list),
-  `.panel-head` (mono caption strip on a framed panel), `.outline-numeral` (the outlined
-  hero count), `.eyebrow` (mono section labels), and a numbering scheme `01 — Index`,
-  `02 — Categories`, … across the site.
-- **Motion:** colour and 1–2 px translations only, all of it disabled under
-  `prefers-reduced-motion`.
+- **Geometry:** `--radius-sm` 6 px → `--radius-3xl` 24 px; cards are 18 px with the
+  `--shadow-soft` pair, and `.card-lift` adds a 2 px rise plus a deeper shadow on hover.
+- **Category colour:** `.cat-*` classes carry a hue per category (`--tint`, `--tint-soft`),
+  used by `CategoryTile` on cards, category grids and search results. The orange stays
+  reserved for actions, live results and focus.
+- **Signature components:** `.card` / `.card-lift` (white catalogue cards), `.panel-head`
+  (mono caption strip), `.stat-number` (accent result numerals), `.chip` (pill metadata),
+  `.index-row` (numbered list row that lifts on hover), and the directory sidebar with its
+  colour-coded category rail.
+- **Motion:** 160–200 ms colour, border and 2 px translations only, all of it disabled
+  under `prefers-reduced-motion`.
 
-Contrast is checked against the token pairs above: body text is 15.8:1 on paper, secondary
-text 7:1, mono metadata 4.7:1, and the signal colour is never used for small text without
-the `--accent-text` variant.
+Contrast is checked against the token pairs above: body text 16.7:1 on the canvas, secondary
+text 6.8:1, mono metadata 4.5:1 at its smallest size, and category tints 4.5–9:1 on their own
+soft backgrounds. The signal colour is never used for small text without `--accent-text`.
 
 ### Data model
 

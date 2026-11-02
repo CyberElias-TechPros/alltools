@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { HeaderStat, PageHeader } from "@/components/page-header";
-import { CategoryIcon } from "@/components/category-icon";
+import { CategoryTile } from "@/components/category-icon";
 import { categories } from "@/lib/tools/categories";
 import { toolCountByCategory } from "@/lib/tools/registry";
 
@@ -43,51 +43,36 @@ export default function CategoriesPage() {
         }
       />
 
-      <ul className="mt-2 border-t border-[var(--border)]">
-        {categories.map((category, index) => {
+      <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {categories.map((category) => {
           const count = toolCountByCategory[category.id] ?? 0;
           const planned = count === 0;
           return (
-            <li key={category.id} className="border-b border-[var(--border)]">
+            <li key={category.id} className="min-w-0">
               <Link
                 href={`/categories/${category.id}/`}
-                className="group grid grid-cols-[2rem_1fr_auto] items-baseline gap-x-4 gap-y-1 py-5 transition-colors hover:bg-[var(--surface-muted)] sm:grid-cols-[2.5rem_1.5rem_1fr_8rem_auto] sm:px-2"
+                className="card card-lift group flex h-full flex-col p-5"
               >
-                <span className="font-mono text-[0.62rem] tracking-[0.1em] text-[var(--text-subtle)]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span
-                  className={`col-start-2 hidden sm:block ${planned ? "text-[var(--text-subtle)]" : "text-[var(--text)]"}`}
-                >
-                  <CategoryIcon id={category.id} className="size-[1.05rem]" />
-                </span>
-                <span className="col-start-2 min-w-0 sm:col-start-3">
+                <div className="flex items-start justify-between gap-3">
+                  <CategoryTile id={category.id} size="lg" />
                   <span
-                    className={`block font-display text-[1.2rem] font-semibold leading-tight tracking-[-0.03em] transition-colors ${
-                      planned
-                        ? "text-[var(--text-subtle)]"
-                        : "text-[var(--text)] group-hover:text-[var(--accent-text)]"
+                    className={`shrink-0 rounded-full border border-[var(--border)] px-2.5 py-1 font-mono text-[0.58rem] uppercase tracking-[0.1em] ${
+                      planned ? "text-[var(--text-subtle)]" : "text-[var(--text-muted)]"
                     }`}
                   >
-                    {category.name}
+                    {planned ? "Planned" : `${count} tools`}
                   </span>
-                  <span className="mt-1 block max-w-2xl text-[0.86rem] leading-relaxed text-[var(--text-muted)]">
-                    {category.tagline}
-                  </span>
-                </span>
-                <span
-                  className={`hidden font-mono text-[0.6rem] uppercase tracking-[0.12em] sm:block ${
-                    planned ? "text-[var(--text-subtle)]" : "text-[var(--accent-text)]"
-                  }`}
-                >
-                  {planned ? "Planned" : `${count} live`}
-                </span>
-                <span className="col-start-3 flex items-center gap-3 self-center sm:col-start-5">
-                  <span className="font-mono text-[0.6rem] uppercase tracking-[0.12em] text-[var(--text-subtle)] sm:hidden">
-                    {planned ? "Planned" : `${count} live`}
-                  </span>
+                </div>
+                <h2 className="mt-4 font-display text-[1.15rem] font-semibold leading-tight tracking-[-0.03em] text-[var(--text)]">
+                  {category.name}
+                </h2>
+                <p className="mt-1.5 text-[0.86rem] leading-relaxed text-[var(--text-muted)]">
+                  {category.tagline}
+                </p>
+                <span className="mt-4 inline-flex items-center gap-1 text-[0.8rem] font-medium text-[var(--accent-text)]">
+                  Browse
                   <ArrowUpRight
-                    className="size-4 text-[var(--text-subtle)] transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[var(--accent-text)]"
+                    className="size-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                     aria-hidden
                   />
                 </span>

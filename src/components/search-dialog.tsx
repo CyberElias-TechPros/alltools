@@ -168,12 +168,12 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="group flex h-10 items-center gap-2 border border-[var(--border-strong)] bg-[var(--surface)] px-2.5 font-mono text-[0.64rem] uppercase tracking-[0.12em] text-[var(--text-muted)] transition-colors hover:border-[var(--text)] hover:text-[var(--text)] md:min-w-56 md:justify-between"
+        className="group flex h-10 items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 text-[0.82rem] text-[var(--text-subtle)] shadow-[0_1px_2px_rgb(20_22_26/0.04)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text)] md:min-w-52 md:justify-between"
         aria-label="Search tools"
       >
         <span className="flex items-center gap-2">
-          <Search className="size-3.5" aria-hidden />
-          <span className="hidden md:inline">Search</span>
+          <Search className="size-4" aria-hidden />
+          <span className="hidden md:inline">Search tools</span>
         </span>
         <span className="hidden items-center gap-1 md:flex">
           <kbd className="kbd">⌘</kbd>

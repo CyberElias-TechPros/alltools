@@ -6,7 +6,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { HeaderStat } from "@/components/page-header";
 import { JsonLd } from "@/components/json-ld";
 import { ToolCard, PlannedToolPill } from "@/components/tool-card";
-import { CategoryIcon } from "@/components/category-icon";
+import { CategoryIcon, CategoryTile } from "@/components/category-icon";
 import { categories, getCategory } from "@/lib/tools/categories";
 import { toolsByCategory } from "@/lib/tools/registry";
 import { siteConfig } from "@/lib/site";
@@ -67,12 +67,10 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
         ]}
       />
 
-      <header className="border-b border-[var(--text)] pb-6">
+      <header className="pb-2">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="flex size-9 items-center justify-center border border-[var(--border-strong)] text-[var(--text)]">
-            <CategoryIcon id={category.id} className="size-4" />
-          </span>
-          <span className="eyebrow">
+          <CategoryTile id={category.id} size="lg" />
+          <span className="chip">
             {live.length > 0 ? `${live.length} tools live` : "Planned — not yet published"}
           </span>
         </div>
@@ -90,20 +88,20 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
 
       {live.length > 0 ? (
         <section className="mt-10">
-          <div className="flex items-baseline justify-between border-b border-[var(--text)] pb-3">
-            <h2 className="section-title text-[var(--text)]">Live in this category</h2>
-            <span className="font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--text-subtle)]">
-              {String(live.length).padStart(2, "0")} tools
-            </span>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 className="font-display text-[clamp(1.5rem,3vw,2.1rem)] font-bold tracking-[-0.035em] text-[var(--text)]">
+              Every tool in this shelf
+            </h2>
+            <span className="chip">{live.length} tools</span>
           </div>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {live.map((tool) => (
               <ToolCard key={tool.slug} tool={tool} />
             ))}
           </div>
         </section>
       ) : (
-        <div className="mt-10 border border-dashed border-[var(--border-strong)] p-6">
+        <div className="mt-10 rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--surface)] p-6">
           <p className="text-sm font-semibold text-[var(--text)]">
             This category is on the roadmap
           </p>
@@ -117,7 +115,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
 
       {category.plannedTools.length > 0 && (
       <section className="mt-12">
-        <div className="flex items-baseline gap-3 border-b border-[var(--text)] pb-3">
+        <div className="flex items-baseline gap-3 border-b border-[var(--border)] pb-3">
           <Clock className="size-3.5 self-center text-[var(--text-subtle)]" aria-hidden />
           <h2 className="section-title text-[var(--text)]">Planned for this category</h2>
         </div>
@@ -138,14 +136,14 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
       )}
 
       {related.length ? (
-        <section className="mt-12 border-t border-[var(--text)] pt-5">
-          <h2 className="eyebrow">Other live categories</h2>
+        <section className="mt-12 border-t border-[var(--border)] pt-6">
+          <h2 className="eyebrow">Other shelves</h2>
           <div className="mt-3 flex flex-wrap gap-2">
             {related.map((item) => (
               <Link
                 key={item.id}
                 href={`/categories/${item.id}/`}
-                className="inline-flex items-center gap-1.5 border border-[var(--border)] px-3 py-2 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-[var(--text-muted)] transition-colors hover:border-[var(--text)] hover:text-[var(--text)]"
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3.5 py-2 text-[0.8rem] text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text)]"
               >
                 <CategoryIcon id={item.id} className="size-3.5" />
                 {item.shortName}

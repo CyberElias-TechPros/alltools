@@ -7,7 +7,7 @@ export default function NotFound() {
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6">
       <p className="outline-numeral text-[28vw] leading-none sm:text-[16rem]">404</p>
-      <div className="-mt-4 border-t border-[var(--text)] pt-6">
+      <div className="-mt-4 border-t border-[var(--border)] pt-6">
         <h1 className="display text-[clamp(1.9rem,4.4vw,3rem)] text-[var(--text)]">
           That page does not exist
         </h1>
@@ -28,7 +28,7 @@ export default function NotFound() {
       </div>
 
       <section className="mt-14">
-        <div className="border-b border-[var(--text)] pb-3">
+        <div className="border-b border-[var(--border)] pb-3">
           <h2 className="eyebrow">Popular tools</h2>
         </div>
         <ol className="mt-2">

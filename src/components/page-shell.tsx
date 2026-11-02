@@ -19,7 +19,7 @@ export function PageShell({
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
       <Breadcrumbs items={breadcrumbs} />
-      <header className="max-w-3xl border-b border-[var(--text)] pb-6">
+      <header className="max-w-3xl border-b border-[var(--border)] pb-6">
         <h1 className="display text-[clamp(2.1rem,4.6vw,3.35rem)] text-[var(--text)]">{title}</h1>
         {intro ? <p className="lede mt-4">{intro}</p> : null}
         {updated ? (

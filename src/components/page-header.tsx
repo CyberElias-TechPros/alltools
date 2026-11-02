@@ -1,9 +1,8 @@
 import type { ReactNode } from "react";
 
 /**
- * Editorial page head: numbered section label, oversized display title, lede and
- * an optional right-hand meta column. Closed by an ink rule so every page opens
- * the same way.
+ * Page head used by every interior page: a small label, a large display title,
+ * an optional lede and a right-hand meta column rendered as stat cards.
  */
 export function PageHeader({
   label,
@@ -19,17 +18,17 @@ export function PageHeader({
   children?: ReactNode;
 }) {
   return (
-    <header className="border-b border-[var(--text)] pb-6">
-      <div className="grid gap-6 lg:grid-cols-12 lg:gap-10">
-        <div className="lg:col-span-8">
+    <header className="pb-2">
+      <div className="grid gap-8 lg:grid-cols-[1.65fr_1fr] lg:items-end lg:gap-12">
+        <div>
           <p className="eyebrow">{label}</p>
-          <h1 className="display mt-3 text-[clamp(2.2rem,5.2vw,3.9rem)] text-[var(--text)]">
+          <h1 className="display mt-3 text-[clamp(2.15rem,4.6vw,3.5rem)] text-[var(--text)]">
             {title}
           </h1>
           {lede ? <p className="lede mt-4">{lede}</p> : null}
         </div>
         {meta ? (
-          <div className="self-end border-t border-[var(--border)] pt-3 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+          <div className="grid gap-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[var(--shadow-soft)] sm:grid-cols-3 lg:grid-cols-1">
             {meta}
           </div>
         ) : null}
@@ -41,8 +40,8 @@ export function PageHeader({
 
 export function HeaderStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 border-b border-[var(--border)] py-2 last:border-b-0">
-      <span className="font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--text-subtle)]">
+    <div className="flex items-baseline justify-between gap-4 rounded-xl px-1 py-1.5 lg:px-2">
+      <span className="font-mono text-[0.6rem] uppercase tracking-[0.12em] text-[var(--text-subtle)]">
         {label}
       </span>
       <span className="font-display text-lg font-bold tracking-[-0.03em] text-[var(--text)]">

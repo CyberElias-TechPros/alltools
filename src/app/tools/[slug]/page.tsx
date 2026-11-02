@@ -8,7 +8,8 @@ import { AdSlot } from "@/components/ad-slot";
 import { ToolRunner } from "@/tools/registry";
 import { getCategory } from "@/lib/tools/categories";
 import { liveTools, relatedTools, tools } from "@/lib/tools/registry";
-import { CategoryIcon } from "@/components/category-icon";
+import { CategoryTile } from "@/components/category-icon";
+import { ToolCard } from "@/components/tool-card";
 import { siteConfig } from "@/lib/site";
 
 export function generateStaticParams() {
@@ -113,41 +114,39 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_17rem]">
           <div className="min-w-0">
             <header>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <Link
-                  href={`/categories/${category.id}/`}
-                  className="inline-flex items-center gap-1.5 font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--accent-text)] transition-opacity hover:opacity-70"
-                >
-                  <CategoryIcon id={category.id} className="size-3.5" />
-                  {category.name}
-                </Link>
-                <span className="tag">
-                  <span className="size-[5px] bg-[var(--text-subtle)]" aria-hidden /> Instant result
-                </span>
-                <span className="tag">
-                  <span className="size-[5px] bg-[var(--text-subtle)]" aria-hidden /> Runs in your
-                  browser
-                </span>
-              </div>
+              <Link
+                href={`/categories/${category.id}/`}
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] py-1 pl-1.5 pr-3 text-[0.75rem] font-medium text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text)]"
+              >
+                <CategoryTile id={category.id} size="sm" className="size-6 rounded-[6px]" />
+                {category.shortName}
+              </Link>
 
-              <h1 className="display mt-4 text-[clamp(2.2rem,5vw,3.6rem)] text-[var(--text)]">
+              <h1 className="display mt-5 text-[clamp(2.1rem,4.6vw,3.3rem)] text-[var(--text)]">
                 {tool.name}
               </h1>
-              <p className="mt-3 max-w-2xl text-[1.06rem] leading-relaxed text-[var(--text-muted)]">
+              <p className="mt-3 max-w-2xl text-[1.05rem] leading-relaxed text-[var(--text-muted)]">
                 {tool.tagline}
               </p>
+              <ul className="mt-4 flex flex-wrap items-center gap-1.5">
+                {["Runs in your browser", "No sign-up", "Results are instant"].map((item) => (
+                  <li key={item} className="chip">
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </header>
 
             {/* Tool console */}
-            <div className="mt-8 border border-[var(--border-strong)] bg-[var(--surface)]">
+            <div className="card mt-8 overflow-hidden">
               <div className="panel-head">
-                <span className="flex items-center gap-2">
-                  <span className="size-[6px] bg-[var(--ring)]" aria-hidden />
+                <span className="flex items-center gap-2 font-medium text-[var(--text-muted)]">
+                  <span className="size-[6px] rounded-full bg-[var(--ring)]" aria-hidden />
                   Live tool
                 </span>
-                <span className="hidden sm:inline">Local only · no upload</span>
+                <span className="hidden sm:inline">Local only · nothing uploaded</span>
               </div>
-              <div className="p-4 sm:p-5">
+              <div className="p-4 sm:p-6">
                 <ToolRunner slug={tool.slug} />
               </div>
             </div>
@@ -185,7 +184,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                     <p key={paragraph.slice(0, 24)}>{paragraph}</p>
                   ))}
                   {tool.content.method.formula ? (
-                    <pre className="my-4 overflow-x-auto border border-[var(--border)] bg-[var(--code-bg)] p-4 font-mono text-[0.82rem] leading-relaxed text-[var(--text)]">
+                    <pre className="my-4 overflow-x-auto rounded-xl border border-[var(--border)] bg-[var(--code-bg)] p-4 font-mono text-[0.82rem] leading-relaxed text-[var(--text)]">
                       <code>{tool.content.method.formula}</code>
                     </pre>
                   ) : null}
@@ -193,9 +192,9 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
               ) : null}
 
               <h2 id="examples">Worked examples</h2>
-              <div className="not-prose mt-4 space-y-px bg-[var(--border)]">
+              <div className="not-prose mt-4 grid gap-3 sm:grid-cols-2">
                 {tool.content.examples.map((example) => (
-                  <div key={example.title} className="bg-[var(--surface)] p-4 sm:p-5">
+                  <div key={example.title} className="card p-5">
                     <h3 className="font-display text-[1.02rem] font-semibold tracking-[-0.02em] text-[var(--text)]">
                       {example.title}
                     </h3>
@@ -204,7 +203,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                         <li key={step.slice(0, 24)}>{step}</li>
                       ))}
                     </ol>
-                    <p className="mt-3 flex items-start gap-2 border-l-2 border-[var(--ring)] bg-[var(--surface-muted)] px-3 py-2 font-mono text-[0.78rem] text-[var(--text)]">
+                    <p className="mt-3 flex items-start gap-2 rounded-lg border-l-2 border-[var(--ring)] bg-[var(--surface-muted)] px-3 py-2 font-mono text-[0.78rem] text-[var(--text)]">
                       <CheckCircle2
                         className="mt-0.5 size-3.5 shrink-0 text-[var(--accent-text)]"
                         aria-hidden
@@ -223,9 +222,12 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
               </ul>
 
               <h2 id="faq">Frequently asked questions</h2>
-              <div className="not-prose mt-4 border-t border-[var(--border)]">
+              <div className="not-prose mt-4 grid gap-2">
                 {tool.content.faqs.map((faq) => (
-                  <details key={faq.q} className="group border-b border-[var(--border)]">
+                  <details
+                    key={faq.q}
+                    className="group rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4"
+                  >
                     <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-3.5 [&::-webkit-details-marker]:hidden">
                       <span className="font-display text-[1rem] font-semibold tracking-[-0.02em] text-[var(--text)]">
                         {faq.q}
@@ -247,9 +249,9 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           </div>
 
           <aside className="lg:sticky lg:top-28 lg:self-start">
-            <div className="border-t border-[var(--text)]">
-              <h2 className="eyebrow py-3">On this page</h2>
-              <nav aria-label="On this page" className="flex flex-col">
+            <div className="card p-4">
+              <h2 className="eyebrow">On this page</h2>
+              <nav aria-label="On this page" className="mt-2 flex flex-col">
                 {[
                   { id: "about", label: "About this tool" },
                   { id: "how-to-use", label: "How to use it" },
@@ -261,7 +263,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                   <a
                     key={item.id}
                     href={`#${item.id}`}
-                    className="border-b border-[var(--border)] py-2 text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--accent-text)]"
+                    className="rounded-lg px-2 py-1.5 text-[0.86rem] text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-muted)] hover:text-[var(--text)]"
                   >
                     {item.label}
                   </a>
@@ -269,14 +271,14 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
               </nav>
             </div>
 
-            <div className="mt-8">
-              <h2 className="eyebrow border-b border-[var(--text)] py-3">Related tools</h2>
-              <ul>
+            <div className="card mt-3 p-4">
+              <h2 className="eyebrow">Related tools</h2>
+              <ul className="mt-2">
                 {related.map((item) => (
                   <li key={item.slug}>
                     <Link
                       href={`/tools/${item.slug}/`}
-                      className="group flex items-baseline justify-between gap-3 border-b border-[var(--border)] py-2.5"
+                      className="group flex items-baseline justify-between gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-[var(--surface-muted)]"
                     >
                       <span className="min-w-0">
                         <span className="block font-display text-[0.95rem] font-semibold leading-tight tracking-[-0.02em] text-[var(--text)] transition-colors group-hover:text-[var(--accent-text)]">
@@ -293,47 +295,32 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
               </ul>
               <Link
                 href={`/categories/${category.id}/`}
-                className="mt-4 inline-flex items-center gap-1.5 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--text)] transition-colors hover:text-[var(--accent-text)]"
+                className="mt-3 inline-flex items-center gap-1.5 px-2 text-[0.8rem] font-medium text-[var(--accent-text)] hover:underline"
               >
-                All {category.shortName.toLowerCase()} tools
+                All {category.shortName} tools
                 <ArrowRight className="size-3" aria-hidden />
               </Link>
             </div>
           </aside>
         </div>
 
-        <section className="mt-16 border-t border-[var(--text)] pt-6">
+        <section className="mt-16 border-t border-[var(--border)] pt-10">
           <div className="flex flex-wrap items-end justify-between gap-3">
-            <h2 className="section-title text-[var(--text)]">
-              More {category.shortName.toLowerCase()} tools
+            <h2 className="font-display text-[clamp(1.5rem,3vw,2rem)] font-bold tracking-[-0.035em] text-[var(--text)]">
+              More {category.shortName} tools
             </h2>
             <Link
               href="/tools/"
-              className="inline-flex items-center gap-1.5 font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--text)] transition-colors hover:text-[var(--accent-text)]"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-[0.8rem] font-medium text-[var(--text)] transition-colors hover:border-[var(--border-strong)]"
             >
               Browse all
               <ArrowRight className="size-3.5" aria-hidden />
             </Link>
           </div>
-          <ol className="mt-4">
-            {related.slice(0, 4).map((item, index) => (
-              <li key={item.slug}>
-                <Link
-                  href={`/tools/${item.slug}/`}
-                  className="index-row grid-cols-[1.75rem_1fr_auto] sm:grid-cols-[2.25rem_1fr_9rem_auto]"
-                >
-                  <span className="index-row-num">{String(index + 1).padStart(2, "0")}</span>
-                  <span className="min-w-0">
-                    <span className="index-row-title block">{item.name}</span>
-                    <span className="index-row-desc mt-1 block truncate text-[0.84rem]">
-                      {item.tagline}
-                    </span>
-                  </span>
-                  <span className="index-row-meta hidden sm:block">
-                    {getCategory(item.category).shortName}
-                  </span>
-                  <ArrowUpRight className="index-row-arrow size-4" aria-hidden />
-                </Link>
+          <ol className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {related.slice(0, 4).map((item) => (
+              <li key={item.slug} className="min-w-0">
+                <ToolCard tool={item} compact className="h-full" />
               </li>
             ))}
           </ol>

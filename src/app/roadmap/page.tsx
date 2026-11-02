@@ -139,7 +139,7 @@ export default function RoadmapPage() {
 
       <div className="mt-14 grid gap-12 lg:grid-cols-2">
         <section>
-          <div className="flex items-baseline justify-between border-b border-[var(--text)] pb-3">
+          <div className="flex items-baseline justify-between border-b border-[var(--border)] pb-3">
             <h2 className="section-title text-[var(--text)]">Live by category</h2>
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--text-subtle)]">
               {liveTools.length} tools
@@ -165,7 +165,7 @@ export default function RoadmapPage() {
         </section>
 
         <section>
-          <div className="flex items-baseline justify-between border-b border-[var(--text)] pb-3">
+          <div className="flex items-baseline justify-between border-b border-[var(--border)] pb-3">
             <h2 className="section-title text-[var(--text)]">Not built yet</h2>
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--text-subtle)]">
               {plannedTools.length} planned

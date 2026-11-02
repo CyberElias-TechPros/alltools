@@ -3,11 +3,12 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
-  TOOLORA — "INSTRUMENT" DESIGN SYSTEM
-  ------------------------------------
-  An editorial/industrial catalogue: warm paper, ink, one signal colour, hairline
-  rules, a mechanical type pairing and no decorative effects. Radii are 2px and
-  shadows are disabled — depth comes from rules and typography, not from blur.
+  TOOLORA — "STUDIO" DESIGN SYSTEM
+  --------------------------------
+  A calm, modern catalogue: warm off-white canvas, white cards with soft depth,
+  generous radii, colour-coded category tiles and one signal colour. The
+  mechanical type pairing stays — that is the identity — but the geometry is
+  friendlier than the original instrument-boards aesthetic.
 
   Type: Bricolage Grotesque (display) · Inter Tight (text) · JetBrains Mono (meta)
 */
@@ -38,58 +39,66 @@
   --color-accent-500: #4b4f43;
   --color-accent-600: #33362d;
 
-  /* Square-ish geometry everywhere. */
-  --radius-sm: 1px;
-  --radius-md: 2px;
-  --radius-lg: 2px;
-  --radius-xl: 2px;
-  --radius-2xl: 2px;
-  --radius-3xl: 2px;
+  /* Soft, modern geometry. These tokens cascade into every tool surface. */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+  --radius-3xl: 24px;
 
-  --shadow-soft: 0 0 #0000;
-  --shadow-lg: 0 0 #0000;
-  --shadow-2xl: 0 0 #0000;
+  --shadow-soft: 0 1px 2px rgb(20 22 26 / 0.04), 0 12px 32px -20px rgb(20 22 26 / 0.28);
+  --shadow-lg: 0 1px 2px rgb(20 22 26 / 0.05), 0 24px 48px -28px rgb(20 22 26 / 0.35);
+  --shadow-2xl: 0 32px 64px -32px rgb(20 22 26 / 0.4);
 }
 
 @layer base {
   :root {
-    --page: #efede6;
-    --page-elevated: #f5f3ec;
-    --surface: #f6f4ee;
-    --surface-muted: #e7e4da;
-    --border: #d7d3c6;
-    --border-strong: #b6b1a0;
-    --text: #14140f;
-    --text-muted: #514f47;
-    --text-subtle: #6c695e;
+    --page: #f7f6f2;
+    --page-elevated: #fbfaf7;
+    --surface: #ffffff;
+    --surface-muted: #f2f1eb;
+    --surface-sunken: #eae8e0;
+    --border: #e6e4dc;
+    --border-strong: #d5d2c7;
+    --text: #15161a;
+    --text-muted: #55565e;
+    --text-subtle: #6f717a;
     --ring: #ff4b00;
+    --ring-soft: color-mix(in oklab, #ff4b00 14%, transparent);
+    --result-bg: color-mix(in oklab, #ff4b00 6%, #ffffff);
+    --result-border: color-mix(in oklab, #ff4b00 22%, #e6e4dc);
     --accent-text: #b83500;
-    --code-bg: #e9e6db;
-    --invert-bg: #14140f;
-    --invert-text: #f5f3ec;
+    --code-bg: #f2f1eb;
+    --invert-bg: #15161a;
+    --invert-text: #fbfaf7;
     --invert-mark: #ff4b00;
-    --grain: 0.035;
-    --grid-line: color-mix(in oklab, #14140f 8%, transparent);
+    --grain: 0.014;
+    --grid-line: color-mix(in oklab, #15161a 6%, transparent);
   }
 
   .dark {
-    --page: #0b0b09;
-    --page-elevated: #121210;
-    --surface: #141412;
-    --surface-muted: #1d1d19;
-    --border: #2b2b26;
-    --border-strong: #45453c;
-    --text: #f3f1ea;
-    --text-muted: #b3b0a5;
-    --text-subtle: #918e83;
-    --ring: #ff6a2b;
-    --accent-text: #ff8452;
-    --code-bg: #171714;
-    --invert-bg: #f3f1ea;
-    --invert-text: #0b0b09;
+    --page: #0b0c0e;
+    --page-elevated: #101114;
+    --surface: #15171a;
+    --surface-muted: #1d2024;
+    --surface-sunken: #111316;
+    --border: #272b31;
+    --border-strong: #3a3f47;
+    --text: #f4f3ee;
+    --text-muted: #aeb0b8;
+    --text-subtle: #85878f;
+    --ring: #ff7a3d;
+    --ring-soft: color-mix(in oklab, #ff7a3d 20%, transparent);
+    --result-bg: color-mix(in oklab, #ff7a3d 9%, #15171a);
+    --result-border: color-mix(in oklab, #ff7a3d 26%, #272b31);
+    --accent-text: #ff9166;
+    --code-bg: #1b1e22;
+    --invert-bg: #f4f3ee;
+    --invert-text: #0b0c0e;
     --invert-mark: #b83500;
-    --grain: 0.05;
-    --grid-line: color-mix(in oklab, #f3f1ea 9%, transparent);
+    --grain: 0.02;
+    --grid-line: color-mix(in oklab, #f4f3ee 7%, transparent);
   }
 
   html {
@@ -125,7 +134,6 @@
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
-    border-radius: 0;
   }
 
   h1,
@@ -225,14 +233,28 @@
   .card {
     background-color: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 2px;
-    box-shadow: none;
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Interactive card: lifts a little on hover instead of inverting. */
+  .card-lift {
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .card-lift:hover,
+  .card-lift:focus-visible {
+    transform: translateY(-2px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-lg);
   }
 
   .panel {
     background-color: var(--surface);
-    border: 1px solid var(--border-strong);
-    border-radius: 2px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-soft);
   }
 
   /* A labelled frame: mono caption rule across the top of a block. */
@@ -241,9 +263,10 @@
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0.5rem 0.75rem;
+    padding: 0.7rem 1rem;
     border-bottom: 1px solid var(--border);
     background-color: var(--surface-muted);
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
     font-family: var(--font-mono);
     font-size: 0.62rem;
     letter-spacing: 0.16em;
@@ -290,19 +313,26 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 2px;
-    font-family: var(--font-mono);
-    font-weight: 500;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: -0.005em;
     line-height: 1;
-    padding: 0.85rem 1.1rem;
-    min-height: 2.75rem;
+    padding: 0.8rem 1.05rem;
+    min-height: 2.7rem;
     border: 1px solid var(--border-strong);
-    transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+    background-color: var(--surface);
+    color: var(--text);
+    transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease,
+      box-shadow 0.16s ease, transform 0.16s ease;
     cursor: pointer;
     white-space: nowrap;
+  }
+
+  .btn:hover:not(:disabled) {
+    border-color: var(--text);
+    box-shadow: 0 1px 2px rgb(20 22 26 / 0.06);
   }
 
   .btn:active {
@@ -324,31 +354,31 @@
   .btn-primary:hover:not(:disabled) {
     background-color: var(--ring);
     border-color: var(--ring);
-    color: #14140f;
+    color: #15161a;
   }
 
   .btn-accent {
     background-color: var(--ring);
     border-color: var(--ring);
-    color: #14140f;
+    color: #15161a;
   }
 
   .btn-accent:hover:not(:disabled) {
-    background-color: var(--text);
-    border-color: var(--text);
-    color: var(--page);
+    background-color: color-mix(in oklab, var(--ring) 84%, #000);
+    border-color: color-mix(in oklab, var(--ring) 84%, #000);
+    color: #15161a;
   }
 
   .btn-secondary {
-    background-color: transparent;
+    background-color: var(--surface);
     color: var(--text);
     border-color: var(--border-strong);
   }
 
   .btn-secondary:hover:not(:disabled) {
-    background-color: var(--text);
-    color: var(--page);
-    border-color: var(--text);
+    background-color: var(--surface-muted);
+    color: var(--text);
+    border-color: var(--text-subtle);
   }
 
   .btn-ghost {
@@ -357,9 +387,15 @@
     border-color: transparent;
   }
 
+  .btn-ghost {
+    background-color: transparent;
+  }
+
   .btn-ghost:hover:not(:disabled) {
     background-color: var(--surface-muted);
     color: var(--text);
+    border-color: transparent;
+    box-shadow: none;
   }
 
   .input {
@@ -367,11 +403,11 @@
     background-color: var(--surface);
     color: var(--text);
     border: 1px solid var(--border-strong);
-    border-radius: 2px;
-    padding: 0.7rem 0.8rem;
-    min-height: 2.75rem;
+    border-radius: var(--radius-md);
+    padding: 0.7rem 0.85rem;
+    min-height: 2.7rem;
     font-size: 0.95rem;
-    transition: border-color 0.15s ease, background-color 0.15s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
   }
 
   .input::placeholder {
@@ -385,23 +421,23 @@
   .input:focus {
     outline: none;
     border-color: var(--ring);
-    background-color: var(--page-elevated);
-    box-shadow: inset 0 0 0 1px var(--ring);
+    background-color: var(--surface);
+    box-shadow: 0 0 0 3px var(--ring-soft);
   }
 
   .input[aria-invalid="true"] {
     border-color: #c0392b;
-    box-shadow: inset 0 0 0 1px #c0392b;
+    box-shadow: 0 0 0 3px rgb(192 57 43 / 0.14);
   }
 
   .label {
     display: block;
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     font-weight: 500;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--text-subtle);
     margin-bottom: 0.4rem;
   }
 
@@ -409,22 +445,22 @@
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    border-radius: 2px;
+    border-radius: 999px;
     border: 1px solid var(--border);
-    background: transparent;
+    background: var(--surface);
     color: var(--text-muted);
     font-family: var(--font-mono);
     font-size: 0.6rem;
     font-weight: 500;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 0.25rem 0.45rem;
+    padding: 0.3rem 0.6rem;
   }
 
   .chip-accent {
-    border-color: var(--ring);
-    background-color: var(--ring);
-    color: #14140f;
+    border-color: color-mix(in oklab, var(--ring) 30%, var(--border));
+    background-color: color-mix(in oklab, var(--ring) 12%, var(--surface));
+    color: var(--accent-text);
   }
 
   .tag {
@@ -440,11 +476,12 @@
 
   .kbd {
     font-family: var(--font-mono);
-    font-size: 0.64rem;
+    font-size: 0.66rem;
     letter-spacing: 0.04em;
-    border: 1px solid var(--border-strong);
-    border-radius: 1px;
-    padding: 0.1rem 0.3rem;
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 6px;
+    padding: 0.12rem 0.36rem;
     color: var(--text-muted);
     background: var(--surface);
   }
@@ -497,17 +534,22 @@
     transition: background-color 0.18s ease, color 0.18s ease, padding 0.18s ease;
   }
 
+  .index-row {
+    border-radius: var(--radius-lg);
+  }
+
   .index-row:hover,
   .index-row:focus-visible {
-    background-color: var(--invert-bg);
-    color: var(--invert-text);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-soft);
+    border-color: transparent;
     padding-left: 0.9rem;
     padding-right: 0.9rem;
   }
 
   .index-row:hover .index-row-meta,
   .index-row:focus-visible .index-row-meta {
-    color: color-mix(in oklab, var(--invert-text) 70%, transparent);
+    color: var(--text-subtle);
   }
 
   .index-row:hover .index-row-arrow,
@@ -559,6 +601,70 @@
     color: var(--text-subtle);
   }
 
+  /* ---------- Category colour system ---------- */
+
+  /*
+    One hue per category, used only on icon tiles and small meta labels. The
+    signal orange stays reserved for actions and live results, so the rainbow
+    never competes with the thing the visitor is meant to press.
+  */
+  .cat-text { --tint: #b45309; --tint-soft: #fbf0dd; }
+  .cat-calculators { --tint: #1d4ed8; --tint-soft: #e8eeff; }
+  .cat-finance { --tint: #047857; --tint-soft: #e2f6ee; }
+  .cat-developer { --tint: #6d28d9; --tint-soft: #f0eaff; }
+  .cat-everyday { --tint: #be123c; --tint-soft: #fdeaee; }
+  .cat-seo { --tint: #0e7490; --tint-soft: #e3f4f8; }
+  .cat-security { --tint: #334155; --tint-soft: #eceff3; }
+  .cat-images { --tint: #a21caf; --tint-soft: #fbe9fb; }
+  .cat-pdf { --tint: #b91c1c; --tint-soft: #fdeaea; }
+  .cat-education { --tint: #0f766e; --tint-soft: #e3f6f4; }
+  .cat-internet { --tint: #0369a1; --tint-soft: #e4f1fa; }
+  .cat-business { --tint: #c2410c; --tint-soft: #fdeee3; }
+
+  .dark .cat-text { --tint: #fbbf24; --tint-soft: #37290d; }
+  .dark .cat-calculators { --tint: #7aa2ff; --tint-soft: #16233f; }
+  .dark .cat-finance { --tint: #34d399; --tint-soft: #0f2b23; }
+  .dark .cat-developer { --tint: #c0a2ff; --tint-soft: #251c3a; }
+  .dark .cat-everyday { --tint: #fb7185; --tint-soft: #33161c; }
+  .dark .cat-seo { --tint: #38bdf8; --tint-soft: #0d2630; }
+  .dark .cat-security { --tint: #cbd5e1; --tint-soft: #232a33; }
+  .dark .cat-images { --tint: #e879f9; --tint-soft: #2f1233; }
+  .dark .cat-pdf { --tint: #f87171; --tint-soft: #331616; }
+  .dark .cat-education { --tint: #2dd4bf; --tint-soft: #0e2b28; }
+  .dark .cat-internet { --tint: #38bdf8; --tint-soft: #0d2432; }
+  .dark .cat-business { --tint: #fb923c; --tint-soft: #331d0f; }
+
+  /* Neutral tile for "all tools" and other non-category marks. */
+  .cat-neutral { --tint: var(--text-muted); --tint-soft: var(--surface-muted); }
+
+  .cat-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background-color: var(--tint-soft);
+    color: var(--tint);
+    border-radius: var(--radius-lg);
+  }
+
+  .cat-label {
+    color: var(--tint);
+  }
+
+  /* ---------- Result numerals ---------- */
+
+  .stat-number {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--accent-text);
+  }
+
+  .dark .stat-number {
+    color: var(--ring);
+  }
+
   /* ---------- Prose ---------- */
 
   .prose-tool {
@@ -575,8 +681,6 @@
     letter-spacing: -0.03em;
     margin-top: 2.75rem;
     margin-bottom: 0.85rem;
-    padding-top: 1.1rem;
-    border-top: 1px solid var(--border);
     scroll-margin-top: 6rem;
   }
 
