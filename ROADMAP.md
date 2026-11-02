@@ -391,16 +391,24 @@ assets, network-first for HTML) so updates are not stuck behind an old service w
 
 **Completed (verifiable in the repo):** product definition and PRD; static Next.js
 foundation; design system with dark mode; header/footer/search/breadcrumb shell; data model
-and 12-category taxonomy; 41 live tools across 7 categories, each with editorial content;
-tool page template with JSON-LD; code-split tool registry; 139 automated tests across 7
-suites; homepage, directory, category, guide, about, contact, roadmap and six policy pages;
-sitemap, robots, manifest, 404; consent-gated analytics; inert ad slots; public documentation
-(README, PRD, testing guide, AdSense audit).
+and 12-category taxonomy; **184 live tools across 10 categories** (text 23, calculators 28,
+finance 25, developer 30, images 20, PDF 19, SEO 24, internet 10, everyday 4, security 1),
+each with editorial content; every tool runs client-side with no backend calls — including
+PDF editing (pdf-lib), DOCX text extraction, image processing, hashing, code formatting,
+QR generation and decoding; tool page template with JSON-LD; code-split tool registry;
+**480 automated tests across 19 suites**, including a render smoke test over every tool
+component; homepage, directory, category, guide, about, contact, roadmap and six policy
+pages; sitemap, robots, manifest, 404; consent-gated analytics; inert ad slots; public
+documentation (README, PRD, testing guide, AdSense audit).
 
-**Pending (code work, no external dependency):** manual browser QA of all 41 tools;
+**Pending (code work, no external dependency):** manual browser QA of all 184 tools;
 Lighthouse/CWV measurement; screen-reader pass; Playwright smoke tests; visual regression
-baselines; certified CMP integration; image/PDF/education/internet/business tool categories;
-PWA offline caching; localisation.
+baselines; certified CMP integration; the remaining blueprint sections — education (I, 20
+tools), everyday (J, 23), business (K, 21) and security (L, 12); PWA offline caching;
+localisation. Eight network tools (URL shortener, IP lookup, DNS, header checker, TLS
+expiry, status and response-time probes, redirect tracer) and the broken-link checker stay
+catalogued as planned because they genuinely require a server; the PDF password tool stays
+planned until an audited encryption path exists.
 
 **Blocked (needs an owner decision or an external account):** real domain and
 `NEXT_PUBLIC_SITE_URL`; monitored contact mailbox; legal review of the policy pages;
