@@ -157,3 +157,30 @@ export function downloadText(
   anchor.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+
+/** Trigger a download for binary data held in memory. */
+export function downloadBlob(blob: Blob, filename: string): void {
+  if (typeof window === "undefined") return;
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/** Human-readable byte size: 1536 → "1.5 KB". */
+export function formatBytes(bytes: number, decimals = 1): string {
+  if (!Number.isFinite(bytes) || bytes < 0) return "—";
+  if (bytes < 1024) return `${bytes} B`;
+  const units = ["KB", "MB", "GB"];
+  let value = bytes / 1024;
+  let unit = 0;
+  while (value >= 1024 && unit < units.length - 1) {
+    value /= 1024;
+    unit += 1;
+  }
+  return `${value.toFixed(decimals)} ${units[unit]}`;
+}

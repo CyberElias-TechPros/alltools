@@ -142,6 +142,7 @@ export function DownloadButton({
   label = "Download",
   size = "sm",
   variant = "secondary",
+  onDownload,
 }: {
   filename: string;
   content: string;
@@ -149,15 +150,18 @@ export function DownloadButton({
   label?: string;
   size?: "sm" | "md";
   variant?: ButtonProps["variant"];
+  /** Use for binary output (images, PDFs) instead of text content. */
+  onDownload?: () => void;
 }) {
   const toast = useToast();
   return (
     <Button
       size={size}
       variant={variant}
-      disabled={content.trim() === ""}
+      disabled={!onDownload && content.trim() === ""}
       onClick={() => {
-        downloadText(filename, content, mime);
+        if (onDownload) onDownload();
+        else downloadText(filename, content, mime);
         toast("Download started");
       }}
     >
@@ -460,16 +464,22 @@ export function EmptyState({
   title,
   children,
   icon,
+  description,
 }: {
   title: string;
   children?: ReactNode;
   icon?: ReactNode;
+  description?: ReactNode;
 }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--border-strong)] px-6 py-10 text-center">
       {icon ? <div className="mb-2 text-[var(--text-subtle)]">{icon}</div> : null}
       <p className="text-sm font-semibold text-[var(--text)]">{title}</p>
-      {children ? <div className="mt-1 text-sm text-[var(--text-muted)]">{children}</div> : null}
+      {children ? (
+        <div className="mt-1 text-sm text-[var(--text-muted)]">{children}</div>
+      ) : description ? (
+        <div className="mt-1 text-sm text-[var(--text-muted)]">{description}</div>
+      ) : null}
     </div>
   );
 }

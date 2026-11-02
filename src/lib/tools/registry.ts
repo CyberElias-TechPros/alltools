@@ -8,6 +8,7 @@ import { developerTools } from "./data/developer";
 import { everydayTools } from "./data/everyday";
 import { seoTools } from "./data/seo";
 import { securityTools } from "./data/security";
+import { imageTools } from "./data/images";
 import type { CategoryId, ToolDefinition } from "./types";
 import type { SearchableTool } from "@/lib/search";
 
@@ -22,6 +23,7 @@ export const tools: ToolDefinition[] = [
   ...everydayTools,
   ...seoTools,
   ...securityTools,
+  ...imageTools,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 export const toolMap = new Map<string, ToolDefinition>(tools.map((tool) => [tool.slug, tool]));
