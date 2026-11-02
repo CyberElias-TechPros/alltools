@@ -15,6 +15,7 @@ import { pdfTools } from "./data/pdf";
 import { internetTools } from "./data/internet";
 import { seoMoreTools } from "./data/seo-more";
 import { educationTools } from "./data/education";
+import { everydayMoreTools } from "./data/everyday-more";
 import type { CategoryId, ToolDefinition } from "./types";
 import type { SearchableTool } from "@/lib/search";
 
@@ -36,6 +37,7 @@ export const tools: ToolDefinition[] = [
   ...internetTools,
   ...seoMoreTools,
   ...educationTools,
+  ...everydayMoreTools,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 export const toolMap = new Map<string, ToolDefinition>(tools.map((tool) => [tool.slug, tool]));
