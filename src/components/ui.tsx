@@ -520,10 +520,9 @@ export function SimpleTable({
 export function ToolPanel({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div
-      className={cn(
-        "rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-soft)] sm:p-5",
-        className,
-      )}
+      /* The tool page supplies the frame and padding, so a tool panel only
+         paints its own surface — no border-inside-a-border. */
+      className={cn("bg-[var(--surface)]", className)}
     >
       {children}
     </div>

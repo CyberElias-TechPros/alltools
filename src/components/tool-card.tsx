@@ -30,7 +30,7 @@ export function ToolCard({
         >
           <span className="index-row-num">{pad(index) ?? "—"}</span>
           <span className="min-w-0">
-            <span className="index-row-title block text-[var(--text)] group-hover:text-inherit">
+            <span className="index-row-title block">
               {tool.name}
             </span>
             {!compact ? (

@@ -67,6 +67,7 @@
     --code-bg: #e9e6db;
     --invert-bg: #14140f;
     --invert-text: #f5f3ec;
+    --invert-mark: #ff4b00;
     --grain: 0.035;
     --grid-line: color-mix(in oklab, #14140f 8%, transparent);
   }
@@ -86,6 +87,7 @@
     --code-bg: #171714;
     --invert-bg: #f3f1ea;
     --invert-text: #0b0b09;
+    --invert-mark: #b83500;
     --grain: 0.05;
     --grid-line: color-mix(in oklab, #f3f1ea 9%, transparent);
   }
@@ -510,7 +512,7 @@
 
   .index-row:hover .index-row-arrow,
   .index-row:focus-visible .index-row-arrow {
-    color: var(--ring);
+    color: var(--invert-mark);
     transform: translate(2px, -2px);
   }
 
@@ -522,7 +524,7 @@
   }
 
   .index-row:hover .index-row-num {
-    color: var(--ring);
+    color: var(--invert-mark);
   }
 
   .index-row-title {
