@@ -41,3 +41,21 @@ describe("tool components render", () => {
     expect(missing.map((entry) => entry.path)).toEqual([]);
   });
 });
+
+describe("the component map matches the catalogue", () => {
+  it("has a component for every live tool, and no orphan components", async () => {
+    const { liveTools } = await import("@/lib/tools/registry");
+    const { toolComponents } = await import("@/tools/registry");
+    const live = new Set(liveTools.map((tool) => tool.slug));
+    const mapped = new Set(Object.keys(toolComponents));
+    expect([...live].filter((slug) => !mapped.has(slug))).toEqual([]);
+    expect([...mapped].filter((slug) => !live.has(slug))).toEqual([]);
+  });
+
+  it("does not map the slug of a planned tool", async () => {
+    const { tools } = await import("@/lib/tools/registry");
+    const { toolComponents } = await import("@/tools/registry");
+    const planned = tools.filter((tool) => tool.status === "planned").map((tool) => tool.slug);
+    expect(planned.filter((slug) => slug in toolComponents)).toEqual([]);
+  });
+});
