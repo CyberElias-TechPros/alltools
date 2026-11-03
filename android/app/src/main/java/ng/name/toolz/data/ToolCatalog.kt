@@ -19,6 +19,7 @@ val categories: List<ToolCategory> = listOf(
     ToolCategory("business", "Business", "Invoices, pricing, payback."),
     ToolCategory("internet", "Internet", "Links, domains and the web."),
     ToolCategory("images", "Images", "Sizes, ratios and print checks."),
+    ToolCategory("pdf", "PDF", "Read, write and rearrange PDFs."),
 )
 
 val allTools: List<Tool> =

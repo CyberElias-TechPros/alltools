@@ -453,7 +453,15 @@ class CatalogTest {
         assertEquals("Hello\nWorld & friends", extractDocxText(docx))
 
         val archive = zipOf(listOf("a.txt" to "alpha".toByteArray(), "b.txt" to "beta".toByteArray()))
-        assertEquals(4, archive[0].toInt())
+        val names = mutableListOf<String>()
+        java.util.zip.ZipInputStream(java.io.ByteArrayInputStream(archive)).use { zip ->
+            var entry = zip.nextEntry
+            while (entry != null) {
+                names += entry.name
+                entry = zip.nextEntry
+            }
+        }
+        assertEquals(listOf("a.txt", "b.txt"), names)
         assertTrue(archive.size > 100)
 
         assertEquals("hello", String(decodeBase64Image("data:text/plain;base64,aGVsbG8=")!!, Charsets.UTF_8))
@@ -470,8 +478,8 @@ class CatalogTest {
             assertTrue("${tool.slug} has no explanation", result.note != null && result.note!!.length > 20)
             assertTrue("${tool.slug} claims an answer it cannot give", result.label == "On this device")
         }
-        assertEquals(16, fileTools.count { it.media == MediaKind.IMAGE })
-        assertEquals(15, fileTools.count { it.media == MediaKind.PDF })
+        assertEquals(18, fileTools.count { it.media == MediaKind.IMAGE })
+        assertEquals(13, fileTools.count { it.media == MediaKind.PDF })
         assertEquals(1, fileTools.count { it.media == MediaKind.PDF_MULTI })
         assertEquals(2, fileTools.count { it.media == MediaKind.DOCX })
         assertEquals(2, fileTools.count { it.media == MediaKind.NONE })
