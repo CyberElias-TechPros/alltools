@@ -159,7 +159,7 @@ fun SettingsScreen(onBack: () -> Unit, onReplayOnboarding: () -> Unit) {
             }
             Spacer(Modifier.height(10.dp))
             Text(
-                "The website carries the full catalogue of 254 tools. This app ships the 87 that work best offline on a phone.",
+                "The website carries the full catalogue of 254 tools. This app ships ${allTools.size} of them natively; the rest are file-based tools that need a picker and an export step.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

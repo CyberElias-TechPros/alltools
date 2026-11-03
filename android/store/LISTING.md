@@ -19,7 +19,7 @@ there is no account, and there is no upload of anything a user types.
 ## Short description (Play, 80 characters max)
 
 ```
-85+ calculators, converters and text tools. Offline, private, no sign-up.
+220+ calculators, converters, PDF and image tools. Offline, no sign-up.
 ```
 
 ## Promotional text (Play, 80 characters, optional)
@@ -31,9 +31,9 @@ Every result is worked out on your phone — nothing you type is uploaded.
 ## Full description (Play, 4000 characters max)
 
 ```
-Toolz is a pocket workshop: 85+ everyday tools that answer instantly and keep
-your numbers to yourself. Every calculation runs on your phone. Nothing you type
-is uploaded, there is no account to create, and the tools work with no signal.
+Toolz is a pocket workshop: 220+ tools that answer instantly and keep your files
+to yourself. Every calculation runs on your phone. Nothing you type is uploaded,
+there is no account to create, and the tools work with no signal.
 
 WHAT YOU GET
 
@@ -66,11 +66,21 @@ SEO — title and description length checks, a phone-sized search preview, keywo
 density, a robots.txt builder, campaign URL tagging.
 
 Business — invoice totals with tax, payback periods, pricing tiers, commission
-splits.
+splits, letters, proposals, hashtags and captions.
+
+PDF — type text into a real PDF, turn photos or Word files into PDFs, count and
+reorder pages, merge, split, rotate, watermark, extract text, render pages as
+JPG or PNG, and shrink a file to a size limit.
+
+Images — resize, crop, compress, blur, pixelate, swap formats, flatten onto a
+colour, read EXIF, pull out a favicon, sample colours, turn images into Base64
+and read QR codes.
 
 WHY IT FEELS DIFFERENT
 
 • Answers appear as you type. There is no button to press and no spinner.
+• Files never leave the phone: the system picker hands over a document, the work
+  happens in memory, and you save wherever you like. No storage permission.
 • Each result shows its workings, so you can see where the number came from.
 • Star the tools you use weekly and they move to the top of the home screen.
 • Light and dark, sized for one hand, labelled for screen readers.
@@ -99,8 +109,8 @@ word counter, json, base64, hash, password generator, offline tools, utility
 ## What's new (first release)
 
 ```
-First release: 85+ tools across nine collections, offline calculation,
-favourites, dark mode and a 20-second tour.
+First release: 220+ tools across twelve collections, including PDF and image
+tools, with offline calculation, favourites, dark mode and a 20-second tour.
 ```
 
 ## Data safety answers (Play)
@@ -113,7 +123,7 @@ favourites, dark mode and a 20-second tour.
 | Purpose | Advertising or marketing |
 | Is data encrypted in transit? | Yes |
 | Can users request deletion? | Nothing is stored by Toolz; users can reset their advertising ID in Android settings and change consent in the app |
-| Does the app collect location, contacts, photos, files, messages or health data? | No |
+| Does the app collect location, contacts, photos, files, messages or health data? | No. Files you pick are read through the system picker and processed in memory on the device; they are never uploaded |
 | Does the app let users create accounts? | No |
 
 Galaxy Store asks similar questions in its own form; the same answers apply.
@@ -127,8 +137,8 @@ Galaxy Store asks similar questions in its own form; the same answers apply.
 
 ## Screenshot captions (optional, if the store form accepts them)
 
-1. “85+ tools, worked out on your phone.”
-2. “Nine collections, one clear list.”
+1. “220+ tools, worked out on your phone.”
+2. “Twelve collections, one clear list.”
 3. “Type once. The answer is already there.”
 4. “Find any tool in two taps.”
 5. “Yours to set up — including ads.”

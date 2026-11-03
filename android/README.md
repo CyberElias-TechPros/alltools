@@ -32,7 +32,7 @@ android/
 | Speed | Catalogue is compile-time data; a result is one pure function call. No network round trip, no JS bridge, no splash spinner. |
 | Offline | Tools never touch the network. The only traffic is the ad SDK, and only after consent. |
 | Platform fit | Edge-to-edge Material 3 with the studio palette, system dark mode, predictive back, dynamic type, TalkBack labels on every control. |
-| Depth | 87 tools across nine collections, including ones that are awkward in a browser tab on a phone. |
+| Depth | 222 tools across twelve collections, including the PDF and image work that is awkward in a browser tab on a phone. |
 | Privacy | No account, no analytics SDK, no uploads. Favourites and recents live in the app's private preferences. |
 
 ## Requirements
@@ -185,10 +185,14 @@ store listing is <https://toolz.name.ng/privacy-policy/>.
 
 ## Coverage and what comes next
 
-The app currently ships **87 native tools** in nine collections. The website carries
-**254**, so the app is deliberately a curated native set rather than a mirror: every
-tool here was chosen because it is worth a home-screen icon, and each one is rewritten
-in Kotlin rather than wrapped.
+The app currently ships **222 native tools** in twelve collections, covering every
+one of the website's 254 tools. The last wave added the 36 file-based tools — PDF,
+image and a QR reader — behind a system picker, with results saved through
+`ACTION_CREATE_DOCUMENT`, so no storage permission is ever requested.
+[`docs/ANDROID_COVERAGE.md`](../docs/ANDROID_COVERAGE.md) tracks the mapping, and
+the verification story is split the same way the tools are: 17 JVM tests for the
+186 text-and-number tools, 12 instrumented tests on an Android 30 emulator for the
+36 file tools.
 
 Already native and not possible to fake in a browser tab: offline results with no
 first-paint cost, a native share/clipboard path, saved tools that survive a cold start,

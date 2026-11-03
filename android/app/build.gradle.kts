@@ -29,6 +29,7 @@ android {
         versionCode = 1
         versionName = "1.0.0"
         vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -89,9 +90,13 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.play.services.ads)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.zxing.core)
+    implementation(libs.pdfbox.android)
+    implementation(libs.androidx.exifinterface)
     debugImplementation(libs.androidx.ui.tooling)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.test.runner)
 }

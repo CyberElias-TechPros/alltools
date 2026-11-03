@@ -286,7 +286,7 @@ at the real origin (view source and search for `example.com`).
 ## Android app
 
 A separate, fully native Kotlin + Jetpack Compose app lives in [`android/`](android/).
-It is not a WebView: 87 tools are Kotlin functions compiled into the APK, so they
+It is not a WebView: 222 tools are Kotlin functions compiled into the APK, so they
 answer in a frame, work in aeroplane mode and never upload a value.
 
 ```bash
@@ -318,6 +318,7 @@ contains credentials.
 | [`docs/ADSENSE_QA.md`](docs/ADSENSE_QA.md) | Pre-AdSense-application audit with evidence and owner actions |
 | [`android/README.md`](android/README.md) | Native Android app: architecture, build, signing, AdMob |
 | [`android/store/LISTING.md`](android/store/LISTING.md) | Play and Galaxy Store listing copy, data-safety answers |
+| [`docs/ANDROID_COVERAGE.md`](docs/ANDROID_COVERAGE.md) | Which of the 254 web tools already exist in the app, and why the rest do not (yet) |
 
 ---
 
