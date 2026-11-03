@@ -105,6 +105,12 @@ them; adding more slots is a template change, not a rebuild.
 1. `NEXT_PUBLIC_SITE_URL` set to the real origin; `curl -I` shows the right canonical.
 2. No `example.com` anywhere in the HTML source of the homepage, a tool page and a guide.
 3. Contact mailbox receives a test message; reply works.
+3a. **AdSense loader present in the page source.** `npm run build && npm run verify:adsense`
+   must pass; it checks every exported page for
+   `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5010473500037610" crossorigin="anonymous">`
+   inside `<head>`, the `google-adsense-account` meta tag, and the `ads.txt` line.
+   On the live domain, `curl -s https://toolz.name.ng/ | grep -c adsbygoogle` must print a
+   number greater than zero — a 0 means the deployed build predates this fix.
 4. `/sitemap.xml`, `/robots.txt`, `/manifest.webmanifest` return 200 and list only real URLs.
 5. Search Console: property verified, sitemap submitted, coverage report clean.
 6. Analytics consent banner appears only when `NEXT_PUBLIC_GA_ID` is set; decline path
@@ -112,9 +118,26 @@ them; adding more slots is a template change, not a rebuild.
 7. Privacy, cookie, terms and disclaimer pages reviewed and dated by the operator.
 8. 30 days of stable, indexed operation before the application is submitted.
 
+## 6a. "We couldn't find your site" — the four causes, in order
+
+AdSense fetches the URL you typed and looks for the loader `<script>` (or the
+`google-adsense-account` meta tag) in the returned HTML. Work down this list; each
+step is a different failure with a different fix.
+
+| # | Cause | How to tell | Fix |
+| --- | --- | --- | --- |
+| 1 | The loader was injected by JavaScript, so it is absent from the page source | View source (Ctrl+U) and search `adsbygoogle` — the raw HTML only had a `<link rel="preload">` | **Fixed in this repo**: `src/components/adsense-loader.tsx` renders a literal `<script>` inside `<head>`; `next/script` with `strategy="afterInteractive"` must never wrap it again |
+| 2 | The deployed site is older than the fix, or the domain serves a different build | `curl -s https://toolz.name.ng/ \| grep -c adsbygoogle` prints 0 | Merge to `main`, trigger a production deploy, re-check |
+| 3 | The URL is wrong: `www.` vs apex, `http://` vs `https://`, or a path instead of the root | The dashboard entry and the redirect chain disagree | Submit the exact canonical origin `https://toolz.name.ng/`; keep one hop of redirect only |
+| 4 | The crawler is blocked: Vercel Deployment Protection, Cloudflare "Under Attack"/Bot Fight Mode, basic auth, or a firewall rule | `curl -I` shows 401/403, a challenge page, or a login | Allow public unauthenticated access to `/`, `/ads.txt` and `/robots.txt`; disable protection on the production alias |
+
+After any of these, allow up to 24 hours for Google to re-crawl before concluding it
+still fails.
+
 ## 7. After approval
 
-1. Add the exact seller line supplied by Google to `public/ads.txt` (replacing the comment).
+1. `public/ads.txt` already carries the seller line `google.com, pub-5010473500037610, DIRECT,
+   f08c47fec0942fa0`; confirm it stays exact if the account changes.
 2. Set `NEXT_PUBLIC_ADSENSE_CLIENT` and `NEXT_PUBLIC_ADS_ENABLED=true` in the host's
    environment — never commit either value.
 3. Set `NEXT_PUBLIC_ADSENSE_SLOT_TOOL` to the tool-page unit id. The loader and the
@@ -125,7 +148,7 @@ them; adding more slots is a template change, not a rebuild.
 5. Monitor the Policy Centre weekly for the first month; a single "low value content"
    warning is a signal to add depth, not to add ad units.
 
-## 8. Known placeholders (must be resolved before applying)
+## 8. Known placeholders (owner action; the code side is done)
 
 | Placeholder | Location | Replace with |
 | --- | --- | --- |
@@ -133,8 +156,6 @@ them; adding more slots is a template change, not a rebuild.
 | `hello@toolz.name.ng` | `src/lib/site.ts` | A monitored mailbox |
 | "pending legal review" notes | Policy pages | Confirmation after review |
 | Operator identity on `/about/` | About page | Real, verifiable details |
-| Empty/comment-only `ads.txt` | `public/ads.txt` | Google's exact seller line |
-| Tools brand name | Site-wide | Only if the name is cleared, otherwise rewrite brand copy |
 
 ## 9. Explicit non-goals
 
