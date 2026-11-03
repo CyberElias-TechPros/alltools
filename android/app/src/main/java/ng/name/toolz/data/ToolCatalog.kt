@@ -18,13 +18,15 @@ val categories: List<ToolCategory> = listOf(
     ToolCategory("seo", "SEO", "Snippets, slugs and tagging."),
     ToolCategory("business", "Business", "Invoices, pricing, payback."),
     ToolCategory("internet", "Internet", "Links, domains and the web."),
+    ToolCategory("images", "Images", "Sizes, ratios and print checks."),
 )
 
 val allTools: List<Tool> =
     textTools + textTools2 + calculatorTools + calculatorTools2 + financeTools + financeTools2 +
         developerTools + developerTools2 + everydayTools + everydayTools2 + securityTools +
         securityTools2 + educationTools + educationTools2 + seoTools + seoTools2 +
-        businessTools + businessTools2 + internetTools2 + timerTools + extraTools + batchTools
+        businessTools + businessTools2 + internetTools2 + imageTools1 + timerTools +
+        extraTools + batchTools
 
 private val bySlug: Map<String, Tool> = allTools.associateBy { it.slug }
 

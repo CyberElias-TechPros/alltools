@@ -350,4 +350,26 @@ class CatalogTest {
         assertEquals("Total time", run("pomodoro-timer").details.first().first)
         assertEquals("00:00.00", run("stopwatch").value)
     }
+
+    @Test
+    fun `image maths answers without a bitmap`() {
+        fun run(slug: String, overrides: Map<String, String> = emptyMap()) =
+            toolBySlug(slug)!!.let { tool ->
+                val input = tool.fields.associate { it.id to it.defaultValue } + overrides
+                tool.compute(input)
+            }
+
+        val dimensions = run("image-dimension")
+        assertEquals("1600 × 1200", dimensions.label)
+        assertEquals("4:3", dimensions.details.first { it.first == "Aspect ratio" }.second)
+
+        assertEquals("10 × 6.67 in", run("image-dpi").label)
+        assertEquals("2.07 MP", run("image-resolution").label)
+        assertEquals("16:9", run("image-resolution").details.first { it.first == "Aspect ratio" }.second)
+        assertTrue(run("social-image-size").value.contains("LinkedIn post"))
+        assertEquals(
+            "Matches 1 preset",
+            run("social-image-size", mapOf("width" to "1080", "height" to "1080")).label,
+        )
+    }
 }
