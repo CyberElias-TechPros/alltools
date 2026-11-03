@@ -4,7 +4,7 @@ export function LogoMark({ className }: { className?: string }) {
       viewBox="0 0 24 24"
       className={className}
       role="img"
-      aria-label="Tools logo"
+      aria-label="Toolz logo"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -23,7 +23,7 @@ export function Logo({ className }: { className?: string }) {
       <span className="flex items-center gap-2.5">
         <LogoMark className="size-[26px] shrink-0 text-[var(--text)]" />
         <span className="font-display text-[1.3rem] font-bold leading-none tracking-[-0.05em] text-[var(--text)]">
-          Tools
+          Toolz
         </span>
       </span>
     </span>

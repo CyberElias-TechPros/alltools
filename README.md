@@ -1,4 +1,4 @@
-# Tools
+# Toolz
 
 **Fast, free, privacy-first online tools that run entirely in your browser.**
 
@@ -11,6 +11,7 @@ verified by automated tests.
 - **Live tools:** 254 across 12 categories (plus 10 honestly labelled as planned)
 - **Test suite:** 971 tests in 27 files (`npm test`) — logic, catalogue rules, a render smoke test over every tool, an interaction sweep that types/clicks through all 254, and known-answer checks through the real UI
 - **First-load JS:** one route's worth of code per tool (each tool is code-split)
+- **Domain:** toolz.name.ng
 - **Hosting:** any static host — output is plain HTML/CSS/JS in `out/`
 
 The original product plan (271-tool catalogue, policy rules, stack decisions, 90-day
@@ -244,7 +245,7 @@ Everything is optional for development; see [`.env.example`](.env.example).
 
 | Variable | Purpose | Default |
 | --- | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | Canonical origin for canonicals, sitemap, robots, JSON-LD | `https://tools.example.com` (placeholder) |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin for canonicals, sitemap, robots, JSON-LD | `https://toolz.name.ng` (placeholder) |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console meta token | unset (tag omitted) |
 | `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Bing Webmaster `msvalidate.01` token | unset (tag omitted) |
 | `NEXT_PUBLIC_GA_ID` | GA4 measurement ID; analytics also requires cookie consent | empty — no analytics |

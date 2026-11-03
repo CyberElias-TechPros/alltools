@@ -7,7 +7,7 @@ import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
   title: "About this site",
-  description: "Who runs Tools, why the tools exist, how they are built and tested, and what we will never do with your data.",
+  description: "Who runs Toolz, why the tools exist, how they are built and tested, and what we will never do with your data.",
   path: "/about/",
   keywords: ['about tools', 'free online tools', 'privacy', 'how it works'],
 });

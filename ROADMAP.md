@@ -1,4 +1,4 @@
-# Tools build roadmap
+# Toolz build roadmap
 
 Ultra-granular, start-to-finish plan. Every step below records **what it is**, **whether it
 is done**, **why it exists**, **what it depends on / connects to**, and **how to verify it**.
@@ -232,7 +232,7 @@ spun, which is a requirement in the blueprint. *Connects to:* `src/lib/guides.ts
 **4.8 — Contact.** *Why:* a contact method is an AdSense requirement, and a half-working
 form endpoint is worse than none. The form validates locally, then opens the visitor's own
 mail client with the message pre-filled; "Copy address" is offered as a fallback.
-*Owner action:* replace `hello@tools.example.com` in `src/lib/site.ts` with a real,
+*Owner action:* replace `hello@toolz.name.ng` in `src/lib/site.ts` with a real,
 monitored mailbox before launch.
 
 **4.9–4.10 — Legal and policy pages.** *Why:* required for trust, ads and accessibility

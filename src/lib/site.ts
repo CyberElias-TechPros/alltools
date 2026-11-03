@@ -1,12 +1,12 @@
 /**
- * Site configuration for "Tools".
+ * Site configuration for "Toolz".
  *
  * IMPORTANT: set NEXT_PUBLIC_SITE_URL in your hosting provider's environment
  * before launch. Every canonical URL, sitemap entry, robots.txt host and
  * structured-data @id is derived from this single value.
  */
 const rawUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-const fallback = "https://tools.example.com";
+const fallback = "https://toolz.name.ng";
 
 export const siteUrl = (rawUrl || fallback).replace(/\/+$/, "");
 
@@ -14,8 +14,8 @@ export const siteUrl = (rawUrl || fallback).replace(/\/+$/, "");
 export const siteUrlIsPlaceholder = siteUrl.includes("example.com");
 
 export const siteConfig = {
-  name: "Tools",
-  legalName: "Tools",
+  name: "Toolz",
+  legalName: "Toolz",
   tagline: "Free online tools that run in your browser",
   /** Used verbatim as the site-wide meta description. Kept to ~155 characters. */
   description:
@@ -25,11 +25,22 @@ export const siteConfig = {
   url: siteUrl,
   locale: "en_US",
   language: "en",
-  email: "hello@tools.example.com",
+  email: "hello@toolz.name.ng",
   /** Set NEXT_PUBLIC_GA_ID to enable consented, aggregate analytics. */
   gaId: process.env.NEXT_PUBLIC_GA_ID?.trim() || "",
-  /** Set after AdSense approval to render ad slots. */
-  adsenseClient: process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.trim() || "",
+  /**
+   * AdSense publisher ID. The public client id is committed here on purpose —
+   * it appears in the page source of every AdSense site — while the ad *unit*
+   * ids stay environment-driven so a slot can never render an invented unit.
+   */
+  adsenseClient: process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.trim() || "ca-pub-5010473500037610",
+  /**
+   * Which consent UI collects choices. "builtin" uses the banner in
+   * src/components/analytics.tsx; "google" defers to the certified CMP that
+   * AdSense serves from Privacy & messaging, and hides ours so visitors never
+   * see two prompts.
+   */
+  cmpProvider: (process.env.NEXT_PUBLIC_CMP_PROVIDER?.trim() || "builtin") as "builtin" | "google",
   /**
    * Search-engine verification tokens. Leave unset rather than inventing one —
    * an invalid token does not verify anything.

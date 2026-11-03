@@ -6,7 +6,7 @@ import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
   title: "Privacy Policy",
-  description: "What Tools collects (very little), what stays in your browser, how analytics and advertising work, and how to exercise your rights.",
+  description: "What Toolz collects (very little), what stays in your browser, how analytics and advertising work, and how to exercise your rights.",
   path: "/privacy-policy/",
   keywords: ['privacy policy', 'data protection', 'no uploads', 'gdpr'],
 });
@@ -59,8 +59,8 @@ export default function PrivacyPolicyPage() {
 
       <h2>5. Cookies and local storage</h2>
       <p>
-        By default this site sets no advertising or analytics cookies. We use your browser&apos;s
-        local storage for two things:
+        The tools themselves set no cookies — everything you type is handled in your browser. We use
+        your browser&apos;s local storage for two things:
       </p>
       <ul>
         <li>
@@ -91,17 +91,23 @@ export default function PrivacyPolicyPage() {
 
       <h2>7. Advertising</h2>
       <p>
-        Advertising is not currently enabled. If the site is accepted into an advertising programme
-        such as Google AdSense, third-party vendors — including Google — may use cookies to serve
-        ads based on your prior visits to this or other websites. Google&apos;s use of advertising
-        cookies enables it and its partners to serve ads based on your visit to this site and other
-        sites on the internet.
+        This site is supported by advertising served through Google AdSense (publisher ID{" "}
+        <code className="font-mono text-[0.85em]">ca-pub-5010473500037610</code>). Third-party
+        vendors, including Google, use cookies to serve ads based on your prior visits to this and
+        other websites, and Google&apos;s use of advertising cookies enables it and its partners to
+        serve ads to you based on your visit to this site and other sites on the internet.
       </p>
       <p>
-        Where required — for visitors in the European Economic Area, the United Kingdom and
-        Switzerland — a Google-certified consent management platform will be used to collect and
-        honour consent before any personalised advertising or non-essential cookie is set. You will
-        be able to change or withdraw that consent at any time.
+        Adverts are placed between content blocks, never inside a tool&apos;s input or result area,
+        and never styled to look like a control. We do not pass the text you type into a tool, file
+        names or results to an advertising system.
+      </p>
+      <p>
+        Advertising and analytics storage start denied. They are only granted after you choose
+        &ldquo;Accept&rdquo; in the cookie banner, and you can withdraw that choice at any time via
+        &ldquo;Cookie settings&rdquo; in the footer. For visitors in the European Economic Area, the
+        United Kingdom and Switzerland, consent is collected through a Google-certified consent
+        management platform before any personalised advertising cookie is set.
       </p>
       <p>
         You can learn about Google&apos;s practices and opt out of personalised advertising in{" "}

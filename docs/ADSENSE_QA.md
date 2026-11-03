@@ -47,7 +47,7 @@ content requirements in Google Search's helpful-content guidance.
 | # | Requirement | Status | Evidence / action |
 | --- | --- | --- | --- |
 | 3.1 | About page explaining who runs the site and why | 🟡 | `/about/` exists and is substantive. It must be updated with the operator's real identity before applying. |
-| 3.2 | Contact method that reaches a human | ⛔ | `/contact/` composes a mailto link, but `siteConfig.email` is `hello@tools.example.com`. Replace with a monitored mailbox (`src/lib/site.ts`) or the form has no destination. |
+| 3.2 | Contact method that reaches a human | ⛔ | `/contact/` composes a mailto link, but `siteConfig.email` is `hello@toolz.name.ng`. Replace with a monitored mailbox (`src/lib/site.ts`) or the form has no destination. |
 | 3.3 | Terms of service | 🟡 | `/terms/` written and dated; needs legal review for the operator's jurisdiction. |
 | 3.4 | Privacy policy covering analytics and ads | 🟡 | `/privacy-policy/` already names Google, AdSense, cookies, third parties, the EEA/UK consent position and opt-out routes. **Add the specific ad-cookie wording (DoubleClick/`__gads`) on the day ads are enabled** — the page currently states, correctly, that advertising is not enabled. |
 | 3.5 | Cookie policy | 🟡 | `/cookies/` accurate for today's build; extend with ad cookies when ads are enabled. |
@@ -128,8 +128,8 @@ them; adding more slots is a template change, not a rebuild.
 
 | Placeholder | Location | Replace with |
 | --- | --- | --- |
-| `https://tools.example.com` | `src/lib/site.ts` fallback | Real origin via `NEXT_PUBLIC_SITE_URL` |
-| `hello@tools.example.com` | `src/lib/site.ts` | A monitored mailbox |
+| `https://toolz.name.ng` | `src/lib/site.ts` fallback | Real origin via `NEXT_PUBLIC_SITE_URL` |
+| `hello@toolz.name.ng` | `src/lib/site.ts` | A monitored mailbox |
 | "pending legal review" notes | Policy pages | Confirmation after review |
 | Operator identity on `/about/` | About page | Real, verifiable details |
 | Empty/comment-only `ads.txt` | `public/ads.txt` | Google's exact seller line |

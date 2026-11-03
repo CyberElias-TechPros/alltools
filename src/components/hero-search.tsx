@@ -6,7 +6,7 @@ export function HeroSearch({ count }: { count: number }) {
   return (
     <button
       type="button"
-      onClick={() => window.dispatchEvent(new Event("tools:open-search"))}
+      onClick={() => window.dispatchEvent(new Event("toolz:open-search"))}
       className="group flex h-[62px] w-full items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] pl-5 pr-3 text-left shadow-[0_2px_4px_rgb(20_22_26/0.04),0_18px_40px_-24px_rgb(20_22_26/0.3)] transition-all hover:border-[var(--border-strong)] hover:shadow-[0_4px_8px_rgb(20_22_26/0.06),0_24px_48px_-24px_rgb(20_22_26/0.35)]"
       aria-label={`Search ${count} tools`}
     >

@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { CategoryIcon } from "./category-icon";
 import type { CategoryId } from "@/lib/tools/types";
 
-const RECENT_KEY = "tools:recent";
+const RECENT_KEY = "toolz:recent";
 
 export function readRecentSlugs(): string[] {
   if (typeof window === "undefined") return [];
@@ -95,10 +95,10 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
     }
 
     window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("tools:open-search", onOpen);
+    window.addEventListener("toolz:open-search", onOpen);
     return () => {
       window.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("tools:open-search", onOpen);
+      window.removeEventListener("toolz:open-search", onOpen);
     };
   }, []);
 

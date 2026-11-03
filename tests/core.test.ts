@@ -177,7 +177,8 @@ describe("SEO helpers", () => {
 
 describe("site configuration", () => {
   it("uses the plain name and a canonical origin without a trailing slash", () => {
-    expect(siteConfig.name).toBe("Tools");
+    expect(siteConfig.name).toBe("Toolz");
+    expect(siteConfig.url).toBe("https://toolz.name.ng");
     expect(siteConfig.url.endsWith("/")).toBe(false);
     expect(siteConfig.url.startsWith("https://")).toBe(true);
   });

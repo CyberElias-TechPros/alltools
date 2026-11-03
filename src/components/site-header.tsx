@@ -22,7 +22,7 @@ export function SiteHeader({ index }: { index: SearchableTool[] }) {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--page)]/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-2 px-4 sm:px-6">
-        <Link href="/" aria-label="Tools home" className="shrink-0 rounded-lg">
+        <Link href="/" aria-label="Toolz home" className="shrink-0 rounded-lg">
           <Logo />
         </Link>
 

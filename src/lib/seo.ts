@@ -280,7 +280,7 @@ export function pageMetadata({
   path,
   keywords,
   image = "/og/tools.png",
-  imageAlt = "Tools — free online tools that run in your browser",
+  imageAlt = "Toolz — free online tools that run in your browser",
   type = "website",
   publishedTime,
   modifiedTime,

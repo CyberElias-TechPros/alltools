@@ -6,14 +6,14 @@ import { cn } from "@/lib/utils";
 
 type Theme = "light" | "dark" | "system";
 
-const STORAGE_KEY = "tools:theme";
+const STORAGE_KEY = "toolz:theme";
 
 function applyTheme(theme: Theme) {
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const isDark = theme === "dark" || (theme === "system" && prefersDark);
   document.documentElement.classList.toggle("dark", isDark);
   document.documentElement.style.colorScheme = isDark ? "dark" : "light";
-  window.dispatchEvent(new CustomEvent("tools:theme", { detail: theme }));
+  window.dispatchEvent(new CustomEvent("toolz:theme", { detail: theme }));
 }
 
 export function ThemeToggle() {
