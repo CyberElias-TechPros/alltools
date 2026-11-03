@@ -18,6 +18,7 @@ concurrency:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   build:
@@ -70,8 +71,6 @@ jobs:
           fi
 
       - name: Build
-        id: build
-        continue-on-error: true
         run: |
           set -o pipefail
           gradle \
@@ -88,7 +87,7 @@ jobs:
           set -euo pipefail
           mkdir -p dist ci
           cp "$GITHUB_WORKSPACE/ci-build.log" ci/build.log || true
-          tail -n 300 ci/build.log > ci/build-tail.log || true
+          tail -n 400 ci/build.log > ci/build-tail.log || true
           : > dist/SHA256SUMS.txt
           copy() {
             if [ -f "$1" ]; then
@@ -101,6 +100,27 @@ jobs:
           copy app/build/outputs/apk/release/app-release-unsigned.apk toolz-1.0.0-unsigned.apk
           copy app/build/outputs/apk/debug/app-debug.apk toolz-1.0.0-debug.apk
           ls -l dist
+          find app/build/outputs -maxdepth 3 -type d 2>/dev/null | head -20
+
+      # Check-run annotations are readable through the API even when the runner
+      # token cannot push, so they are the reliable way to surface build errors.
+      - name: Annotate build errors
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          import os, re
+          path = "ci/build.log"
+          if not os.path.exists(path):
+              print("::error::No build log was produced at all.")
+              raise SystemExit(0)
+          lines = open(path, errors="ignore").read().splitlines()
+          keep = [l for l in lines if re.search(r"(^e: |^w: .*error|error:|FAILURE:|What went wrong|Execution failed for task|Caused by:|> Task .* FAILED|Unresolved reference|error: )", l)]
+          interesting = keep[:14] if keep else lines[-14:]
+          for line in interesting:
+              print("::error::" + line.strip()[:880])
+          tail = "\n".join(lines[-25:])
+          print("::error::TAIL " + tail.replace("\n", " | ")[:880])
+          PY
 
       - name: Publish build output to the pull request branch
         if: always()
@@ -113,8 +133,10 @@ jobs:
             echo "Nothing new to publish."
           else
             git commit -m "ci: android build output [skip ci]"
-            git push origin "HEAD:${{ github.head_ref || github.ref_name }}"
+            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${{ github.head_ref || github.ref_name }}"
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -131,9 +153,3 @@ jobs:
           name: toolz-aab
           path: android/dist/*.aab
           if-no-files-found: warn
-
-      - name: Fail the job if the build failed
-        if: steps.build.outcome != 'success'
-        run: |
-          echo "Gradle failed — read android/ci/build-tail.log on the branch." >&2
-          exit 1
