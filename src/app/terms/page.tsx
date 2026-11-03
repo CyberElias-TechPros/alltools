@@ -5,19 +5,19 @@ import { PageShell } from "@/components/page-shell";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Terms of Service",
-  description: "The terms that apply when you use the free tools on this site, including acceptable use and the limits of our liability.",
+  title: "Terms & Conditions",
+  description: "The terms and conditions that apply when you use the free tools on this site, including acceptable use, intellectual property and the limits of our liability.",
   path: "/terms/",
-  keywords: ['terms of service', 'usage terms', 'licence'],
+  keywords: ['terms and conditions', 'terms of service', 'usage terms', 'licence'],
 });
 
 export default function TermsPage() {
   return (
     <PageShell
-      title="Terms of Service"
-      intro="Plain terms for a free tool site. Using the site means you accept them."
-      breadcrumbs={[{ href: "/terms/", label: "Terms" }]}
-      updated="2 November 2025"
+      title="Terms & Conditions"
+      intro="The terms and conditions for a free tool site. Using the site means you accept them."
+      breadcrumbs={[{ href: "/terms/", label: "Terms & conditions" }]}
+      updated="3 November 2026"
     >
       <h2>1. Agreement</h2>
       <p>
@@ -99,19 +99,39 @@ export default function TermsPage() {
 
       <h2>11. Governing law</h2>
       <p>
-        These terms are governed by the laws of the operator&apos;s jurisdiction of establishment,
-        without regard to conflict-of-law rules. Before launch, the operator should insert the
-        specific jurisdiction and a contact address here.
+        These terms are governed by the law that applies at the operator&apos;s place of
+        establishment, without regard to conflict-of-law rules. If you use the site as a consumer,
+        nothing in these terms removes the protection of mandatory consumer law in your country of
+        residence, and you may bring proceedings in your local courts where the law allows it.
       </p>
 
-      <h2>12. Contact</h2>
+      <h2>12. Contact us</h2>
       <p>
-        Questions about these terms:{" "}
+        Questions about these terms, or a request relating to any of our other legal pages, can be
+        sent to{" "}
         <a href={`mailto:${siteConfig.email}`} className="link">
           {siteConfig.email}
-        </a>
-        .
+        </a>{" "}
+        or through the <Link href="/contact/">contact page</Link>. We aim to reply within five
+        working days.
       </p>
+
+      <h2>13. The rest of our legal pages</h2>
+      <ul>
+        <li>
+          <Link href="/privacy-policy/">Privacy Policy</Link> — what is and is not collected,
+          including third-party advertising cookies such as Google DoubleClick.
+        </li>
+        <li>
+          <Link href="/cookies/">Cookie Policy</Link> — the cookies and local storage keys involved.
+        </li>
+        <li>
+          <Link href="/disclaimer/">Disclaimer</Link> — the limits of the calculations and content.
+        </li>
+        <li>
+          <Link href="/about/">About Us</Link> — who runs the site and how it is built.
+        </li>
+      </ul>
     </PageShell>
   );
 }

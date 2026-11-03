@@ -46,17 +46,18 @@ content requirements in Google Search's helpful-content guidance.
 
 | # | Requirement | Status | Evidence / action |
 | --- | --- | --- | --- |
-| 3.1 | About page explaining who runs the site and why | 🟡 | `/about/` exists and is substantive. It must be updated with the operator's real identity before applying. |
-| 3.2 | Contact method that reaches a human | ⛔ | `/contact/` composes a mailto link, but `siteConfig.email` is `hello@toolz.name.ng`. Replace with a monitored mailbox (`src/lib/site.ts`) or the form has no destination. |
-| 3.3 | Terms of service | 🟡 | `/terms/` written and dated; needs legal review for the operator's jurisdiction. |
-| 3.4 | Privacy policy covering analytics and ads | 🟡 | `/privacy-policy/` already names Google, AdSense, cookies, third parties, the EEA/UK consent position and opt-out routes. **Add the specific ad-cookie wording (DoubleClick/`__gads`) on the day ads are enabled** — the page currently states, correctly, that advertising is not enabled. |
-| 3.5 | Cookie policy | 🟡 | `/cookies/` accurate for today's build; extend with ad cookies when ads are enabled. |
-| 3.6 | Disclaimer | 🟡 | `/disclaimer/` covers informational use; legal review required. |
+| 3.1 | About page explaining who runs the site and why | ✅ | `/about/` is titled **About Us**, describes who runs the site, how tools are built and tested, and links every other policy page. Linked from the footer legal row and the Company column. |
+| 3.2 | Contact method that reaches a human | 🟡 | `/contact/` is titled **Contact Us**, shows the mailbox as text, and its form composes a `mailto:` — no server, no stored submissions. Owner action: confirm `hello@toolz.name.ng` is monitored (`src/lib/site.ts`) before applying. |
+| 3.3 | Terms and conditions | ✅ | `/terms/` is titled **Terms & Conditions** and covers agreement, permitted use, your content, accuracy, IP, liability, availability, third parties, changes, governing law (with a consumer-law carve-out), contact and links to the other policies. The public placeholder sentence was removed; legal review of the governing-law wording still recommended. |
+| 3.4 | Privacy policy covering analytics and ads | ✅ | `/privacy-policy/` §7 is now headed *Advertising and third-party cookies, including Google DoubleClick*. It carries the required sentence that third-party vendors, including Google, use cookies to serve ads based on prior visits; names the **DoubleClick cookie (DART)**; names other ad networks; links Google Ads Settings, Google Ad Center, `aboutads.info` and `policies.google.com/technologies/ads`; states ads are off until approval and that ad/analytics storage starts denied. |
+| 3.5 | Cookie policy | ✅ | `/cookies/` §4 is headed *Advertising cookies, including Google DoubleClick*, explains what that cookie does, links the opt-outs, and keeps the `toolz:theme` / `toolz:recent` / `toolz:consent` inventory accurate. |
+| 3.6 | Disclaimer | 🟡 | `/disclaimer/` covers informational use and is linked from every page; legal review still required. |
 | 3.7 | Accessibility statement | ✅ | `/accessibility/` states the target, describes the built-in measures and how to report barriers. |
 | 3.8 | Editorial policy | ✅ | `/editorial-policy/` explains sourcing, review and correction of tool content. |
 | 3.9 | Public roadmap | ✅ | `/roadmap/` derives counts from the registry and marks planned work as planned. |
 | 3.10 | Working 404 page | ✅ | `src/app/not-found.tsx`; static hosts serve `404.html`. |
 | 3.11 | Sitemap and robots.txt | ✅ | `src/app/sitemap.ts` builds from the live registry; `robots.ts` points at it. Verify on the deployed domain (§6.1). |
+| 3.12 | Legal pages reachable from every page | ✅ | `legalLinks` in `src/lib/site.ts` renders a labelled *Legal & policies* row in the footer (Privacy Policy, Terms & Conditions, Cookie Policy, Disclaimer, About Us, Contact Us). `tests/legal.test.tsx` asserts the links, the page titles and the DoubleClick wording. |
 
 ## 4. Advertising implementation rules
 
@@ -104,6 +105,12 @@ them; adding more slots is a template change, not a rebuild.
 1. `NEXT_PUBLIC_SITE_URL` set to the real origin; `curl -I` shows the right canonical.
 2. No `example.com` anywhere in the HTML source of the homepage, a tool page and a guide.
 3. Contact mailbox receives a test message; reply works.
+3a. **AdSense loader present in the page source.** `npm run build && npm run verify:adsense`
+   must pass; it checks every exported page for
+   `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5010473500037610" crossorigin="anonymous">`
+   inside `<head>`, the `google-adsense-account` meta tag, and the `ads.txt` line.
+   On the live domain, `curl -s https://toolz.name.ng/ | grep -c adsbygoogle` must print a
+   number greater than zero — a 0 means the deployed build predates this fix.
 4. `/sitemap.xml`, `/robots.txt`, `/manifest.webmanifest` return 200 and list only real URLs.
 5. Search Console: property verified, sitemap submitted, coverage report clean.
 6. Analytics consent banner appears only when `NEXT_PUBLIC_GA_ID` is set; decline path
@@ -111,9 +118,26 @@ them; adding more slots is a template change, not a rebuild.
 7. Privacy, cookie, terms and disclaimer pages reviewed and dated by the operator.
 8. 30 days of stable, indexed operation before the application is submitted.
 
+## 6a. "We couldn't find your site" — the four causes, in order
+
+AdSense fetches the URL you typed and looks for the loader `<script>` (or the
+`google-adsense-account` meta tag) in the returned HTML. Work down this list; each
+step is a different failure with a different fix.
+
+| # | Cause | How to tell | Fix |
+| --- | --- | --- | --- |
+| 1 | The loader was injected by JavaScript, so it is absent from the page source | View source (Ctrl+U) and search `adsbygoogle` — the raw HTML only had a `<link rel="preload">` | **Fixed in this repo**: `src/components/adsense-loader.tsx` renders a literal `<script>` inside `<head>`; `next/script` with `strategy="afterInteractive"` must never wrap it again |
+| 2 | The deployed site is older than the fix, or the domain serves a different build | `curl -s https://toolz.name.ng/ \| grep -c adsbygoogle` prints 0 | Merge to `main`, trigger a production deploy, re-check |
+| 3 | The URL is wrong: `www.` vs apex, `http://` vs `https://`, or a path instead of the root | The dashboard entry and the redirect chain disagree | Submit the exact canonical origin `https://toolz.name.ng/`; keep one hop of redirect only |
+| 4 | The crawler is blocked: Vercel Deployment Protection, Cloudflare "Under Attack"/Bot Fight Mode, basic auth, or a firewall rule | `curl -I` shows 401/403, a challenge page, or a login | Allow public unauthenticated access to `/`, `/ads.txt` and `/robots.txt`; disable protection on the production alias |
+
+After any of these, allow up to 24 hours for Google to re-crawl before concluding it
+still fails.
+
 ## 7. After approval
 
-1. Add the exact seller line supplied by Google to `public/ads.txt` (replacing the comment).
+1. `public/ads.txt` already carries the seller line `google.com, pub-5010473500037610, DIRECT,
+   f08c47fec0942fa0`; confirm it stays exact if the account changes.
 2. Set `NEXT_PUBLIC_ADSENSE_CLIENT` and `NEXT_PUBLIC_ADS_ENABLED=true` in the host's
    environment — never commit either value.
 3. Set `NEXT_PUBLIC_ADSENSE_SLOT_TOOL` to the tool-page unit id. The loader and the
@@ -124,7 +148,7 @@ them; adding more slots is a template change, not a rebuild.
 5. Monitor the Policy Centre weekly for the first month; a single "low value content"
    warning is a signal to add depth, not to add ad units.
 
-## 8. Known placeholders (must be resolved before applying)
+## 8. Known placeholders (owner action; the code side is done)
 
 | Placeholder | Location | Replace with |
 | --- | --- | --- |
@@ -132,8 +156,6 @@ them; adding more slots is a template change, not a rebuild.
 | `hello@toolz.name.ng` | `src/lib/site.ts` | A monitored mailbox |
 | "pending legal review" notes | Policy pages | Confirmation after review |
 | Operator identity on `/about/` | About page | Real, verifiable details |
-| Empty/comment-only `ads.txt` | `public/ads.txt` | Google's exact seller line |
-| Tools brand name | Site-wide | Only if the name is cleared, otherwise rewrite brand copy |
 
 ## 9. Explicit non-goals
 

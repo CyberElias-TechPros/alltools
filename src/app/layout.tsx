@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import "@fontsource-variable/bricolage-grotesque/standard.css";
 import "@fontsource-variable/inter-tight/wght.css";
 import "@fontsource-variable/jetbrains-mono/wght.css";
@@ -8,6 +7,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ToastProvider } from "@/components/ui";
 import { Analytics } from "@/components/analytics";
+import { AdsenseLoader } from "@/components/adsense-loader";
 import { JsonLd } from "@/components/json-ld";
 import { searchIndex } from "@/lib/tools/registry";
 import { siteConfig, siteKeywords } from "@/lib/site";
@@ -24,6 +24,14 @@ export const metadata: Metadata = {
   authors: [{ name: siteConfig.name, url: siteConfig.url }],
   creator: siteConfig.name,
   publisher: siteConfig.name,
+  /**
+   * Secondary proof of site ownership for AdSense. Google accepts either this
+   * meta tag or the loader script in the head; both are shipped, so whichever
+   * check the dashboard runs finds an answer.
+   */
+  other: {
+    "google-adsense-account": siteConfig.adsenseClient,
+  },
   category: "technology",
   classification: "Utilities, Online Tools, Productivity",
   alternates: {
@@ -157,24 +165,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-dvh antialiased">
+      {/*
+        The head is written explicitly so that the AdSense loader is a real
+        <script> element in the exported HTML of every page. AdSense verifies
+        site ownership by fetching the page source, so anything injected later
+        by JavaScript — including next/script with strategy="afterInteractive" —
+        reads as "not found". See src/components/adsense-loader.tsx.
+      */}
+      <head>
+        {/* Applies the stored theme before first paint, so there is no flash. */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {/*
           Consent Mode v2 defaults. Every storage signal starts denied, so no
           advertising or analytics cookie is set until the visitor chooses in
           the banner (or in Google's certified CMP when NEXT_PUBLIC_CMP_PROVIDER
-          is "google"). Runs before the AdSense tag below.
+          is "google"). Must run before the AdSense loader below.
         */}
         <script dangerouslySetInnerHTML={{ __html: consentDefaultScript }} />
-        {siteConfig.adsenseClient ? (
-          <Script
-            id="toolz-adsense"
-            async
-            strategy="afterInteractive"
-            crossOrigin="anonymous"
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${siteConfig.adsenseClient}`}
-          />
-        ) : null}
+        <AdsenseLoader />
+      </head>
+      <body className="min-h-dvh antialiased">
         <JsonLd data={websiteSchema} />
         <a
           href="#main"

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { footerLinkGroups, siteConfig } from "@/lib/site";
+import { footerLinkGroups, legalLinks, siteConfig } from "@/lib/site";
 import { liveTools, popularTools } from "@/lib/tools/registry";
 import { categories } from "@/lib/tools/categories";
 import { CookieSettings } from "./analytics";
@@ -29,7 +29,7 @@ export function SiteFooter() {
           ))}
         </div>
 
-        <div className="grid gap-10 py-12 md:grid-cols-[1.4fr_repeat(4,1fr)]">
+        <div className="grid gap-10 py-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
             <div className="flex items-center gap-2.5">
               <LogoMark className="size-6 text-[var(--text)]" />
@@ -78,6 +78,25 @@ export function SiteFooter() {
             </nav>
           ))}
         </div>
+
+        <nav
+          aria-label="Legal and policies"
+          className="flex flex-col gap-3 border-t border-[var(--border)] py-5 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <h2 className="eyebrow">Legal &amp; policies</h2>
+          <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            {legalLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="text-sm font-medium text-[var(--text-muted)] underline-offset-4 transition-colors hover:text-[var(--accent-text)] hover:underline"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
         <div className="flex flex-col gap-3 border-t border-[var(--border)] py-6 text-xs text-[var(--text-subtle)] sm:flex-row sm:items-center sm:justify-between">
           <p className="font-mono text-[0.66rem] uppercase tracking-[0.1em]">

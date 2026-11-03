@@ -7,19 +7,19 @@ import { ContactForm } from "@/components/contact-form";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Contact",
+  title: "Contact Us",
   description: "Report a wrong result, request a tool, flag an accessibility problem or ask a privacy question.",
   path: "/contact/",
-  keywords: ['contact', 'report a bug', 'suggest a tool'],
+  keywords: ['contact us', 'contact', 'report a bug', 'suggest a tool'],
 });
 
 export default function ContactPage() {
   return (
     <PageShell
-      title="Contact"
+      title="Contact Us"
       intro="Found a wrong calculation? Need a tool that does not exist yet? Tell us — specific reports are the fastest way to improve this site."
-      breadcrumbs={[{ href: "/contact/", label: "Contact" }]}
-      updated="2 November 2025"
+      breadcrumbs={[{ href: "/contact/", label: "Contact us" }]}
+      updated="3 November 2026"
     >
       <div className="not-prose grid gap-5 sm:grid-cols-[1.2fr_1fr]">
         <div className="border border-[var(--border-strong)] bg-[var(--surface)]">

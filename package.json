@@ -2,7 +2,7 @@
   "name": "toolz",
   "version": "1.0.0",
   "private": true,
-  "description": "Toolz — 254 fast, free, privacy-first online tools that run in your browser.",
+  "description": "Toolz \u2014 254 fast, free, privacy-first online tools that run in your browser.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "npm run typecheck && npm run test && npm run build"
+    "check": "npm run typecheck && npm run test && npm run build",
+    "verify:adsense": "node scripts/verify-adsense.mjs"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",
