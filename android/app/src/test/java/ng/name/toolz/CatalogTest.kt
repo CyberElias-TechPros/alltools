@@ -161,4 +161,56 @@ class CatalogTest {
         assertTrue(run("email-signature").value.contains("mailto:hello@toolz.name.ng"))
         assertEquals("12", run("content-calendar").details.first { it.first == "Posts" }.second)
     }
+
+    @Test
+    fun `calculator and developer ports compute correctly`() {
+        fun run(slug: String, overrides: Map<String, String> = emptyMap()) =
+            toolBySlug(slug)!!.let { tool ->
+                val input = tool.fields.associate { it.id to it.defaultValue } + overrides
+                tool.compute(input)
+            }
+
+        assertEquals("48", run("basic-calculator").value)
+        assertEquals("12.5", run("scientific-calculator").value)
+        assertEquals("8.485281", run("square-root").value)
+        assertEquals("6√2", run("square-root").details.first { it.first == "Simplified" }.second)
+        assertEquals("19/12", run("fraction").value)
+        assertEquals("5", run("matrix").value)
+        assertEquals("58%", run("probability").value)
+        assertEquals("10", run("probability").details.first { it.first == "C(5,2)" }.second)
+        assertEquals("16:9", run("ratio").value)
+        assertEquals("3:2", run("ratio", mapOf("ratio" to "150:100")).value)
+
+        assertEquals("box-shadow", run("box-shadow").label)
+        assertEquals(
+            "0px 12px 24px -6px rgba(21,22,26,0.25)",
+            run("box-shadow").value,
+        )
+        assertFalse(run("css-minifier").value.contains("  "))
+        assertTrue(run("css-formatter").value.contains("{\n"))
+        assertTrue(run("html-formatter").value.contains("\n  <h2>"))
+        assertTrue(run("xml-formatter").value.contains("Widget"))
+        assertTrue(run("javascript-formatter").value.contains("const total"))
+        assertTrue(run("javascript-minifier").value.length < 120)
+        assertFalse(run("javascript-minifier").value.contains("//"))
+
+        assertTrue(run("json-to-csv").value.startsWith("name,role,city"))
+        assertTrue(run("json-to-csv").value.contains("Ada,Founder,"))
+        assertTrue(run("qr-code").value.contains("█"))
+        assertEquals("2 matches", run("regex-tester").label)
+        assertEquals("Well-formed", run("xml-validator").label)
+        assertEquals(
+            "Not well-formed",
+            run("xml-validator", mapOf("xml" to "<a><b></a>")).label,
+        )
+
+        assertEquals(
+            "12.5",
+            run("basic-calculator", mapOf("expression" to "10/0.8")).value,
+        )
+        assertEquals(
+            "Check your input",
+            run("basic-calculator", mapOf("expression" to "1/0")).label,
+        )
+    }
 }

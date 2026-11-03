@@ -140,6 +140,10 @@ jobs:
               tests += int(root.get("tests", 0))
               failures += int(root.get("failures", 0))
               errors += int(root.get("errors", 0))
+              for case in root.iter("testcase"):
+                  for bad in list(case.findall("failure")) + list(case.findall("error")):
+                      message = (bad.get("message") or bad.text or "").strip()
+                      emit("TEST FAILED: " + case.get("name", "?") + " — " + message[:600])
           emit(f"JVM TESTS: {tests} run / {failures} failed / {errors} errors")
 
           def digest(path):
