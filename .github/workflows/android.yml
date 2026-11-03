@@ -124,19 +124,37 @@ jobs:
 
       - name: Publish build output to the pull request branch
         if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set -euo pipefail
+          set -uo pipefail
           git config user.name "toolz-ci"
           git config user.email "ci@toolz.name.ng"
           git add -A android/dist android/ci
           if git diff --cached --quiet; then
             echo "Nothing new to publish."
-          else
-            git commit -m "ci: android build output [skip ci]"
-            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${{ github.head_ref || github.ref_name }}"
+            exit 0
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git commit -m "ci: android build output [skip ci]"
+          if git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${{ github.head_ref || github.ref_name }}" 2>push.err; then
+            echo "Pushed the artefacts."
+            exit 0
+          fi
+          echo "::error::PUSH FAILED: $(tr '\n' ' ' < push.err | head -c 700)"
+          # Second channel: a pull-request comment we can read through the API.
+          if gh pr comment "${{ github.event.pull_request.number }}" --body "Build finished. Artefact publish failed: $(head -c 300 push.err)" 2>comment.err; then
+            echo "::warning::PR COMMENT CHANNEL WORKS"
+          else
+            echo "::error::COMMENT FAILED: $(tr '\n' ' ' < comment.err | head -c 500)"
+          fi
+          # Third channel: a direct contents API write.
+          if echo "probe" | base64 > blob.txt && gh api -X PUT "repos/${GITHUB_REPOSITORY}/contents/android/ci/probe.txt" -f message="ci probe" -f content="$(cat blob.txt)" 2>api.err; then
+            echo "::warning::CONTENTS API CHANNEL WORKS"
+          else
+            echo "::error::API FAILED: $(tr '\n' ' ' < api.err | head -c 500)"
+          fi
+          exit 0
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
