@@ -86,9 +86,9 @@ internal object PdfWriter {
 
         pages.forEachIndexed { index, pageLines ->
             val contentId = firstContent + index * 2
-            val body = StringBuilder("BT\n/F1 ").append(trim(size)).append(" Tf\n")
+            val body = StringBuilder("BT\n/F1 ").append(trim(size.toDouble())).append(" Tf\n")
             pageLines.forEachIndexed { lineIndex, line ->
-                val y = PAGE_HEIGHT - MARGIN - size - lineIndex * leading
+                val y = PAGE_HEIGHT - MARGIN - size.toDouble() - lineIndex * leading.toDouble()
                 body.append("1 0 0 1 ").append(trim(MARGIN)).append(' ').append(trim(y)).append(" Tm (")
                     .append(escape(line)).append(") Tj\n")
             }
