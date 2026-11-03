@@ -20,9 +20,10 @@ val categories: List<ToolCategory> = listOf(
 )
 
 val allTools: List<Tool> =
-    textTools + calculatorTools + calculatorTools2 + financeTools + developerTools +
-        developerTools2 + everydayTools + securityTools + educationTools + seoTools +
-        seoTools2 + businessTools + businessTools2 + extraTools + batchTools
+    textTools + textTools2 + calculatorTools + calculatorTools2 + financeTools +
+        developerTools + developerTools2 + everydayTools + securityTools + educationTools +
+        seoTools + seoTools2 + businessTools + businessTools2 + internetTools2 +
+        extraTools + batchTools
 
 private val bySlug: Map<String, Tool> = allTools.associateBy { it.slug }
 

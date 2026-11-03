@@ -121,8 +121,9 @@ class CatalogTest {
         assertEquals("1", alt.details.first { it.first == "Missing alt" }.second)
 
         val readability = run("readability")
-        assertTrue(readability.value.toDouble() in 0.0..121.0)
-        assertFalse(readability.value.contains(","))
+        assertTrue(readability.label.toDouble() in 0.0..121.0)
+        assertFalse(readability.label.contains(","))
+        assertTrue(readability.value.isNotBlank())
 
         val page = run("page-size")
         assertEquals("Raw weight", page.label)
@@ -212,5 +213,69 @@ class CatalogTest {
             "Check your input",
             run("basic-calculator", mapOf("expression" to "1/0")).label,
         )
+    }
+
+    @Test
+    fun `text and internet ports compute correctly`() {
+        fun run(slug: String, overrides: Map<String, String> = emptyMap()) =
+            toolBySlug(slug)!!.let { tool ->
+                val input = tool.fields.associate { it.id to it.defaultValue } + overrides
+                tool.compute(input)
+            }
+
+        val html = run("markdown-to-html").value
+        assertTrue(html.contains("<h1>Weekly note</h1>"))
+        assertTrue(html.contains("<strong>three</strong>"))
+        assertTrue(html.contains("<del>ten</del>"))
+        assertTrue(html.contains("<li>Check the <em>build</em></li>"))
+        assertTrue(html.contains("<code>logs.txt</code>"))
+        assertTrue(html.contains("<a href=\"https://toolz.name.ng\">Docs</a>"))
+
+        val markdown = run("html-to-markdown").value
+        assertTrue(markdown.contains("## Plan"))
+        assertTrue(markdown.contains("**three**"))
+        assertTrue(markdown.contains("- Draft"))
+        assertTrue(markdown.contains("[Docs](https://toolz.name.ng)"))
+
+        val preview = run("markdown-preview")
+        assertEquals("1", preview.details.first { it.first == "Headings" }.second)
+        assertEquals("3", preview.details.first { it.first == "List items" }.second)
+
+        assertEquals("How To Check A Vat Number", run("slug-to-text").value)
+        assertEquals(
+            "how to check a vat number",
+            run("slug-to-text", mapOf("style" to "lower case")).value,
+        )
+
+        val random = run("random-text")
+        assertTrue(random.value.isNotBlank())
+        assertEquals(
+            random.value,
+            run("random-text").value,
+        )
+
+        val subnet = run("ipv4-subnet")
+        assertEquals("192.168.1.0/24", subnet.label)
+        assertEquals("255.255.255.0", subnet.details.first { it.first == "Subnet mask" }.second)
+        assertEquals("254", subnet.details.first { it.first == "Usable hosts" }.second)
+        assertEquals(
+            "10.0.0.0/8",
+            run("ipv4-subnet", mapOf("cidr" to "10.1.2.3/8")).label,
+        )
+
+        assertEquals(
+            "https://toolz.name.ng/Tools",
+            run("canonical-url").value,
+        )
+        assertEquals("100/100", run("domain-analyzer").label)
+        assertEquals("3 URLs", run("sitemap-generator").label)
+        assertTrue(run("sitemap-generator").value.contains("<loc>https://toolz.name.ng/</loc>"))
+        assertTrue(run("meta-tags").value.contains("<link rel=\"canonical\""))
+        assertTrue(run("open-graph").value.contains("Free VAT Calculator"))
+
+        val ua = run("user-agent")
+        assertEquals("Chrome", ua.label)
+        assertTrue(ua.value.startsWith("Android 14"))
+        assertEquals("Phone", ua.details.first { it.first == "Device" }.second)
     }
 }
