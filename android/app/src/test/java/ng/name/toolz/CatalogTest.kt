@@ -278,4 +278,56 @@ class CatalogTest {
         assertTrue(ua.value.startsWith("Android 14"))
         assertEquals("Phone", ua.details.first { it.first == "Device" }.second)
     }
+
+    @Test
+    fun `money, study, health and security ports compute correctly`() {
+        fun run(slug: String, overrides: Map<String, String> = emptyMap()) =
+            toolBySlug(slug)!!.let { tool ->
+                val input = tool.fields.associate { it.id to it.defaultValue } + overrides
+                tool.compute(input)
+            }
+
+        assertEquals("3,456,000", run("business-revenue").value)
+        assertEquals("155,000 NGN", run("currency-converter").value)
+        assertTrue(run("debt-payoff").label.endsWith("months"))
+        assertEquals("176,234.17", run("inflation").value)
+        assertEquals("623,000", run("overtime").value)
+        assertEquals("12.5%", run("ownership").label)
+        assertEquals("6.57%", run("rental-yield").label)
+        assertEquals("245.6667", run("stock-average").value)
+
+        assertEquals("77.5%", run("attendance").label)
+        assertEquals("Two thousand five", run("number-to-words").value)
+        assertEquals("2,005", run("words-to-number").value)
+        assertEquals("4.2 × 10^-4", run("scientific-notation").value)
+        assertTrue(run("multiplication-table").value.contains("7 × 12 = 84"))
+        assertEquals("2 cards", run("flashcard-generator").label)
+        assertEquals("3 questions", run("random-quiz").label)
+        assertTrue(run("bibliography").value.contains("(2024). Practical VAT"))
+        assertTrue(run("citation").value.startsWith("Toolz. (2026-11-03)."))
+
+        assertTrue(run("body-fat").label.endsWith("%"))
+        assertEquals("2,693 kcal a day", run("calorie-estimate").label)
+        assertEquals("15 Oct 2026", run("ovulation-date").value)
+        assertEquals("5:15 per km", run("pace").label)
+        assertEquals("12 km/h", run("running-speed").label)
+        assertEquals("8 Jun 2027", run("pregnancy-due-date").value)
+        assertEquals("3.45 L a day", run("water-intake").label)
+
+        assertTrue(run("privacy-policy").value.contains("# Privacy policy for https://toolz.name.ng"))
+        assertTrue(run("terms-conditions").value.contains("## 1. Using https://toolz.name.ng"))
+        assertEquals("3 gaps", run("cookie-checklist").label)
+        assertEquals("Suspicious", run("url-safety").label)
+
+        val payload = run("text-encryption").value
+        assertTrue(payload.isNotBlank())
+        assertEquals(
+            "Meet me at 6.",
+            run("text-encryption", mapOf("mode" to "Decrypt", "text" to payload)).value,
+        )
+        assertEquals(
+            "Could not decrypt: wrong passphrase, or the payload was altered.",
+            run("text-encryption", mapOf("mode" to "Decrypt", "text" to payload, "passphrase" to "wrong password")).error,
+        )
+    }
 }
