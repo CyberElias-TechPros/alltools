@@ -89,6 +89,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.play.services.ads)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.zxing.core)
     debugImplementation(libs.androidx.ui.tooling)
 
     testImplementation(libs.junit)
