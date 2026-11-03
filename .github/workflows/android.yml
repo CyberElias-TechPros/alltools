@@ -16,17 +16,23 @@ concurrency:
   group: android-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Test and assemble
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     defaults:
       run:
         working-directory: android
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -39,32 +45,95 @@ jobs:
         with:
           gradle-version: "8.9"
 
-      - name: Unit tests
-        run: gradle :app:testDebugUnitTest --no-daemon --stacktrace
-
-      - name: Assemble debug APK
-        run: gradle :app:assembleDebug --no-daemon
-
-      - name: Build release bundle (unsigned without signing secrets)
-        if: github.event_name != 'pull_request'
-        run: gradle :app:bundleRelease --no-daemon
+      # Signing keys never live in a public repository. If the owner adds the
+      # four secrets below, the release is signed here; otherwise it is built
+      # unsigned and `scripts/sign-release.sh` finishes the job locally.
+      - name: Import keystore if the owner supplied one
         env:
-          TOOLZ_KEYSTORE_PATH: ${{ secrets.TOOLZ_KEYSTORE_PATH }}
-          TOOLZ_KEYSTORE_PASSWORD: ${{ secrets.TOOLZ_KEYSTORE_PASSWORD }}
-          TOOLZ_KEY_ALIAS: ${{ secrets.TOOLZ_KEY_ALIAS }}
-          TOOLZ_KEY_PASSWORD: ${{ secrets.TOOLZ_KEY_PASSWORD }}
+          KEYSTORE_B64: ${{ secrets.TOOLZ_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.TOOLZ_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.TOOLZ_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.TOOLZ_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -n "${KEYSTORE_B64:-}" ]; then
+            printf '%s' "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/toolz-upload.jks"
+            {
+              echo "TOOLZ_KEYSTORE_PATH=$RUNNER_TEMP/toolz-upload.jks"
+              echo "TOOLZ_KEYSTORE_PASSWORD=$STORE_PASSWORD"
+              echo "TOOLZ_KEY_ALIAS=$KEY_ALIAS"
+              echo "TOOLZ_KEY_PASSWORD=$KEY_PASSWORD"
+            } >> "$GITHUB_ENV"
+            echo "Release will be signed with the owner's upload key."
+          else
+            echo "No signing secrets — building an unsigned release, as documented."
+          fi
+
+      - name: Build
+        id: build
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          gradle \
+            :app:testDebugUnitTest \
+            :app:assembleDebug \
+            :app:assembleRelease \
+            :app:bundleRelease \
+            --no-daemon --stacktrace --warning-mode=summary \
+            2>&1 | tee "$GITHUB_WORKSPACE/ci-build.log"
+
+      - name: Collect artefacts
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p dist ci
+          cp "$GITHUB_WORKSPACE/ci-build.log" ci/build.log || true
+          tail -n 300 ci/build.log > ci/build-tail.log || true
+          : > dist/SHA256SUMS.txt
+          copy() {
+            if [ -f "$1" ]; then
+              cp "$1" "dist/$2"
+              ( cd dist && sha256sum "$2" >> SHA256SUMS.txt )
+            fi
+          }
+          copy app/build/outputs/bundle/release/app-release.aab toolz-1.0.0.aab
+          copy app/build/outputs/apk/release/app-release.apk toolz-1.0.0.apk
+          copy app/build/outputs/apk/release/app-release-unsigned.apk toolz-1.0.0-unsigned.apk
+          copy app/build/outputs/apk/debug/app-debug.apk toolz-1.0.0-debug.apk
+          ls -l dist
+
+      - name: Publish build output to the pull request branch
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "toolz-ci"
+          git config user.email "ci@toolz.name.ng"
+          git add -A android/dist android/ci
+          if git diff --cached --quiet; then
+            echo "Nothing new to publish."
+          else
+            git commit -m "ci: android build output [skip ci]"
+            git push origin "HEAD:${{ github.head_ref || github.ref_name }}"
+          fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: toolz-debug-apk
-          path: android/app/build/outputs/apk/debug/*.apk
+          name: toolz-apk
+          path: android/dist/*.apk
           if-no-files-found: warn
 
       - name: Upload bundle
-        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: toolz-release-aab
-          path: android/app/build/outputs/bundle/release/*.aab
+          name: toolz-aab
+          path: android/dist/*.aab
           if-no-files-found: warn
+
+      - name: Fail the job if the build failed
+        if: steps.build.outcome != 'success'
+        run: |
+          echo "Gradle failed — read android/ci/build-tail.log on the branch." >&2
+          exit 1
