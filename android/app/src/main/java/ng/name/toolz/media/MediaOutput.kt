@@ -3,7 +3,7 @@ package ng.name.toolz.media
 import android.graphics.Bitmap
 
 /** What a media tool hands back: a headline, the workings, and maybe a file. */
-internal data class MediaOutput(
+data class MediaOutput(
     val label: String,
     val summary: String,
     val details: List<Pair<String, String>> = emptyList(),
@@ -17,4 +17,4 @@ internal data class MediaOutput(
 }
 
 /** A failure the user can act on, as opposed to a bug. */
-internal class MediaError(message: String) : IllegalArgumentException(message)
+class MediaError(message: String) : IllegalArgumentException(message)

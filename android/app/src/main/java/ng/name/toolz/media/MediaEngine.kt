@@ -4,7 +4,7 @@ import android.content.Context
 import ng.name.toolz.data.Tool
 
 /** Sends a media tool to the engine that can actually run it. */
-internal object MediaEngine {
+object MediaEngine {
 
     private val PDF_SLUGS = setOf(
         "text-to-pdf", "docx-to-pdf", "jpg-to-pdf", "png-to-pdf", "pdf-page-counter",

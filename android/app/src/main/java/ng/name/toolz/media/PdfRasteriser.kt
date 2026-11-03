@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 
 /** Pages to pixels, using the PDF renderer that ships with Android. */
-internal object PdfRasteriser {
+object PdfRasteriser {
 
     fun pageCount(context: Context, pdf: ByteArray): Int = withRenderer(context, pdf) { it.pageCount }
 
