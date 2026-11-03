@@ -286,7 +286,7 @@ at the real origin (view source and search for `example.com`).
 ## Android app
 
 A separate, fully native Kotlin + Jetpack Compose app lives in [`android/`](android/).
-It is not a WebView: 186 tools are Kotlin functions compiled into the APK, so they
+It is not a WebView: 222 tools are Kotlin functions compiled into the APK, so they
 answer in a frame, work in aeroplane mode and never upload a value.
 
 ```bash

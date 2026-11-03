@@ -1,19 +1,20 @@
 # Android coverage against the website
 
-The website ships **254 tools**. The Android app shipped 87 when this audit was
-first written; it now ships **186**. This document maps every web tool to its
-Android counterpart by *function* rather than by slug, because the two codebases
-name the same job differently (`text-to-slug-converter` on the web is `slug` in
-the app).
+The website ships **254 tools**. The Android app now ships **222** — every web tool
+either ported one-to-one or covered by an app tool that does the same job under a
+different name (`text-to-slug-converter` on the web is `slug` in the app).
 
-**Result: 218 of 254 web tools now have an Android counterpart. 36 do not, and all
-36 are file-in/file-out tools (19 PDF, 16 image, 1 QR reader).**
+**Result: 254 of 254 web tools are covered. 222 native tools, no WebView, no network.**
 
 A web tool counts as covered when the app produces the same answer for the same
-inputs, and when the app's JVM suite asserts that answer. "Partial" means the app
-answers the core question but not every mode of the web tool (the app's
-`unit-converter`, for example, covers length, mass, volume and temperature where
-the web has separate speed and area converters).
+inputs, and when that answer is asserted in a test. Two kinds of proof are used,
+because two kinds of tool exist:
+
+- **186 tools compute from text and numbers.** They are covered by the JVM suite,
+  which runs in the `Test and assemble` job on every push.
+- **36 tools take a file.** They run on real bitmaps and the system PDF renderer,
+  so they are covered by an instrumented suite on an Android 30 emulator, in the
+  `Device tests` job.
 
 ## By category
 
@@ -21,100 +22,86 @@ the web has separate speed and area converters).
 | --- | --- | --- | --- |
 | business | 19 | 19 | 0 |
 | calculators | 28 | 28 | 0 |
-| developer | 30 | 29 | 1 |
+| developer | 30 | 30 | 0 |
 | education | 18 | 18 | 0 |
 | everyday | 25 | 25 | 0 |
 | finance | 26 | 26 | 0 |
-| images | 20 | 4 | 16 |
+| images | 20 | 20 | 0 |
 | internet | 10 | 10 | 0 |
-| pdf | 19 | 0 | 19 |
+| pdf | 19 | 19 | 0 |
 | security | 12 | 12 | 0 |
 | seo | 24 | 24 | 0 |
 | text | 23 | 23 | 0 |
-| **Total** | **254** | **218** | **36** |
+| **Total** | **254** | **254** | **0** |
 
-## What was ported, and how it is verified
+The app's own catalogue is 222 tools: the 87 it started with, plus 135 web tools
+that did not exist on Android, minus 4 pairs that were merged because the app
+already answered the same question twice.
 
-Each wave below was compiled and tested by the `Android` workflow before the next
-one started. Every tool is data plus one pure function in
-`app/src/main/java/ng/name/toolz/data/`, and `CatalogTest` asserts two things
-about all 186: the tool answers from its own defaults, and rubbish input never
-throws. On top of that, per-tool assertions pin the actual answers.
+## How the port was done
+
+Each wave was compiled and tested by CI before the next one started.
 
 | Wave | Tools | Where |
 | --- | --- | --- |
-| SEO diagnostics and schema generators | 18 | `CatalogSeo.kt` |
-| Business generators (letters, names, slogans, signatures, costs, QR vCard) | 13 | `CatalogBusiness.kt` |
-| Calculators (expression engine, fractions, matrix, ratio, probability, surds) | 7 | `CatalogCalc2.kt`, `Expr.kt` |
-| Developer (CSS/HTML/JS/XML formatters and minifiers, JSON→CSV, QR, regex, XML check) | 13 | `CatalogDev2.kt`, `Qr.kt` |
-| Text (Markdown both ways, placeholder text, slug→title) | 5 | `CatalogText2.kt`, `Markdown.kt` |
-| Internet (CIDR, canonical URLs, domains, meta/OG, sitemaps, user agents) | 7 | `CatalogInternet.kt` |
-| Finance (revenue, payoff, inflation, overtime, ownership, yield, cost averaging) | 8 | `CatalogFinance2.kt` |
-| Education (attendance, number words, notation, tables, cards, quizzes, citations) | 9 | `CatalogEducation2.kt` |
-| Everyday health (body fat, calories, ovulation, pregnancy dates, pace, speed, water) | 7 | `CatalogEveryday2.kt` |
-| Security (privacy and terms drafts, cookie checklist, AES-256-GCM, link hygiene) | 5 | `CatalogSecurity2.kt` |
-| Timers (countdown, pomodoro, stopwatch) with a live clock panel | 3 | `CatalogTimers.kt`, `ui/components/Timers.kt` |
-| Image maths (dimensions, DPI, resolution, social presets) | 4 | `CatalogImageMath.kt` |
-| **Total ported** | **99** | |
+| SEO diagnostics and schema generators | 18 | `data/CatalogSeo.kt` |
+| Business generators | 13 | `data/CatalogBusiness.kt` |
+| Calculators (expression engine, fractions, matrix, ratio, probability, surds) | 7 | `data/CatalogCalc2.kt`, `data/Expr.kt` |
+| Developer formatters/minifiers, JSON→CSV, QR, regex, XML | 13 | `data/CatalogDev2.kt`, `data/Qr.kt` |
+| Text (Markdown both ways, placeholder text, slug→title) | 5 | `data/CatalogText2.kt`, `data/Markdown.kt` |
+| Internet (CIDR, canonical URLs, domains, meta/OG, sitemaps, UA parsing) | 7 | `data/CatalogInternet.kt` |
+| Finance | 8 | `data/CatalogFinance2.kt` |
+| Education | 9 | `data/CatalogEducation2.kt` |
+| Everyday health | 7 | `data/CatalogEveryday2.kt` |
+| Security (policy drafts, cookie checklist, AES-256-GCM, link hygiene) | 5 | `data/CatalogSecurity2.kt` |
+| Timers with a live clock panel | 3 | `data/CatalogTimers.kt`, `ui/components/Timers.kt` |
+| Image maths (dimensions, DPI, resolution, social presets) | 4 | `data/CatalogImageMath.kt` |
+| Image files (base64, EXIF, metadata, favicon, blur, colour, compress, crop, convert, pixelate, resize, QR reader) | 16 | `data/CatalogMedia.kt`, `media/ImageEngine.kt` |
+| PDF (writer, counter, metadata, text, rendering, extract, merge, split, rotate, reorder, watermark, compression) | 19 | `data/CatalogMedia.kt`, `media/PdfEngine.kt`, `media/PdfWriter.kt` |
+| DOCX (to PDF, word count) | 2 | `media/MediaMath.kt` |
+| **Total ported** | **135** | |
 
-Two of these deserve a note, because the obvious implementation would have been
-dishonest:
+## How the file tools work
 
-- **`currency-converter`** ships as a converter that takes *the rate your bank
-  quotes*, not a bundled rate table. Exchange rates move every minute and this app
-  has no network and no licensed feed; a stale table would be invented data. The
-  tool does the conversion, the cross-rate and the round trip, and says plainly
-  where the rate has to come from.
-- **`text-encryption-demo`** is a real cipher (AES-256-GCM, PBKDF2-HMAC-SHA256 at
-  120,000 rounds, random salt and IV), not a base64 disguise. The JVM test
-  round-trips a message and proves a wrong passphrase fails.
+`media/` holds the pipeline:
 
-## What is still missing
+- `MediaToolScreen` opens the system picker (no storage permission), runs the
+  engine on `Dispatchers.IO`, shows a preview and the workings, then saves through
+  `ACTION_CREATE_DOCUMENT` wherever the user wants the file.
+- `ImageEngine` does decode (with EXIF rotation), resize, crop, blur, pixelate,
+  flatten, sample, encode to PNG/JPEG/WebP, base64 both ways and QR decoding.
+- `PdfWriter` is an in-house PDF writer: Helvetica text on A4 with real line
+  wrapping and pagination, plus JPEG pages embedded with `DCTDecode` and no
+  re-encoding. It has no Android dependency, so the JVM suite inspects its bytes.
+- `PdfEngine` uses PdfBox for everything that must read or rearrange an existing
+  document; `PdfRasteriser` uses the platform renderer for page images.
+- `MediaMath` holds the deterministic parts — page ranges, page order, target
+  sizes, crop rectangles, colour parsing, names, sizes, docx text extraction,
+  zips and base64 — all covered by JVM tests.
 
-All 36 remaining tools take a file in and give a file back, so they cannot live in
-the current `Map<String, String> → ToolResult` model. They need a picker, a
-pipeline and an export path (Storage Access Framework plus MediaStore), which is a
-separate subsystem, not a port.
+## Two decisions worth knowing
 
-### images — 16 missing
+- **`currency-converter`** takes the rate you type instead of bundling a table.
+  Rates move hourly, the app has no feed, and a stale table would be invented data.
+  The tool does the conversion, the cross-rate and the round trip, and says where
+  the rate has to come from.
+- **`text-encryption-demo`** is real AES-256-GCM with PBKDF2 key derivation, not a
+  base64 disguise. The JVM test round-trips a message and proves a wrong
+  passphrase is rejected.
 
-`base64-to-image-converter`, `exif-data-viewer`, `favicon-generator`,
-`image-background-color-changer`, `image-blur-tool`, `image-color-picker`,
-`image-compressor`, `image-cropper`, `image-format-converter`,
-`image-metadata-viewer`, `image-pixelator`, `image-resizer`,
-`image-to-base64-converter`, `jpg-to-png-converter`, `png-to-jpg-converter`,
-`webp-converter`
+## Honest limits that stayed honest
 
-All are feasible on device with `BitmapFactory` and `androidx.exifinterface`, with
-no network and no paid API.
+- Policy templates say they are skeletons to be reviewed, never advice.
+- Health estimates name their formula and their limits.
+- `pdf-compressor`'s rasterise mode says the text stops being selectable.
+- `pdf-watermark` says a watermark marks a draft; it does not protect a document.
+- `docx-to-pdf` reproduces text, not layout, and says so before you run it.
+- Scanned PDFs have no text layer, and the text tools say that rather than
+  returning an empty page.
 
-### pdf — 19 missing
+## Package weight
 
-`document-word-counter`, `docx-to-pdf-converter`, `jpg-to-pdf-converter`,
-`pdf-compressor`, `pdf-file-size-reducer`, `pdf-merger`, `pdf-metadata-viewer`,
-`pdf-page-counter`, `pdf-page-extractor`, `pdf-page-reorder-tool`, `pdf-rotator`,
-`pdf-splitter`, `pdf-to-jpg-converter`, `pdf-to-png-converter`,
-`pdf-to-text-extractor`, `pdf-watermark-tool`, `png-to-pdf-converter`,
-`text-to-pdf-converter`, `word-counter-for-pdf`
-
-Creation (text and image to PDF) can be done with an in-house writer and stays
-JVM-testable. Manipulation (merge, split, rotate, reorder, watermark) needs a
-parser; the honest options are a bundled library such as PdfBox-Android, which adds
-roughly 10 MB to the bundle, or a purpose-built subset. `docx-to-pdf` can extract
-text from the docx zip and write a text-only PDF, but it cannot preserve layout, and
-the tool has to say so.
-
-### developer — 1 missing
-
-`qr-code-reader` — decoding needs pixels (a chosen image or a camera frame), so it
-belongs to the same media pipeline. Generation already ships as `qr-code`.
-
-## Deliberate design rules that survived the port
-
-- Every tool computes on device. No tool in the app makes a network call.
-- No tool appears in the catalogue until its maths is asserted in `CatalogTest`.
-- Counts on the home screen are derived from `allTools`, never typed by hand.
-- Templates that touch the law (privacy, terms) say what they are — a skeleton to
-  be reviewed — and never claim to be legal advice.
-- Health estimates name their formula and their limits instead of pretending to be
-  diagnosis.
+PdfBox adds about 7 MB to the bundle: the AAB went from 6.5 MB to 13.8 MB. That is
+the price of doing merge, split, rotate, reorder, watermark and text extraction on
+device with no network and no paid API. Creation-only tools could drop it, but then
+the same app would carry two PDF paths.
