@@ -249,9 +249,10 @@ Everything is optional for development; see [`.env.example`](.env.example).
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console meta token | unset (tag omitted) |
 | `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Bing Webmaster `msvalidate.01` token | unset (tag omitted) |
 | `NEXT_PUBLIC_GA_ID` | GA4 measurement ID; analytics also requires cookie consent | empty — no analytics |
-| `NEXT_PUBLIC_ADSENSE_CLIENT` | Publisher ID from Google after approval | empty — no ad script |
+| `NEXT_PUBLIC_ADSENSE_CLIENT` | AdSense publisher ID | `ca-pub-5010473500037610` (live) |
 | `NEXT_PUBLIC_ADSENSE_SLOT_TOOL` | Ad unit id for the tool-page slot | empty — slot renders nothing |
 | `NEXT_PUBLIC_ADS_ENABLED` | Must be exactly `"true"` for ad slots to render | `false` |
+| `NEXT_PUBLIC_CMP_PROVIDER` | `google` once a Google-certified CMP is live in AdSense | `internal` |
 
 Before launch, set `NEXT_PUBLIC_SITE_URL` to the real domain, replace the placeholder
 contact address in `src/lib/site.ts`, and review the legal pages. See
@@ -282,6 +283,30 @@ at the real origin (view source and search for `example.com`).
 
 ---
 
+## Android app
+
+A separate, fully native Kotlin + Jetpack Compose app lives in [`android/`](android/).
+It is not a WebView: 87 tools are Kotlin functions compiled into the APK, so they
+answer in a frame, work in aeroplane mode and never upload a value.
+
+```bash
+cd android
+gradle wrapper --gradle-version 8.9   # once, if `gradlew` is not present
+./gradlew :app:testDebugUnitTest      # catalogue tests, JVM only
+./gradlew :app:assembleDebug          # app-debug.apk
+./gradlew :app:bundleRelease          # app-release.aab  (Play)
+./gradlew :app:assembleRelease        # app-release.apk  (Galaxy Store)
+```
+
+- Architecture, signing, AdMob setup and the release checklist: [`android/README.md`](android/README.md)
+- Store listing copy, icon, feature graphic and submission checklist: [`android/store/`](android/store/)
+- Builds run in CI via [`.github/workflows/android.yml`](.github/workflows/android.yml)
+
+Signing keys, store submission and AdMob approval are owner actions — the repo never
+contains credentials.
+
+---
+
 ## Documentation
 
 | Document | Contents |
@@ -291,6 +316,8 @@ at the real origin (view source and search for `example.com`).
 | [`docs/PRD.md`](docs/PRD.md) | Product requirements, audience, jobs to be done, quality bar |
 | [`docs/TESTING.md`](docs/TESTING.md) | Test strategy, what each suite covers, manual QA script |
 | [`docs/ADSENSE_QA.md`](docs/ADSENSE_QA.md) | Pre-AdSense-application audit with evidence and owner actions |
+| [`android/README.md`](android/README.md) | Native Android app: architecture, build, signing, AdMob |
+| [`android/store/LISTING.md`](android/store/LISTING.md) | Play and Galaxy Store listing copy, data-safety answers |
 
 ---
 

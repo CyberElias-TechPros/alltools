@@ -353,13 +353,14 @@ blueprint's rules and can trip "ads on a site under review". *Connects to:*
 a real domain exists (every check that references the live site is 🟡 or ⛔ there).
 
 **7.6 — `ads.txt`.** *Why:* an invented or guessed seller line is worse than an empty file —
-it can invalidate authorised-seller status. `public/ads.txt` therefore contains only an
-explanatory comment until Google supplies the real line.
+it can invalidate authorised-seller status. `public/ads.txt` now carries the real line
+supplied by Google (`google.com, pub-5010473500037610, DIRECT, f08c47fec0942fa0`). ✅
 
 **7.7 — CMP.** *Why:* Google requires a certified CMP for personalised ads in the EEA, UK
-and Switzerland. Analytics consent already exists in `src/components/analytics.tsx`, but a
-certified CMP (or Google's own consent message) must be added before ads are switched on for
-those regions.
+and Switzerland. The site now ships Consent Mode v2 defaults plus an in-house banner, and
+`NEXT_PUBLIC_CMP_PROVIDER=google` hands the banner over to Google's certified message. 🟡
+Switching personalised ads on for those regions still waits for the owner to publish the
+consent message in AdSense.
 
 ---
 
@@ -377,6 +378,35 @@ Only categories that can run entirely in the browser without a paid API are elig
 | 8.6 | Bulk/batch workflows and keyboard-first power features | ⬜ |
 | 8.7 | Optional PWA offline caching of recently used tools | ⬜ |
 | 8.8 | Localisation (start with a single additional locale, reviewed by a native speaker) | ⬜ |
+
+---
+
+## Phase 9 — Native Android app
+
+A second delivery target: the same brand, rebuilt as a Kotlin + Jetpack Compose app rather
+than wrapped in a WebView. Source lives in [`android/`](android/README.md).
+
+| # | Step | Status |
+| --- | --- | --- |
+| 9.1 | Gradle project: AGP 8.7.3, Kotlin 2.0.21, Compose BOM 2024.12, compileSdk 35, minSdk 26 | ✅ |
+| 9.2 | `Tool` / `FieldSpec` / `ToolResult` model so every tool is data plus one pure function | ✅ |
+| 9.3 | 87 tools ported to Kotlin across nine collections, with an in-house JSON parser for the formatter | ✅ |
+| 9.4 | JVM test suite: unique slugs, real categories, defaults answer, rubbish input never crashes, search ranking | ✅ |
+| 9.5 | Studio design system: cream/ink/vermilion palette, serif display type, light and dark schemes | ✅ |
+| 9.6 | Screens: onboarding tour, home, collections, all tools, search, tool, settings | ✅ |
+| 9.7 | AdMob: all six formats wired, UMP consent before any request, sample ids in debug builds | ✅ |
+| 9.8 | Store pack: 512 icon, 1024×500 feature graphic, listing copy, data-safety answers | ✅ |
+| 9.9 | CI workflow that runs the tests and uploads APK/AAB artefacts | ✅ |
+| 9.10 | Signed `app-release.aab` and `app-release.apk` | ⛔ no JDK/Android SDK in this build sandbox; keystore is the owner's |
+| 9.11 | Device QA: onboarding, consent form, rotation, dark mode, airplane mode, screenshots | ⛔ needs a physical device or emulator |
+| 9.12 | Port the remaining 167 web tools in batches (see the plan in `android/README.md`) | ⬜ |
+| 9.13 | Play Console and Galaxy Store submission | ⛔ owner accounts, signed artefact, final human review |
+
+**9.10 — Why the binaries are not in the repo.** *Why:* an AAB is only useful when it is
+signed with the upload key that the owner holds; generating one here would either be
+unsigned (rejected by both stores) or require a credential that must never exist in the
+repository. *Verify:* `android/README.md` documents the three exact Gradle commands and the
+`keystore.properties` / `TOOLZ_*` environment contract.
 
 ### Blueprint coverage by section
 
