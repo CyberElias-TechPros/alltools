@@ -63,6 +63,9 @@ demand:
 Download from **Actions → Android → newest run**:
 <https://github.com/CyberElias-TechPros/alltools/actions/workflows/android.yml>
 
+The newest verified build, with its checksums and package identity, is recorded in
+[`dist/LATEST-BUILD.md`](dist/LATEST-BUILD.md).
+
 The release is **unsigned** unless the four signing secrets below are present —
 a public repository must never contain a keystore. See
 [`dist/README.md`](dist/README.md) and [`scripts/sign-release.sh`](scripts/sign-release.sh).
