@@ -41,6 +41,7 @@ import ng.name.toolz.ui.components.ResultPanel
 import ng.name.toolz.ui.components.StudioButton
 import ng.name.toolz.ui.components.StudioChip
 import ng.name.toolz.ui.components.StudioTextField
+import ng.name.toolz.ui.components.TimerPanel
 import ng.name.toolz.ui.theme.Studio
 
 @Composable
@@ -93,6 +94,19 @@ fun ToolScreen(tool: Tool, onBack: () -> Unit, onOpenCategory: (String) -> Unit)
                         Spacer(Modifier.height(14.dp))
                     }
                 }
+            }
+        }
+
+        if (tool.slug == "countdown-timer" || tool.slug == "pomodoro-timer" || tool.slug == "stopwatch") {
+            item {
+                Spacer(Modifier.height(6.dp))
+                TimerPanel(
+                    slug = tool.slug,
+                    workMinutes = (values["work"] ?: values["minutes"])?.toIntOrNull() ?: 25,
+                    restMinutes = values["rest"]?.toIntOrNull() ?: 5,
+                    rounds = values["rounds"]?.toIntOrNull() ?: 4,
+                )
+                Spacer(Modifier.height(16.dp))
             }
         }
 

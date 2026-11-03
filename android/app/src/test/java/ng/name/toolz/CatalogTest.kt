@@ -293,7 +293,7 @@ class CatalogTest {
         assertEquals("176,234.17", run("inflation").value)
         assertEquals("623,000", run("overtime").value)
         assertEquals("12.5%", run("ownership").label)
-        assertEquals("6.57%", run("rental-yield").label)
+        assertEquals("6.57%", run("rental-yield").value)
         assertEquals("245.6667", run("stock-average").value)
 
         assertEquals("77.5%", run("attendance").label)
@@ -329,5 +329,25 @@ class CatalogTest {
             "Could not decrypt: wrong passphrase, or the payload was altered.",
             run("text-encryption", mapOf("mode" to "Decrypt", "text" to payload, "passphrase" to "wrong password")).error,
         )
+    }
+
+    @Test
+    fun `timers format their clocks and plan their rounds`() {
+        fun run(slug: String, overrides: Map<String, String> = emptyMap()) =
+            toolBySlug(slug)!!.let { tool ->
+                val input = tool.fields.associate { it.id to it.defaultValue } + overrides
+                tool.compute(input)
+            }
+
+        assertEquals("00:00.00", ng.name.toolz.data.clockText(0))
+        assertEquals("01:05.00", ng.name.toolz.data.clockText(65_000))
+        assertEquals("00:59.99", ng.name.toolz.data.clockText(59_990))
+        assertEquals("1:00:00", ng.name.toolz.data.clockText(3_600_000))
+
+        assertEquals("05:00.00", run("countdown-timer").value)
+        assertEquals("Tea", run("countdown-timer").label)
+        assertEquals("100 minutes of focus", run("pomodoro-timer").label)
+        assertEquals("Total time", run("pomodoro-timer").details.first().first)
+        assertEquals("00:00.00", run("stopwatch").value)
     }
 }
