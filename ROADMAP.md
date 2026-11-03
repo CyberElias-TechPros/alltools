@@ -397,16 +397,17 @@ than wrapped in a WebView. Source lives in [`android/`](android/README.md).
 | 9.7 | AdMob: all six formats wired, UMP consent before any request, sample ids in debug builds | ✅ |
 | 9.8 | Store pack: 512 icon, 1024×500 feature graphic, listing copy, data-safety answers | ✅ |
 | 9.9 | CI workflow that runs the tests and uploads APK/AAB artefacts | ✅ |
-| 9.10 | Signed `app-release.aab` and `app-release.apk` | ⛔ no JDK/Android SDK in this build sandbox; keystore is the owner's |
-| 9.11 | Device QA: onboarding, consent form, rotation, dark mode, airplane mode, screenshots | ⛔ needs a physical device or emulator |
-| 9.12 | Port the remaining 167 web tools in batches (see the plan in `android/README.md`) | ⬜ |
-| 9.13 | Play Console and Galaxy Store submission | ⛔ owner accounts, signed artefact, final human review |
+| 9.10 | `app-release.aab` and `app-release.apk` built, tested and verified in CI | ✅ artefacts `toolz-aab` / `toolz-apk` on every workflow run |
+| 9.11 | Signing with the owner's upload key | 🟡 unsigned by default; four repo secrets sign it automatically, or run `scripts/sign-release.sh` |
+| 9.12 | Device QA: onboarding, consent form, rotation, dark mode, airplane mode, screenshots | ⛔ needs a physical device or emulator |
+| 9.13 | Port the remaining 167 web tools in batches (see the plan in `android/README.md`) | ⬜ |
+| 9.14 | Play Console and Galaxy Store submission | ⛔ owner accounts, signed artefact, final human review |
 
-**9.10 — Why the binaries are not in the repo.** *Why:* an AAB is only useful when it is
-signed with the upload key that the owner holds; generating one here would either be
-unsigned (rejected by both stores) or require a credential that must never exist in the
-repository. *Verify:* `android/README.md` documents the three exact Gradle commands and the
-`keystore.properties` / `TOOLZ_*` environment contract.
+**9.10 — Where the binaries come from.** *Why:* this build sandbox cannot reach Google's
+Maven, the Android SDK or the Gradle distribution, so the app is compiled by the `Android`
+workflow on GitHub's runners instead — the same commands a developer would run locally.
+*Verify:* every run publishes `toolz-aab` and `toolz-apk`, and annotates the test totals,
+package identity, dex count, AdMob app id and SHA-256 of each artefact.
 
 ### Blueprint coverage by section
 

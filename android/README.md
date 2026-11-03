@@ -45,7 +45,29 @@ Android Studio: **File → Open → `android/`** and let it sync. It downloads t
 Gradle distribution named in `gradle/wrapper/gradle-wrapper.properties` and any
 missing SDK packages.
 
-### Command line
+## Building
+
+### On GitHub (wired up, nothing to install)
+
+`.github/workflows/android.yml` runs on every push that touches `android/` and on
+demand:
+
+1. JDK 17 + Gradle 8.9
+2. `:app:testDebugUnitTest` — the whole catalogue, on the JVM
+3. `:app:assembleDebug`, `:app:assembleRelease`, `:app:bundleRelease`
+4. Uploads `toolz-aab` and `toolz-apk` as workflow artefacts
+5. Prints the tests, package identity, dex count, AdMob app id and SHA-256 of
+   each artefact as check-run annotations, so a build can be audited without
+   downloading anything
+
+Download from **Actions → Android → newest run**:
+<https://github.com/CyberElias-TechPros/alltools/actions/workflows/android.yml>
+
+The release is **unsigned** unless the four signing secrets below are present —
+a public repository must never contain a keystore. See
+[`dist/README.md`](dist/README.md) and [`scripts/sign-release.sh`](scripts/sign-release.sh).
+
+### Locally
 
 The wrapper scripts (`gradlew`, `gradlew.bat`, `gradle-wrapper.jar`) are generated
 by Gradle itself and are intentionally not committed here. Create them once:
@@ -62,13 +84,13 @@ Then:
 ./gradlew :app:assembleDebug
 # → app/build/outputs/apk/debug/app-debug.apk
 
-# Release bundle for Google Play
+# Release bundle for Google Play and the Samsung Galaxy Store
 ./gradlew :app:bundleRelease
 # → app/build/outputs/bundle/release/app-release.aab
 
-# Release APK for the Samsung Galaxy Store (and sideloading)
+# Release APK for the Galaxy Store (and sideloading)
 ./gradlew :app:assembleRelease
-# → app/build/outputs/apk/release/app-release.apk
+# → app/build/outputs/apk/release/app-release-unsigned.apk
 ```
 
 Unit tests (the whole catalogue):
