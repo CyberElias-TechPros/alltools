@@ -5,9 +5,9 @@ import { PageShell } from "@/components/page-shell";
 
 export const metadata: Metadata = pageMetadata({
   title: "Cookie Policy",
-  description: "How Toolz uses cookies and local storage — and why the site works with none of them enabled.",
+  description: "How Toolz uses cookies and local storage, which third-party advertising cookies (including Google DoubleClick) may be set, and how to opt out.",
   path: "/cookies/",
-  keywords: ['cookie policy', 'cookies', 'privacy'],
+  keywords: ['cookie policy', 'cookies', 'privacy', 'doubleclick cookie', 'advertising cookies'],
 });
 
 export default function CookiesPage() {
@@ -16,7 +16,7 @@ export default function CookiesPage() {
       title="Cookie Policy"
       intro="The site is designed to work without tracking cookies. This page explains exactly what is stored and why."
       breadcrumbs={[{ href: "/cookies/", label: "Cookie policy" }]}
-      updated="2 November 2025"
+      updated="3 November 2026"
     >
       <h2>1. Do you use cookies?</h2>
       <p>
@@ -55,13 +55,31 @@ export default function CookiesPage() {
         be revoked at any time from the cookie settings control in the footer.
       </p>
 
-      <h2>4. Advertising cookies</h2>
+      <h2>4. Advertising cookies, including Google DoubleClick</h2>
       <p>
-        This site is supported by advertising served through Google AdSense (publisher ID{" "}
+        Advertising is switched off until Google approves the publisher account, so no advertising
+        cookie is set today. When it is on, this site is supported by advertising served through
+        Google AdSense (publisher ID{" "}
         <code className="font-mono text-[0.85em]">ca-pub-5010473500037610</code>). Google and its
-        partners may set advertising cookies — for example to limit how often you see the same ad,
-        measure performance, and, where you have consented, personalise ads. Ad storage is denied
-        until you choose &ldquo;Accept&rdquo;, and the decision can be reversed at any time.
+        partners may then set advertising cookies — for example to limit how often you see the same
+        ad, measure performance, and, where you have consented, personalise ads. Ad storage is
+        denied until you choose &ldquo;Accept&rdquo;, and the decision can be reversed at any time.
+      </p>
+      <p>
+        The best-known of those cookies is the <strong>DoubleClick cookie</strong> (also referred to
+        as the DART cookie). It identifies a browser, not a person, and lets Google and its partners
+        serve adverts based on your visits to this and other websites, avoid showing the same advert
+        repeatedly, and report how adverts performed. Third-party vendors and ad networks other than
+        Google may set similar cookies when they serve here. You can opt out of the DoubleClick
+        cookie in{" "}
+        <a href="https://adssettings.google.com/" className="link" rel="noopener noreferrer nofollow" target="_blank">
+          Google Ads Settings
+        </a>{" "}
+        and read Google&apos;s explanation at{" "}
+        <a href="https://policies.google.com/technologies/ads" className="link" rel="noopener noreferrer nofollow" target="_blank">
+          policies.google.com/technologies/ads
+        </a>
+        .
       </p>
       <p>
         For visitors in the EEA, the UK and Switzerland, consent is collected through a

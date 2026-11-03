@@ -6,9 +6,9 @@ import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
   title: "Privacy Policy",
-  description: "What Toolz collects (very little), what stays in your browser, how analytics and advertising work, and how to exercise your rights.",
+  description: "What Toolz collects (very little), what stays in your browser, how analytics and advertising cookies — including Google DoubleClick — work, and how to opt out.",
   path: "/privacy-policy/",
-  keywords: ['privacy policy', 'data protection', 'no uploads', 'gdpr'],
+  keywords: ['privacy policy', 'data protection', 'no uploads', 'gdpr', 'doubleclick cookie'],
 });
 
 export default function PrivacyPolicyPage() {
@@ -17,7 +17,7 @@ export default function PrivacyPolicyPage() {
       title="Privacy Policy"
       intro="This policy describes the actual behaviour of this website. If a feature is not listed here, it is not running."
       breadcrumbs={[{ href: "/privacy-policy/", label: "Privacy policy" }]}
-      updated="2 November 2025"
+      updated="3 November 2026"
     >
       <h2>1. Summary</h2>
       <ul>
@@ -26,7 +26,11 @@ export default function PrivacyPolicyPage() {
         <li>
           Optional analytics are disabled by default and only run if you explicitly accept them.
         </li>
-        <li>Advertising is not currently enabled. If it is enabled, this policy will be updated first.</li>
+        <li>
+          Advertising is switched off until Google approves the publisher account. This policy
+          already describes everything that runs once it is on, including the Google DoubleClick
+          cookie.
+        </li>
         <li>Preferences such as your theme choice are stored in your own browser.</li>
       </ul>
 
@@ -89,13 +93,29 @@ export default function PrivacyPolicyPage() {
         through the cookie settings control in the footer, or by clearing site data.
       </p>
 
-      <h2>7. Advertising</h2>
+      <h2>7. Advertising and third-party cookies, including Google DoubleClick</h2>
       <p>
-        This site is supported by advertising served through Google AdSense (publisher ID{" "}
-        <code className="font-mono text-[0.85em]">ca-pub-5010473500037610</code>). Third-party
-        vendors, including Google, use cookies to serve ads based on your prior visits to this and
-        other websites, and Google&apos;s use of advertising cookies enables it and its partners to
-        serve ads to you based on your visit to this site and other sites on the internet.
+        Advertising is not live yet. The slots are built into the page but render nothing until the
+        publisher account below is approved and advertising is switched on. Once it is, this site
+        is supported by advertising served through Google AdSense (publisher ID{" "}
+        <code className="font-mono text-[0.85em]">ca-pub-5010473500037610</code>).
+      </p>
+      <p>
+        <strong>
+          Third-party vendors, including Google, use cookies to serve ads based on your prior visits
+          to this website or other websites.
+        </strong>{" "}
+        Google&apos;s use of advertising cookies enables it and its partners to serve ads to you
+        based on your visit to this site and/or other sites on the internet. Those cookies include
+        the <strong>DoubleClick cookie</strong> — historically documented by Google as the DART
+        cookie — which records which adverts a browser has already been shown so the same one is
+        not repeated, and which measures how an advert performed. It does not reveal your name,
+        your email address, or anything you type into a tool.
+      </p>
+      <p>
+        Other third-party vendors and ad networks may also serve adverts on this site, each under
+        its own cookie policy. We do not pass the text you type, file names, results or calculated
+        answers to any advertising system.
       </p>
       <p>
         Adverts are placed between content blocks, never inside a tool&apos;s input or result area,
@@ -110,7 +130,16 @@ export default function PrivacyPolicyPage() {
         management platform before any personalised advertising cookie is set.
       </p>
       <p>
-        You can learn about Google&apos;s practices and opt out of personalised advertising in{" "}
+        You can opt out of personalised advertising, and of the DoubleClick cookie specifically, in{" "}
+        <a
+          href="https://adssettings.google.com/"
+          className="link"
+          rel="noopener noreferrer nofollow"
+          target="_blank"
+        >
+          Google Ads Settings
+        </a>
+        , review your choices in{" "}
         <a
           href="https://myadcenter.google.com/"
           className="link"
@@ -118,8 +147,8 @@ export default function PrivacyPolicyPage() {
           target="_blank"
         >
           Google Ad Center
-        </a>{" "}
-        or at{" "}
+        </a>
+        , or opt out of a third-party vendor&apos;s use of cookies for personalised advertising at{" "}
         <a
           href="https://www.aboutads.info/choices/"
           className="link"
@@ -127,6 +156,15 @@ export default function PrivacyPolicyPage() {
           target="_blank"
         >
           aboutads.info
+        </a>
+        . How Google uses cookies in advertising is set out at{" "}
+        <a
+          href="https://policies.google.com/technologies/ads"
+          className="link"
+          rel="noopener noreferrer nofollow"
+          target="_blank"
+        >
+          policies.google.com/technologies/ads
         </a>
         .
       </p>

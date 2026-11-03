@@ -6,19 +6,19 @@ import { liveTools } from "@/lib/tools/registry";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
-  title: "About this site",
+  title: "About Us",
   description: "Who runs Toolz, why the tools exist, how they are built and tested, and what we will never do with your data.",
   path: "/about/",
-  keywords: ['about tools', 'free online tools', 'privacy', 'how it works'],
+  keywords: ['about us', 'about tools', 'free online tools', 'privacy', 'how it works'],
 });
 
 export default function AboutPage() {
   return (
     <PageShell
-      title="About this site"
+      title="About Us"
       intro="A small, independent tools platform built on a simple idea: a utility page should do one job well, explain itself, and get out of the way."
-      breadcrumbs={[{ href: "/about/", label: "About" }]}
-      updated="2 November 2025"
+      breadcrumbs={[{ href: "/about/", label: "About us" }]}
+      updated="3 November 2026"
     >
       <h2>What this site is</h2>
       <p>
@@ -86,6 +86,29 @@ export default function AboutPage() {
         <Link href="/contact/">contact page</Link>. Corrections and tool requests are genuinely
         welcome — the roadmap is shaped by what people actually need.
       </p>
+
+      <h2>Our legal and policy pages</h2>
+      <p>Everything that governs use of the site is published, in plain language, at one link each:</p>
+      <ul>
+        <li>
+          <Link href="/privacy-policy/">Privacy Policy</Link> — what is collected (very little), which
+          third-party advertising cookies such as Google DoubleClick may be set, and how to opt out.
+        </li>
+        <li>
+          <Link href="/terms/">Terms &amp; Conditions</Link> — acceptable use, intellectual property
+          and the limits of our liability.
+        </li>
+        <li>
+          <Link href="/cookies/">Cookie Policy</Link> — every cookie and local storage key involved.
+        </li>
+        <li>
+          <Link href="/disclaimer/">Disclaimer</Link> — why a calculator result is never advice.
+        </li>
+        <li>
+          <Link href="/contact/">Contact Us</Link> — email us directly; there is no ticketing system
+          and no account.
+        </li>
+      </ul>
 
       <h2>Principles we will not break</h2>
       <ol>

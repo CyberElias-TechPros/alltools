@@ -62,9 +62,11 @@ export function GET() {
   lines.push("");
   for (const [label, path] of [
     ["Privacy policy", "/privacy-policy/"],
-    ["Terms of service", "/terms/"],
+    ["Terms and conditions", "/terms/"],
     ["Cookie policy", "/cookies/"],
     ["Disclaimer", "/disclaimer/"],
+    ["About us", "/about/"],
+    ["Contact us", "/contact/"],
     ["Accessibility", "/accessibility/"],
   ] as const) {
     lines.push(`- [${label}](${siteConfig.url}${path})`);

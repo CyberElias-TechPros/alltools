@@ -132,19 +132,26 @@ export const footerLinkGroups = [
   {
     title: "Company",
     links: [
-      { href: "/about/", label: "About" },
-      { href: "/contact/", label: "Contact" },
+      { href: "/about/", label: "About us" },
+      { href: "/contact/", label: "Contact us" },
       { href: "/editorial-policy/", label: "Editorial policy" },
       { href: "/accessibility/", label: "Accessibility" },
     ],
   },
-  {
-    title: "Legal",
-    links: [
-      { href: "/privacy-policy/", label: "Privacy policy" },
-      { href: "/terms/", label: "Terms of service" },
-      { href: "/disclaimer/", label: "Disclaimer" },
-      { href: "/cookies/", label: "Cookie policy" },
-    ],
-  },
+] as const;
+
+/**
+ * Legal and policy pages. Reviewers and visitors both expect these within one
+ * click of any page, so the footer renders them as their own labelled row
+ * instead of burying them at the bottom of a column. The order is the order a
+ * reader scans: what we do with data, the rules of use, then who we are and how
+ * to reach us.
+ */
+export const legalLinks = [
+  { href: "/privacy-policy/", label: "Privacy Policy" },
+  { href: "/terms/", label: "Terms & Conditions" },
+  { href: "/cookies/", label: "Cookie Policy" },
+  { href: "/disclaimer/", label: "Disclaimer" },
+  { href: "/about/", label: "About Us" },
+  { href: "/contact/", label: "Contact Us" },
 ] as const;

@@ -46,17 +46,18 @@ content requirements in Google Search's helpful-content guidance.
 
 | # | Requirement | Status | Evidence / action |
 | --- | --- | --- | --- |
-| 3.1 | About page explaining who runs the site and why | 🟡 | `/about/` exists and is substantive. It must be updated with the operator's real identity before applying. |
-| 3.2 | Contact method that reaches a human | ⛔ | `/contact/` composes a mailto link, but `siteConfig.email` is `hello@toolz.name.ng`. Replace with a monitored mailbox (`src/lib/site.ts`) or the form has no destination. |
-| 3.3 | Terms of service | 🟡 | `/terms/` written and dated; needs legal review for the operator's jurisdiction. |
-| 3.4 | Privacy policy covering analytics and ads | 🟡 | `/privacy-policy/` already names Google, AdSense, cookies, third parties, the EEA/UK consent position and opt-out routes. **Add the specific ad-cookie wording (DoubleClick/`__gads`) on the day ads are enabled** — the page currently states, correctly, that advertising is not enabled. |
-| 3.5 | Cookie policy | 🟡 | `/cookies/` accurate for today's build; extend with ad cookies when ads are enabled. |
-| 3.6 | Disclaimer | 🟡 | `/disclaimer/` covers informational use; legal review required. |
+| 3.1 | About page explaining who runs the site and why | ✅ | `/about/` is titled **About Us**, describes who runs the site, how tools are built and tested, and links every other policy page. Linked from the footer legal row and the Company column. |
+| 3.2 | Contact method that reaches a human | 🟡 | `/contact/` is titled **Contact Us**, shows the mailbox as text, and its form composes a `mailto:` — no server, no stored submissions. Owner action: confirm `hello@toolz.name.ng` is monitored (`src/lib/site.ts`) before applying. |
+| 3.3 | Terms and conditions | ✅ | `/terms/` is titled **Terms & Conditions** and covers agreement, permitted use, your content, accuracy, IP, liability, availability, third parties, changes, governing law (with a consumer-law carve-out), contact and links to the other policies. The public placeholder sentence was removed; legal review of the governing-law wording still recommended. |
+| 3.4 | Privacy policy covering analytics and ads | ✅ | `/privacy-policy/` §7 is now headed *Advertising and third-party cookies, including Google DoubleClick*. It carries the required sentence that third-party vendors, including Google, use cookies to serve ads based on prior visits; names the **DoubleClick cookie (DART)**; names other ad networks; links Google Ads Settings, Google Ad Center, `aboutads.info` and `policies.google.com/technologies/ads`; states ads are off until approval and that ad/analytics storage starts denied. |
+| 3.5 | Cookie policy | ✅ | `/cookies/` §4 is headed *Advertising cookies, including Google DoubleClick*, explains what that cookie does, links the opt-outs, and keeps the `toolz:theme` / `toolz:recent` / `toolz:consent` inventory accurate. |
+| 3.6 | Disclaimer | 🟡 | `/disclaimer/` covers informational use and is linked from every page; legal review still required. |
 | 3.7 | Accessibility statement | ✅ | `/accessibility/` states the target, describes the built-in measures and how to report barriers. |
 | 3.8 | Editorial policy | ✅ | `/editorial-policy/` explains sourcing, review and correction of tool content. |
 | 3.9 | Public roadmap | ✅ | `/roadmap/` derives counts from the registry and marks planned work as planned. |
 | 3.10 | Working 404 page | ✅ | `src/app/not-found.tsx`; static hosts serve `404.html`. |
 | 3.11 | Sitemap and robots.txt | ✅ | `src/app/sitemap.ts` builds from the live registry; `robots.ts` points at it. Verify on the deployed domain (§6.1). |
+| 3.12 | Legal pages reachable from every page | ✅ | `legalLinks` in `src/lib/site.ts` renders a labelled *Legal & policies* row in the footer (Privacy Policy, Terms & Conditions, Cookie Policy, Disclaimer, About Us, Contact Us). `tests/legal.test.tsx` asserts the links, the page titles and the DoubleClick wording. |
 
 ## 4. Advertising implementation rules
 
