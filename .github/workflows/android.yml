@@ -122,51 +122,68 @@ jobs:
           print("::error::TAIL " + tail.replace("\n", " | ")[:880])
           PY
 
-      # Everything below is emitted as check-run annotations because the runner
-      # token in this repository is read-only: annotations are the only channel
-      # that survives out of the job.
+      # The runner token in this repository is read-only, so the build's own
+      # evidence is emitted as check-run annotations, which the API can read.
       - name: Verify the artefacts
         if: always()
         run: |
-          emit() { printf '%s\n' "::warning::$1" | cut -c1-900; }
-          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
-          AAPT2=$(find "$SDK/build-tools" -name aapt2 2>/dev/null | sort | tail -1)
-          APKSIGNER=$(find "$SDK/build-tools" -name apksigner 2>/dev/null | sort | tail -1)
+          python3 - <<'PY'
+          import glob, hashlib, os, re, subprocess, zipfile
+          import xml.etree.ElementTree as ET
 
-          if ls app/build/test-results/testDebugUnitTest/*.xml >/dev/null 2>&1; then
-            python3 - <<'PY' || true
-          import glob, xml.etree.ElementTree as ET
-          tests = failures = errors = skipped = 0
+          def emit(message):
+              print("::warning::" + " ".join(str(message).split())[:900])
+
+          tests = failures = errors = 0
           for path in glob.glob("app/build/test-results/testDebugUnitTest/*.xml"):
               root = ET.parse(path).getroot()
-              tests += int(root.get("tests", 0)); failures += int(root.get("failures", 0))
-              errors += int(root.get("errors", 0)); skipped += int(root.get("skipped", 0))
-          print(f"::warning::JVM TESTS: {tests} run, {failures} failed, {errors} errors, {skipped} skipped")
+              tests += int(root.get("tests", 0))
+              failures += int(root.get("failures", 0))
+              errors += int(root.get("errors", 0))
+          emit(f"JVM TESTS: {tests} run / {failures} failed / {errors} errors")
+
+          def digest(path):
+              h = hashlib.sha256()
+              with open(path, "rb") as fh:
+                  for chunk in iter(lambda: fh.read(1 << 20), b""):
+                      h.update(chunk)
+              return h.hexdigest()
+
+          aab = "dist/toolz-1.0.0.aab"
+          if os.path.exists(aab):
+              names = zipfile.ZipFile(aab).namelist()
+              dex = [n for n in names if n.startswith("base/dex/")]
+              manifest = zipfile.ZipFile(aab).read("base/manifest/AndroidManifest.xml")
+              admob = b"ca-app-pub-5010473500037610" in manifest
+              sample = [n for n in names if n in (
+                  "base/manifest/AndroidManifest.xml", "base/resources.pb", "BundleConfig.pb")]
+              emit("AAB: " + str(os.path.getsize(aab)) + " bytes, sha256 " + digest(aab))
+              emit(f"AAB contents: {len(names)} entries, {len(dex)} dex file(s), {', '.join(sample)}; "
+                   f"AdMob app id in manifest: {'yes' if admob else 'NO'}")
+
+          for apk in ("dist/toolz-1.0.0.apk", "dist/toolz-1.0.0-unsigned.apk", "dist/toolz-1.0.0-debug.apk"):
+              if not os.path.exists(apk):
+                  continue
+              emit(f"{os.path.basename(apk)}: {os.path.getsize(apk)} bytes, sha256 {digest(apk)}")
+              signer = glob.glob(os.environ.get("ANDROID_SDK_ROOT", "/usr/local/lib/android/sdk") + "/build-tools/*/apksigner")
+              if signer:
+                  result = subprocess.run([sorted(signer)[-1], "verify", "--print-certs", apk],
+                                          capture_output=True, text=True)
+                  first = (result.stdout + result.stderr).strip().splitlines()
+                  keep = [line for line in first if "certificate DN" in line or "DOES NOT VERIFY" in line or "Number of signers" in line]
+                  emit(f"{os.path.basename(apk)} signature: " + (keep[0] if keep else "unsigned / not verified"))
+
+          badge = glob.glob(os.environ.get("ANDROID_SDK_ROOT", "/usr/local/lib/android/sdk") + "/build-tools/*/aapt2")
+          apk = "dist/toolz-1.0.0-debug.apk"
+          if badge and os.path.exists(apk):
+              out = subprocess.run([sorted(badge)[-1], "dump", "badging", apk], capture_output=True, text=True).stdout
+              pkg = next((l for l in out.splitlines() if l.startswith("package:")), "")
+              sdk = [l for l in out.splitlines() if l.startswith(("sdkVersion", "targetSdkVersion"))]
+              perms = len([l for l in out.splitlines() if l.startswith("uses-permission")])
+              emit("DEBUG APK: " + pkg + " | " + " | ".join(sdk) + f" | {perms} permissions")
+
+          emit("download: https://github.com/" + os.environ["GITHUB_REPOSITORY"] + "/actions/runs/" + os.environ["GITHUB_RUN_ID"])
           PY
-          else
-            emit "JVM TESTS: no test results were produced"
-          fi
-
-          if [ -n "$AAPT2" ] && [ -f dist/toolz-1.0.0-debug.apk ]; then
-            "$AAPT2" dump badging dist/toolz-1.0.0-debug.apk 2>/dev/null | grep -E "^(package|sdkVersion|targetSdkVersion|application-label:|uses-permission)" | head -8 | while read -r line; do emit "BADGING $line"; done
-          fi
-
-          if [ -f dist/toolz-1.0.0.aab ]; then
-            emit "AAB entries: $(unzip -l dist/toolz-1.0.0.aab 2>/dev/null | tail -1 | awk '{print $2}') files"
-            unzip -l dist/toolz-1.0.0.aab 2>/dev/null | grep -E "base/(manifest|resources.pb|dex/classes|res/)" | head -4 | awk '{print $4}' | while read -r line; do emit "AAB has $line"; done
-            emit "AdMob app id in manifest: $(unzip -p dist/toolz-1.0.0.aab base/manifest/AndroidManifest.xml 2>/dev/null | strings | grep -c 'ca-app-pub-5010473500037610' || true) match(es)"
-            emit "AAB sha256: $(sha256sum dist/toolz-1.0.0.aab | cut -d' ' -f1)"
-          else
-            emit "AAB: not produced"
-          fi
-
-          for apk in dist/toolz-1.0.0.apk dist/toolz-1.0.0-debug.apk; do
-            [ -f "$apk" ] || continue
-            emit "$(basename "$apk") sha256: $(sha256sum "$apk" | cut -d' ' -f1) size $(stat -c%s "$apk")"
-            if [ -n "$APKSIGNER" ]; then
-              "$APKSIGNER" verify --print-certs "$apk" 2>&1 | grep -E "^(Signer #1 certificate DN|Number of signers|DOES NOT VERIFY)" | while read -r line; do emit "$(basename "$apk") $line"; done
-            fi
-          done
 
       - name: Publish build output to the pull request branch
         if: always()
