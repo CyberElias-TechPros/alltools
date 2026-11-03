@@ -1,121 +1,120 @@
 # Android coverage against the website
 
-The Android app ships **87 tools**. The website ships **254**. This document maps
-every web tool to its nearest Android equivalent, by *function* rather than by slug,
-because the two codebases name the same job differently (`text-to-slug-converter`
-on the web is `slug` in the app).
+The website ships **254 tools**. The Android app shipped 87 when this audit was
+first written; it now ships **186**. This document maps every web tool to its
+Android counterpart by *function* rather than by slug, because the two codebases
+name the same job differently (`text-to-slug-converter` on the web is `slug` in
+the app).
 
-**Result: 119 of 254 web tools have an Android counterpart (99 identical, 20 partial). 135 have none.**
+**Result: 218 of 254 web tools now have an Android counterpart. 36 do not, and all
+36 are file-in/file-out tools (19 PDF, 16 image, 1 QR reader).**
 
 A web tool counts as covered when the app produces the same answer for the same
-inputs. "Partial" means the app answers the core question but not every mode of the
-web tool (for example the app's `unit-converter` covers length, mass, volume and
-temperature, but the web has separate speed and area converters).
+inputs, and when the app's JVM suite asserts that answer. "Partial" means the app
+answers the core question but not every mode of the web tool (the app's
+`unit-converter`, for example, covers length, mass, volume and temperature where
+the web has separate speed and area converters).
 
 ## By category
 
 | Category | Web | In the app | Missing |
 | --- | --- | --- | --- |
-| business | 19 | 6 | 13 |
-| calculators | 28 | 21 | 7 |
-| developer | 30 | 16 | 14 |
-| education | 18 | 9 | 9 |
-| everyday | 25 | 15 | 10 |
-| finance | 26 | 18 | 8 |
-| images | 20 | 0 | 20 |
-| internet | 10 | 3 | 7 |
+| business | 19 | 19 | 0 |
+| calculators | 28 | 28 | 0 |
+| developer | 30 | 29 | 1 |
+| education | 18 | 18 | 0 |
+| everyday | 25 | 25 | 0 |
+| finance | 26 | 26 | 0 |
+| images | 20 | 4 | 16 |
+| internet | 10 | 10 | 0 |
 | pdf | 19 | 0 | 19 |
-| security | 12 | 7 | 5 |
-| seo | 24 | 6 | 18 |
-| text | 23 | 18 | 5 |
-| **Total** | **254** | **119** | **135** |
+| security | 12 | 12 | 0 |
+| seo | 24 | 24 | 0 |
+| text | 23 | 23 | 0 |
+| **Total** | **254** | **218** | **36** |
 
-## What is missing, and how hard it is
+## What was ported, and how it is verified
 
-### business — 13 missing
+Each wave below was compiled and tested by the `Android` workflow before the next
+one started. Every tool is data plus one pure function in
+`app/src/main/java/ng/name/toolz/data/`, and `CatalogTest` asserts two things
+about all 186: the tool answers from its own defaults, and rubbish input never
+throws. On top of that, per-tool assertions pin the actual answers.
 
-Generators (letters, slogans, hashtags, captions) are template-driven string tools — portable, just not yet written.
+| Wave | Tools | Where |
+| --- | --- | --- |
+| SEO diagnostics and schema generators | 18 | `CatalogSeo.kt` |
+| Business generators (letters, names, slogans, signatures, costs, QR vCard) | 13 | `CatalogBusiness.kt` |
+| Calculators (expression engine, fractions, matrix, ratio, probability, surds) | 7 | `CatalogCalc2.kt`, `Expr.kt` |
+| Developer (CSS/HTML/JS/XML formatters and minifiers, JSON→CSV, QR, regex, XML check) | 13 | `CatalogDev2.kt`, `Qr.kt` |
+| Text (Markdown both ways, placeholder text, slug→title) | 5 | `CatalogText2.kt`, `Markdown.kt` |
+| Internet (CIDR, canonical URLs, domains, meta/OG, sitemaps, user agents) | 7 | `CatalogInternet.kt` |
+| Finance (revenue, payoff, inflation, overtime, ownership, yield, cost averaging) | 8 | `CatalogFinance2.kt` |
+| Education (attendance, number words, notation, tables, cards, quizzes, citations) | 9 | `CatalogEducation2.kt` |
+| Everyday health (body fat, calories, ovulation, pregnancy dates, pace, speed, water) | 7 | `CatalogEveryday2.kt` |
+| Security (privacy and terms drafts, cookie checklist, AES-256-GCM, link hygiene) | 5 | `CatalogSecurity2.kt` |
+| Timers (countdown, pomodoro, stopwatch) with a live clock panel | 3 | `CatalogTimers.kt`, `ui/components/Timers.kt` |
+| Image maths (dimensions, DPI, resolution, social presets) | 4 | `CatalogImageMath.kt` |
+| **Total ported** | **99** | |
 
-`business-letter-generator`, `business-name-generator`, `content-calendar-generator`, `email-signature-generator`, `email-subject-line-analyzer`, `hashtag-generator`, `marketing-budget-calculator`, `meeting-cost-calculator`, `project-cost-calculator`, `proposal-template-generator`, `qr-business-card-generator`, `slogan-generator`, `social-media-caption-formatter`
+Two of these deserve a note, because the obvious implementation would have been
+dishonest:
 
-### calculators — 7 missing
+- **`currency-converter`** ships as a converter that takes *the rate your bank
+  quotes*, not a bundled rate table. Exchange rates move every minute and this app
+  has no network and no licensed feed; a stale table would be invented data. The
+  tool does the conversion, the cross-rate and the round trip, and says plainly
+  where the rate has to come from.
+- **`text-encryption-demo`** is a real cipher (AES-256-GCM, PBKDF2-HMAC-SHA256 at
+  120,000 rounds, random salt and IV), not a base64 disguise. The JVM test
+  round-trips a message and proves a wrong passphrase fails.
 
-Pure maths, trivial ports.
+## What is still missing
 
-`basic-calculator`, `fraction-calculator`, `matrix-calculator`, `probability-calculator`, `ratio-calculator`, `scientific-calculator`, `square-root-calculator`
+All 36 remaining tools take a file in and give a file back, so they cannot live in
+the current `Map<String, String> → ToolResult` model. They need a picker, a
+pipeline and an export path (Storage Access Framework plus MediaStore), which is a
+separate subsystem, not a port.
 
-### developer — 14 missing
+### images — 16 missing
 
-QR needs a small encoder library. The CSS/JS/HTML/XML formatters and minifiers are pure string work — easy ports.
+`base64-to-image-converter`, `exif-data-viewer`, `favicon-generator`,
+`image-background-color-changer`, `image-blur-tool`, `image-color-picker`,
+`image-compressor`, `image-cropper`, `image-format-converter`,
+`image-metadata-viewer`, `image-pixelator`, `image-resizer`,
+`image-to-base64-converter`, `jpg-to-png-converter`, `png-to-jpg-converter`,
+`webp-converter`
 
-`box-shadow-generator`, `css-formatter`, `css-gradient-generator`, `css-minifier`, `html-formatter`, `html-minifier`, `javascript-formatter`, `javascript-minifier`, `json-to-csv-converter`, `qr-code-generator`, `qr-code-reader`, `regex-tester`, `xml-formatter`, `xml-validator`
-
-### education — 9 missing
-
-Formula tools port directly; bibliography/citation need style data.
-
-`attendance-calculator`, `bibliography-formatter`, `citation-formatter`, `flashcard-generator`, `multiplication-table-generator`, `number-to-words-converter`, `random-quiz-generator`, `scientific-notation-converter`, `words-to-number-converter`
-
-### everyday — 10 missing
-
-Timers need foreground services; the health estimators are formulas and port easily.
-
-`body-fat-estimator`, `calorie-estimator`, `countdown-timer`, `ovulation-date-estimator`, `pace-calculator`, `pomodoro-timer`, `pregnancy-due-date-calculator`, `running-speed-calculator`, `stopwatch`, `water-intake-estimator`
-
-### finance — 8 missing
-
-currency-converter needs a licensed rate feed, so it stays out until one is chosen. The rest are arithmetic.
-
-`business-revenue-calculator`, `currency-converter`, `debt-payoff-calculator`, `inflation-calculator`, `overtime-calculator`, `percentage-of-ownership-calculator`, `rental-yield-calculator`, `stock-average-price-calculator`
-
-### images — 20 missing
-
-Needs native bitmap work (BitmapFactory, ExifInterface, WebP encode). All 20 are feasible on device with no network.
-
-`base64-to-image-converter`, `exif-data-viewer`, `favicon-generator`, `image-background-color-changer`, `image-blur-tool`, `image-color-picker`, `image-compressor`, `image-cropper`, `image-dimension-calculator`, `image-dpi-calculator`, `image-format-converter`, `image-metadata-viewer`, `image-pixelator`, `image-resizer`, `image-resolution-checker`, `image-to-base64-converter`, `jpg-to-png-converter`, `png-to-jpg-converter`, `social-media-image-size-checker`, `webp-converter`
-
-### internet — 7 missing
-
-domain-name-analyzer and canonical-url-checker need DNS/HTTP; the rest are string parsers.
-
-`canonical-url-checker`, `domain-name-analyzer`, `ipv4-subnet-calculator`, `meta-tag-generator`, `open-graph-preview-tool`, `sitemap-xml-generator`, `user-agent-parser`
+All are feasible on device with `BitmapFactory` and `androidx.exifinterface`, with
+no network and no paid API.
 
 ### pdf — 19 missing
 
-Needs a PDF library (PdfRenderer for reading, a writer for merging/creating). 14 of the 19 are feasible offline; docx→pdf is not.
+`document-word-counter`, `docx-to-pdf-converter`, `jpg-to-pdf-converter`,
+`pdf-compressor`, `pdf-file-size-reducer`, `pdf-merger`, `pdf-metadata-viewer`,
+`pdf-page-counter`, `pdf-page-extractor`, `pdf-page-reorder-tool`, `pdf-rotator`,
+`pdf-splitter`, `pdf-to-jpg-converter`, `pdf-to-png-converter`,
+`pdf-to-text-extractor`, `pdf-watermark-tool`, `png-to-pdf-converter`,
+`text-to-pdf-converter`, `word-counter-for-pdf`
 
-`document-word-counter`, `docx-to-pdf-converter`, `jpg-to-pdf-converter`, `pdf-compressor`, `pdf-file-size-reducer`, `pdf-merger`, `pdf-metadata-viewer`, `pdf-page-counter`, `pdf-page-extractor`, `pdf-page-reorder-tool`, `pdf-rotator`, `pdf-splitter`, `pdf-to-jpg-converter`, `pdf-to-png-converter`, `pdf-to-text-extractor`, `pdf-watermark-tool`, `png-to-pdf-converter`, `text-to-pdf-converter`, `word-counter-for-pdf`
+Creation (text and image to PDF) can be done with an in-house writer and stays
+JVM-testable. Manipulation (merge, split, rotate, reorder, watermark) needs a
+parser; the honest options are a bundled library such as PdfBox-Android, which adds
+roughly 10 MB to the bundle, or a purpose-built subset. `docx-to-pdf` can extract
+text from the docx zip and write a text-only PDF, but it cannot preserve layout, and
+the tool has to say so.
 
-### security — 5 missing
+### developer — 1 missing
 
-The policy generators are long static templates; the encryption demo needs a cipher choice.
+`qr-code-reader` — decoding needs pixels (a chosen image or a camera frame), so it
+belongs to the same media pipeline. Generation already ships as `qr-code`.
 
-`cookie-policy-checklist-generator`, `privacy-policy-generator`, `terms-conditions-generator`, `text-encryption-demo`, `url-safety-syntax-checker`
+## Deliberate design rules that survived the port
 
-### seo — 18 missing
-
-Most are text generators and analysers that port directly; only the site-crawling ones (internal-link-checker, page-size-analyzer) need a fetcher and are deliberately out.
-
-`breadcrumb-schema-generator`, `canonical-tag-generator`, `faq-schema-generator`, `heading-structure-checker`, `hreflang-generator`, `image-alt-text-checker`, `internal-link-checker`, `json-ld-validator`, `keyword-clustering-tool`, `page-size-analyzer`, `readability-checker`, `robots-txt-tester`, `schema-markup-generator`, `seo-checklist-generator`, `seo-text-analyzer`, `sitemap-validator`, `website-content-outline-generator`, `website-launch-checklist`
-
-### text — 5 missing
-
-Markdown renderers need a parser; the rest are string work.
-
-`html-to-markdown-converter`, `markdown-previewer`, `markdown-to-html-converter`, `random-text-generator`, `slug-to-text-converter`
-
-## Deliberate exclusions
-
-- **currency-converter** — needs a licensed exchange-rate feed. Ship it with a rate
-  source, or not at all; a bundled static table would be wrong within a day.
-- **Internal-link-checker, page-size-analyzer, canonical-url-checker, robots-txt-tester,
-  sitemap-validator, domain-name-analyzer** — these crawl a live site. On a phone that
-  is slow, battery-hungry and privacy-hostile, so they stay web-only until there is a
-  design that makes sense offline.
-- **docx-to-pdf-converter** — needs a document renderer far beyond a phone-sized tool.
-
-## Rule all of this obeys
-
-Nothing is listed in the app until it computes a correct answer in a JVM test. The
-counts on the home screen and in Settings are derived from `allTools`, so the app can
-never advertise a tool it does not have.
+- Every tool computes on device. No tool in the app makes a network call.
+- No tool appears in the catalogue until its maths is asserted in `CatalogTest`.
+- Counts on the home screen are derived from `allTools`, never typed by hand.
+- Templates that touch the law (privacy, terms) say what they are — a skeleton to
+  be reviewed — and never claim to be legal advice.
+- Health estimates name their formula and their limits instead of pretending to be
+  diagnosis.

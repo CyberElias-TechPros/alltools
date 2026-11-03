@@ -390,8 +390,8 @@ than wrapped in a WebView. Source lives in [`android/`](android/README.md).
 | --- | --- | --- |
 | 9.1 | Gradle project: AGP 8.7.3, Kotlin 2.0.21, Compose BOM 2024.12, compileSdk 35, minSdk 26 | ✅ |
 | 9.2 | `Tool` / `FieldSpec` / `ToolResult` model so every tool is data plus one pure function | ✅ |
-| 9.3 | 87 tools ported to Kotlin across nine collections, with an in-house JSON parser for the formatter | ✅ |
-| 9.4 | JVM test suite: unique slugs, real categories, defaults answer, rubbish input never crashes, search ranking | ✅ |
+| 9.3 | 186 tools ported to Kotlin across eleven collections, with in-house JSON, Markdown, expression, QR and AES engines | ✅ |
+| 9.4 | JVM test suite (13 tests): unique slugs, real categories, defaults answer, rubbish input never crashes, search ranking, and per-tool answer assertions for the 99 ported tools | ✅ |
 | 9.5 | Studio design system: cream/ink/vermilion palette, serif display type, light and dark schemes | ✅ |
 | 9.6 | Screens: onboarding tour, home, collections, all tools, search, tool, settings | ✅ |
 | 9.7 | AdMob: all six formats wired, UMP consent before any request, sample ids in debug builds | ✅ |
