@@ -275,7 +275,7 @@ same consent gate as analytics.
 | 5.7 | Search suite (9 tests) | ✅ |
 | 5.8 | Catalogue + guides suite (14 tests) | ✅ |
 | 5.9 | `typecheck` + `test` + `build` in one `npm run check` | ✅ |
-| 5.10 | Manual browser QA of all 41 tools (Chrome, Firefox, Safari, mobile) | 🟡 |
+| 5.10 | Manual browser QA of all 254 tools (Chrome, Firefox, Safari, mobile) — the jsdom interaction sweep already covers mechanics for every tool | 🟡 |
 | 5.11 | Lighthouse / Core Web Vitals on a real deployment | ⬜ |
 | 5.12 | Screen-reader pass (VoiceOver and NVDA) | ⬜ |
 | 5.13 | Automated end-to-end smoke test (Playwright) | ⬜ |

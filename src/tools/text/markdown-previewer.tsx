@@ -84,7 +84,11 @@ export default function MarkdownPreviewer() {
             ) : (
               blocks.map((block, index) => {
                 if (block.type === "heading") {
-                  const Tag = (`h${block.level}` as unknown) as "h1";
+                  // The preview lives inside a page that already has one <h1>, so
+                  // the rendered document starts at <h2>. Heading text and order
+                  // are unchanged; only the level is clamped to keep the outline.
+                  const level = Math.min(Math.max(block.level, 2), 6);
+                  const Tag = (`h${level}` as unknown) as "h1";
                   return (
                     <Tag
                       key={index}

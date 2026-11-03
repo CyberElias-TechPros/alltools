@@ -7,7 +7,7 @@ import { ContactForm } from "@/components/contact-form";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Contact Tools",
+  title: "Contact",
   description: "Report a wrong result, request a tool, flag an accessibility problem or ask a privacy question.",
   path: "/contact/",
   keywords: ['contact', 'report a bug', 'suggest a tool'],
