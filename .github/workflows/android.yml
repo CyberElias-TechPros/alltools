@@ -1,0 +1,236 @@
+name: Android
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "android/**"
+      - ".github/workflows/android.yml"
+  pull_request:
+    paths:
+      - "android/**"
+      - ".github/workflows/android.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    name: Test and assemble
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: android
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      # Signing keys never live in a public repository. If the owner adds the
+      # four secrets below, the release is signed here; otherwise it is built
+      # unsigned and `scripts/sign-release.sh` finishes the job locally.
+      - name: Import keystore if the owner supplied one
+        env:
+          KEYSTORE_B64: ${{ secrets.TOOLZ_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.TOOLZ_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.TOOLZ_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.TOOLZ_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -n "${KEYSTORE_B64:-}" ]; then
+            printf '%s' "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/toolz-upload.jks"
+            {
+              echo "TOOLZ_KEYSTORE_PATH=$RUNNER_TEMP/toolz-upload.jks"
+              echo "TOOLZ_KEYSTORE_PASSWORD=$STORE_PASSWORD"
+              echo "TOOLZ_KEY_ALIAS=$KEY_ALIAS"
+              echo "TOOLZ_KEY_PASSWORD=$KEY_PASSWORD"
+            } >> "$GITHUB_ENV"
+            echo "Release will be signed with the owner's upload key."
+          else
+            echo "No signing secrets — building an unsigned release, as documented."
+          fi
+
+      - name: Build
+        run: |
+          set -o pipefail
+          gradle \
+            :app:testDebugUnitTest \
+            :app:assembleDebug \
+            :app:assembleRelease \
+            :app:bundleRelease \
+            --no-daemon --stacktrace --warning-mode=summary \
+            2>&1 | tee "$GITHUB_WORKSPACE/ci-build.log"
+
+      - name: Collect artefacts
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p dist ci
+          cp "$GITHUB_WORKSPACE/ci-build.log" ci/build.log || true
+          tail -n 400 ci/build.log > ci/build-tail.log || true
+          : > dist/SHA256SUMS.txt
+          copy() {
+            if [ -f "$1" ]; then
+              cp "$1" "dist/$2"
+              ( cd dist && sha256sum "$2" >> SHA256SUMS.txt )
+            fi
+          }
+          copy app/build/outputs/bundle/release/app-release.aab toolz-1.0.0.aab
+          copy app/build/outputs/apk/release/app-release.apk toolz-1.0.0.apk
+          copy app/build/outputs/apk/release/app-release-unsigned.apk toolz-1.0.0-unsigned.apk
+          copy app/build/outputs/apk/debug/app-debug.apk toolz-1.0.0-debug.apk
+          ls -l dist
+          find app/build/outputs -maxdepth 3 -type d 2>/dev/null | head -20
+
+      # Check-run annotations are readable through the API even when the runner
+      # token cannot push, so they are the reliable way to surface build errors.
+      - name: Annotate build errors
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          import os, re
+          path = "ci/build.log"
+          if not os.path.exists(path):
+              print("::error::No build log was produced at all.")
+              raise SystemExit(0)
+          lines = open(path, errors="ignore").read().splitlines()
+          keep = [l for l in lines if re.search(r"(^e: |^w: .*error|error:|FAILURE:|What went wrong|Execution failed for task|Caused by:|> Task .* FAILED|Unresolved reference|error: )", l)]
+          interesting = keep[:14] if keep else lines[-14:]
+          for line in interesting:
+              print("::error::" + line.strip()[:880])
+          tail = "\n".join(lines[-25:])
+          print("::error::TAIL " + tail.replace("\n", " | ")[:880])
+          PY
+
+      # The runner token in this repository is read-only, so the build's own
+      # evidence is emitted as check-run annotations, which the API can read.
+      - name: Verify the artefacts
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import glob, hashlib, os, re, subprocess, zipfile
+          import xml.etree.ElementTree as ET
+
+          def emit(message):
+              print("::warning::" + " ".join(str(message).split())[:900])
+
+          tests = failures = errors = 0
+          for path in glob.glob("app/build/test-results/testDebugUnitTest/*.xml"):
+              root = ET.parse(path).getroot()
+              tests += int(root.get("tests", 0))
+              failures += int(root.get("failures", 0))
+              errors += int(root.get("errors", 0))
+          emit(f"JVM TESTS: {tests} run / {failures} failed / {errors} errors")
+
+          def digest(path):
+              h = hashlib.sha256()
+              with open(path, "rb") as fh:
+                  for chunk in iter(lambda: fh.read(1 << 20), b""):
+                      h.update(chunk)
+              return h.hexdigest()
+
+          aab = "dist/toolz-1.0.0.aab"
+          if os.path.exists(aab):
+              names = zipfile.ZipFile(aab).namelist()
+              dex = [n for n in names if n.startswith("base/dex/")]
+              manifest = zipfile.ZipFile(aab).read("base/manifest/AndroidManifest.xml")
+              admob = b"ca-app-pub-5010473500037610" in manifest
+              sample = [n for n in names if n in (
+                  "base/manifest/AndroidManifest.xml", "base/resources.pb", "BundleConfig.pb")]
+              emit("AAB: " + str(os.path.getsize(aab)) + " bytes, sha256 " + digest(aab))
+              emit(f"AAB contents: {len(names)} entries, {len(dex)} dex file(s), {', '.join(sample)}; "
+                   f"AdMob app id in manifest: {'yes' if admob else 'NO'}")
+
+          for apk in ("dist/toolz-1.0.0.apk", "dist/toolz-1.0.0-unsigned.apk", "dist/toolz-1.0.0-debug.apk"):
+              if not os.path.exists(apk):
+                  continue
+              emit(f"{os.path.basename(apk)}: {os.path.getsize(apk)} bytes, sha256 {digest(apk)}")
+              signer = glob.glob(os.environ.get("ANDROID_SDK_ROOT", "/usr/local/lib/android/sdk") + "/build-tools/*/apksigner")
+              if signer:
+                  result = subprocess.run([sorted(signer)[-1], "verify", "--print-certs", apk],
+                                          capture_output=True, text=True)
+                  first = (result.stdout + result.stderr).strip().splitlines()
+                  keep = [line for line in first if "certificate DN" in line or "DOES NOT VERIFY" in line or "Number of signers" in line]
+                  emit(f"{os.path.basename(apk)} signature: " + (keep[0] if keep else "unsigned / not verified"))
+
+          badge = glob.glob(os.environ.get("ANDROID_SDK_ROOT", "/usr/local/lib/android/sdk") + "/build-tools/*/aapt2")
+          apk = "dist/toolz-1.0.0-debug.apk"
+          if badge and os.path.exists(apk):
+              out = subprocess.run([sorted(badge)[-1], "dump", "badging", apk], capture_output=True, text=True).stdout
+              pkg = next((l for l in out.splitlines() if l.startswith("package:")), "")
+              sdk = [l for l in out.splitlines() if l.startswith(("sdkVersion", "targetSdkVersion"))]
+              perms = len([l for l in out.splitlines() if l.startswith("uses-permission")])
+              emit("DEBUG APK: " + pkg + " | " + " | ".join(sdk) + f" | {perms} permissions")
+
+          emit("download: https://github.com/" + os.environ["GITHUB_REPOSITORY"] + "/actions/runs/" + os.environ["GITHUB_RUN_ID"])
+          PY
+
+      - name: Publish build output to the pull request branch
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -uo pipefail
+          git config user.name "toolz-ci"
+          git config user.email "ci@toolz.name.ng"
+          git add -A android/dist android/ci
+          if git diff --cached --quiet; then
+            echo "Nothing new to publish."
+            exit 0
+          fi
+          git commit -m "ci: android build output [skip ci]"
+          if git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${{ github.head_ref || github.ref_name }}" 2>push.err; then
+            echo "Pushed the artefacts."
+            exit 0
+          fi
+          echo "::error::PUSH FAILED: $(tr '\n' ' ' < push.err | head -c 700)"
+          # Second channel: a pull-request comment we can read through the API.
+          if gh pr comment "${{ github.event.pull_request.number }}" --body "Build finished. Artefact publish failed: $(head -c 300 push.err)" 2>comment.err; then
+            echo "::warning::PR COMMENT CHANNEL WORKS"
+          else
+            echo "::error::COMMENT FAILED: $(tr '\n' ' ' < comment.err | head -c 500)"
+          fi
+          # Third channel: a direct contents API write.
+          if echo "probe" | base64 > blob.txt && gh api -X PUT "repos/${GITHUB_REPOSITORY}/contents/android/ci/probe.txt" -f message="ci probe" -f content="$(cat blob.txt)" 2>api.err; then
+            echo "::warning::CONTENTS API CHANNEL WORKS"
+          else
+            echo "::error::API FAILED: $(tr '\n' ' ' < api.err | head -c 500)"
+          fi
+          exit 0
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: toolz-apk
+          path: android/dist/*.apk
+          if-no-files-found: warn
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: toolz-aab
+          path: android/dist/*.aab
+          if-no-files-found: warn

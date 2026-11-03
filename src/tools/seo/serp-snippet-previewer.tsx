@@ -33,7 +33,7 @@ export default function SerpPreview() {
   const [description, setDescription] = useState(
     "Calculate percentages instantly: X% of Y, what percent X is of Y, and percentage increase or decrease. Formulas and worked examples included.",
   );
-  const [url, setUrl] = useState("https://tools.example.com/tools/percentage-calculator/");
+  const [url, setUrl] = useState("https://toolz.name.ng/tools/percentage-calculator/");
   const [mounted, setMounted] = useState(false);
   const measureRef = useRef<HTMLSpanElement>(null);
 

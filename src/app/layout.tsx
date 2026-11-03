@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "@fontsource-variable/bricolage-grotesque/standard.css";
 import "@fontsource-variable/inter-tight/wght.css";
 import "@fontsource-variable/jetbrains-mono/wght.css";
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
     languages: { "x-default": "/", en: "/" },
     types: {
       "application/rss+xml": [{ url: "/feed.xml", title: `${siteConfig.name} — guides` }],
-      "text/markdown": [{ url: "/llms.txt", title: "Tools — machine-readable index" }],
+      "text/markdown": [{ url: "/llms.txt", title: "Toolz — machine-readable index" }],
     },
   },
   openGraph: {
@@ -100,7 +101,9 @@ export const viewport: Viewport = {
   colorScheme: "light dark",
 };
 
-const themeScript = `(function(){try{var t=localStorage.getItem('tools:theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var dark=t==='dark'||((!t||t==='system')&&d);document.documentElement.classList.toggle('dark',dark);document.documentElement.style.colorScheme=dark?'dark':'light';}catch(e){}})();`;
+const consentDefaultScript = `(function(){window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments)};window.gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});})();`;
+
+const themeScript = `(function(){try{var t=localStorage.getItem('toolz:theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var dark=t==='dark'||((!t||t==='system')&&d);document.documentElement.classList.toggle('dark',dark);document.documentElement.style.colorScheme=dark?'dark':'light';}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const websiteSchema = {
@@ -110,7 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         "@type": "WebSite",
         "@id": `${siteConfig.url}/#website`,
         name: siteConfig.name,
-        alternateName: ["Tools online", "Free tools online"],
+        alternateName: ["Toolz online", "Free tools online"],
         url: siteConfig.url,
         description: siteConfig.description,
         inLanguage: siteConfig.language,
@@ -156,6 +159,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-dvh antialiased">
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/*
+          Consent Mode v2 defaults. Every storage signal starts denied, so no
+          advertising or analytics cookie is set until the visitor chooses in
+          the banner (or in Google's certified CMP when NEXT_PUBLIC_CMP_PROVIDER
+          is "google"). Runs before the AdSense tag below.
+        */}
+        <script dangerouslySetInnerHTML={{ __html: consentDefaultScript }} />
+        {siteConfig.adsenseClient ? (
+          <Script
+            id="toolz-adsense"
+            async
+            strategy="afterInteractive"
+            crossOrigin="anonymous"
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${siteConfig.adsenseClient}`}
+          />
+        ) : null}
         <JsonLd data={websiteSchema} />
         <a
           href="#main"

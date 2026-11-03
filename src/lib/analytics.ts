@@ -14,7 +14,7 @@ type EventName =
   | "search_used"
   | "category_viewed";
 
-const CONSENT_KEY = "tools:consent";
+const CONSENT_KEY = "toolz:consent";
 
 export type ConsentState = "granted" | "denied" | "unset";
 
@@ -27,7 +27,7 @@ export function getConsent(): ConsentState {
 export function setConsent(state: Exclude<ConsentState, "unset">): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(CONSENT_KEY, state);
-  window.dispatchEvent(new CustomEvent("tools:consent", { detail: state }));
+  window.dispatchEvent(new CustomEvent("toolz:consent", { detail: state }));
 }
 
 /**

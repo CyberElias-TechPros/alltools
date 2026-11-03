@@ -6,8 +6,8 @@ import { liveTools } from "@/lib/tools/registry";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
-  title: "About Tools",
-  description: "Who runs Tools, why the tools exist, how they are built and tested, and what we will never do with your data.",
+  title: "About this site",
+  description: "Who runs Toolz, why the tools exist, how they are built and tested, and what we will never do with your data.",
   path: "/about/",
   keywords: ['about tools', 'free online tools', 'privacy', 'how it works'],
 });
@@ -15,7 +15,7 @@ export const metadata: Metadata = pageMetadata({
 export default function AboutPage() {
   return (
     <PageShell
-      title="About Tools"
+      title="About this site"
       intro="A small, independent tools platform built on a simple idea: a utility page should do one job well, explain itself, and get out of the way."
       breadcrumbs={[{ href: "/about/", label: "About" }]}
       updated="2 November 2025"

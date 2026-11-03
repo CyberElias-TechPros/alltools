@@ -21,7 +21,7 @@ content requirements in Google Search's helpful-content guidance.
 | # | Requirement | Status | Evidence / action |
 | --- | --- | --- | --- |
 | 1.1 | Site is publicly reachable on a real domain | ⛔ | Nothing is deployed yet. Set `NEXT_PUBLIC_SITE_URL`, deploy `out/`, confirm HTTPS. |
-| 1.2 | Site is old enough / has enough indexed pages | ⛔ | Wait until Search Console shows the 41 tool pages, 4 guides and policy pages indexed. |
+| 1.2 | Site is old enough / has enough indexed pages | ⛔ | Wait until Search Console shows the 254 tool pages, 12 category pages, 4 guides and policy pages indexed. Indexing cannot start until the real domain is live (§1.1). |
 | 1.3 | No ads are shown before approval | ✅ | `src/components/ad-slot.tsx` returns `null` unless `NEXT_PUBLIC_ADS_ENABLED === "true"` *and* a publisher ID exists; no AdSense script is loaded anywhere else (grep `adsbygoogle`). |
 | 1.4 | No placeholder publisher ID or analytics ID in the codebase | ✅ | `src/lib/site.ts` reads env vars only; the only placeholder is the contact email/domain, tracked in §8. |
 | 1.5 | Hosting terms permit advertising | ⛔ | Vercel Hobby does not permit commercial advertising. Choose Cloudflare Pages, Netlify (paid plan if required), or another host whose terms allow ads. |
@@ -34,9 +34,9 @@ content requirements in Google Search's helpful-content guidance.
 | --- | --- | --- | --- |
 | 2.1 | Original content, not copied or auto-spun | ✅ | All copy written for this site; guides in `src/lib/guides.ts` are original explainers. |
 | 2.2 | Substantive pages, not thin doorway pages | ✅ | Every tool page carries about + how-to + method/formula + ≥2 worked examples + ≥2 limitations + ≥3 FAQs, enforced by `tests/catalogue.test.ts`. |
-| 2.3 | No pages built solely to rank for a keyword | ✅ | No city/state/`-vs-` permutations; no auto-generated variants; no hidden text. |
+| 2.3 | No pages built solely to rank for a keyword | ✅ | No city/state/`-vs-` permutations; no auto-generated variants; no hidden text. Measured 3 Nov 2026: every tool page carries 391–1,411 words of visible text (median 571) and no two pages share an opening paragraph. |
 | 2.4 | Content matches what the tool actually does | ✅ | Worked examples are derived from the implementation and pinned by unit tests (`tests/*.test.ts`). |
-| 2.5 | Navigation is clear; every page reachable | ✅ | Header, footer and directory; a full crawl of 71 pages found no broken internal links. |
+| 2.5 | Navigation is clear; every page reachable | ✅ | Header, footer, directory and an in-page "on this page" nav. Crawl of all 285 built pages (3 Nov 2026) followed 12,810 internal links: zero broken, one `<h1>` per page, unique title and description per page. |
 | 2.6 | No misleading or unsupported claims | ✅ | Legal pages describe what the code does (localStorage keys, no uploads, consent-gated analytics). |
 | 2.7 | No adult, violent, hateful, or otherwise restricted content | ✅ | Catalogue is utility-only; see `src/lib/tools/categories.ts`. |
 | 2.8 | No fake tools, no "coming soon" pages presented as working | ✅ | Planned categories are marked planned and contain no tool entries; the roadmap page shows real counts. |
@@ -47,9 +47,9 @@ content requirements in Google Search's helpful-content guidance.
 | # | Requirement | Status | Evidence / action |
 | --- | --- | --- | --- |
 | 3.1 | About page explaining who runs the site and why | 🟡 | `/about/` exists and is substantive. It must be updated with the operator's real identity before applying. |
-| 3.2 | Contact method that reaches a human | ⛔ | `/contact/` composes a mailto link, but `siteConfig.email` is `hello@tools.example.com`. Replace with a monitored mailbox (`src/lib/site.ts`) or the form has no destination. |
+| 3.2 | Contact method that reaches a human | ⛔ | `/contact/` composes a mailto link, but `siteConfig.email` is `hello@toolz.name.ng`. Replace with a monitored mailbox (`src/lib/site.ts`) or the form has no destination. |
 | 3.3 | Terms of service | 🟡 | `/terms/` written and dated; needs legal review for the operator's jurisdiction. |
-| 3.4 | Privacy policy covering analytics and ads | 🟡 | `/privacy-policy/` covers the current build (no ads, consent-gated analytics). **Must be updated before ads go live** to name Google, cookies, and the ad-serving purpose. |
+| 3.4 | Privacy policy covering analytics and ads | 🟡 | `/privacy-policy/` already names Google, AdSense, cookies, third parties, the EEA/UK consent position and opt-out routes. **Add the specific ad-cookie wording (DoubleClick/`__gads`) on the day ads are enabled** — the page currently states, correctly, that advertising is not enabled. |
 | 3.5 | Cookie policy | 🟡 | `/cookies/` accurate for today's build; extend with ad cookies when ads are enabled. |
 | 3.6 | Disclaimer | 🟡 | `/disclaimer/` covers informational use; legal review required. |
 | 3.7 | Accessibility statement | ✅ | `/accessibility/` states the target, describes the built-in measures and how to report barriers. |
@@ -94,9 +94,10 @@ them; adding more slots is a template change, not a rebuild.
 | 5.2 | No intrusive interstitials | ✅ | Only the optional analytics consent banner, which appears solely when a GA ID is configured. |
 | 5.3 | Mobile usable | 🟡 | Responsive layout built for 320 px upward; needs a real-device pass (roadmap 5.10). |
 | 5.4 | Fast | 🟡 | Code-split tool bundles; measure with Lighthouse on the production domain (roadmap 5.11). |
-| 5.5 | No broken links | ✅ | 71-page internal crawl: zero broken links. |
+| 5.5 | No broken links | ✅ | 285-page internal crawl, 12,810 internal links: zero broken (3 Nov 2026). |
 | 5.6 | Canonical URLs consistent | 🟡 | Every route sets a canonical from `siteConfig.url`; confirm the env var on production. |
-| 5.7 | Structured data valid | 🟡 | `BreadcrumbList`, `SoftwareApplication`, `FAQPage`, `Article`, `Organization` present; run Rich Results Test on the live domain. |
+| 5.7 | Structured data valid | 🟡 | `WebSite`+`SearchAction`, `Organization`, `WebPage`, `BreadcrumbList`, `CollectionPage`/`ItemList`, `SoftwareApplication`+`Offer`, `FAQPage`, `Article` present on the relevant routes; run the Rich Results Test once the real domain is live. |
+| 5.8 | Crawlable and complete machine-readable surface | ✅ | `/sitemap.xml` (283 URLs, all resolving), `/robots.txt` (allows CSS/JS, names AI crawlers), `/llms.txt`, `/feed.xml`; a comment-only `/ads.txt` is served and must be replaced with the real seller line after approval. |
 
 ## 6. Launch-day checks (⛔ until performed)
 
@@ -127,8 +128,8 @@ them; adding more slots is a template change, not a rebuild.
 
 | Placeholder | Location | Replace with |
 | --- | --- | --- |
-| `https://tools.example.com` | `src/lib/site.ts` fallback | Real origin via `NEXT_PUBLIC_SITE_URL` |
-| `hello@tools.example.com` | `src/lib/site.ts` | A monitored mailbox |
+| `https://toolz.name.ng` | `src/lib/site.ts` fallback | Real origin via `NEXT_PUBLIC_SITE_URL` |
+| `hello@toolz.name.ng` | `src/lib/site.ts` | A monitored mailbox |
 | "pending legal review" notes | Policy pages | Confirmation after review |
 | Operator identity on `/about/` | About page | Real, verifiable details |
 | Empty/comment-only `ads.txt` | `public/ads.txt` | Google's exact seller line |

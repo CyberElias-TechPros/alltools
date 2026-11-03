@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Search } from "lucide-react";
 import { popularTools } from "@/lib/tools/registry";
 import { ToolCard } from "@/components/tool-card";
+
+export const metadata: Metadata = {
+  title: "Page not found",
+  description: "That page does not exist. Browse the full directory of free browser-based tools instead.",
+  robots: { index: false, follow: true },
+};
 
 export default function NotFound() {
   return (

@@ -1,4 +1,4 @@
-# Tools build roadmap
+# Toolz build roadmap
 
 Ultra-granular, start-to-finish plan. Every step below records **what it is**, **whether it
 is done**, **why it exists**, **what it depends on / connects to**, and **how to verify it**.
@@ -232,7 +232,7 @@ spun, which is a requirement in the blueprint. *Connects to:* `src/lib/guides.ts
 **4.8 — Contact.** *Why:* a contact method is an AdSense requirement, and a half-working
 form endpoint is worse than none. The form validates locally, then opens the visitor's own
 mail client with the message pre-filled; "Copy address" is offered as a fallback.
-*Owner action:* replace `hello@tools.example.com` in `src/lib/site.ts` with a real,
+*Owner action:* replace `hello@toolz.name.ng` in `src/lib/site.ts` with a real,
 monitored mailbox before launch.
 
 **4.9–4.10 — Legal and policy pages.** *Why:* required for trust, ads and accessibility
@@ -275,7 +275,7 @@ same consent gate as analytics.
 | 5.7 | Search suite (9 tests) | ✅ |
 | 5.8 | Catalogue + guides suite (14 tests) | ✅ |
 | 5.9 | `typecheck` + `test` + `build` in one `npm run check` | ✅ |
-| 5.10 | Manual browser QA of all 41 tools (Chrome, Firefox, Safari, mobile) | 🟡 |
+| 5.10 | Manual browser QA of all 254 tools (Chrome, Firefox, Safari, mobile) — the jsdom interaction sweep already covers mechanics for every tool | 🟡 |
 | 5.11 | Lighthouse / Core Web Vitals on a real deployment | ⬜ |
 | 5.12 | Screen-reader pass (VoiceOver and NVDA) | ⬜ |
 | 5.13 | Automated end-to-end smoke test (Playwright) | ⬜ |
@@ -353,13 +353,14 @@ blueprint's rules and can trip "ads on a site under review". *Connects to:*
 a real domain exists (every check that references the live site is 🟡 or ⛔ there).
 
 **7.6 — `ads.txt`.** *Why:* an invented or guessed seller line is worse than an empty file —
-it can invalidate authorised-seller status. `public/ads.txt` therefore contains only an
-explanatory comment until Google supplies the real line.
+it can invalidate authorised-seller status. `public/ads.txt` now carries the real line
+supplied by Google (`google.com, pub-5010473500037610, DIRECT, f08c47fec0942fa0`). ✅
 
 **7.7 — CMP.** *Why:* Google requires a certified CMP for personalised ads in the EEA, UK
-and Switzerland. Analytics consent already exists in `src/components/analytics.tsx`, but a
-certified CMP (or Google's own consent message) must be added before ads are switched on for
-those regions.
+and Switzerland. The site now ships Consent Mode v2 defaults plus an in-house banner, and
+`NEXT_PUBLIC_CMP_PROVIDER=google` hands the banner over to Google's certified message. 🟡
+Switching personalised ads on for those regions still waits for the owner to publish the
+consent message in AdSense.
 
 ---
 
@@ -377,6 +378,36 @@ Only categories that can run entirely in the browser without a paid API are elig
 | 8.6 | Bulk/batch workflows and keyboard-first power features | ⬜ |
 | 8.7 | Optional PWA offline caching of recently used tools | ⬜ |
 | 8.8 | Localisation (start with a single additional locale, reviewed by a native speaker) | ⬜ |
+
+---
+
+## Phase 9 — Native Android app
+
+A second delivery target: the same brand, rebuilt as a Kotlin + Jetpack Compose app rather
+than wrapped in a WebView. Source lives in [`android/`](android/README.md).
+
+| # | Step | Status |
+| --- | --- | --- |
+| 9.1 | Gradle project: AGP 8.7.3, Kotlin 2.0.21, Compose BOM 2024.12, compileSdk 35, minSdk 26 | ✅ |
+| 9.2 | `Tool` / `FieldSpec` / `ToolResult` model so every tool is data plus one pure function | ✅ |
+| 9.3 | 87 tools ported to Kotlin across nine collections, with an in-house JSON parser for the formatter | ✅ |
+| 9.4 | JVM test suite: unique slugs, real categories, defaults answer, rubbish input never crashes, search ranking | ✅ |
+| 9.5 | Studio design system: cream/ink/vermilion palette, serif display type, light and dark schemes | ✅ |
+| 9.6 | Screens: onboarding tour, home, collections, all tools, search, tool, settings | ✅ |
+| 9.7 | AdMob: all six formats wired, UMP consent before any request, sample ids in debug builds | ✅ |
+| 9.8 | Store pack: 512 icon, 1024×500 feature graphic, listing copy, data-safety answers | ✅ |
+| 9.9 | CI workflow that runs the tests and uploads APK/AAB artefacts | ✅ |
+| 9.10 | `app-release.aab` and `app-release.apk` built, tested and verified in CI | ✅ artefacts `toolz-aab` / `toolz-apk` on every workflow run |
+| 9.11 | Signing with the owner's upload key | 🟡 unsigned by default; four repo secrets sign it automatically, or run `scripts/sign-release.sh` |
+| 9.12 | Device QA: onboarding, consent form, rotation, dark mode, airplane mode, screenshots | ⛔ needs a physical device or emulator |
+| 9.13 | Port the remaining 167 web tools in batches (see the plan in `android/README.md`) | ⬜ |
+| 9.14 | Play Console and Galaxy Store submission | ⛔ owner accounts, signed artefact, final human review |
+
+**9.10 — Where the binaries come from.** *Why:* this build sandbox cannot reach Google's
+Maven, the Android SDK or the Gradle distribution, so the app is compiled by the `Android`
+workflow on GitHub's runners instead — the same commands a developer would run locally.
+*Verify:* every run publishes `toolz-aab` and `toolz-apk`, and annotates the test totals,
+package identity, dex count, AdMob app id and SHA-256 of each artefact.
 
 ### Blueprint coverage by section
 

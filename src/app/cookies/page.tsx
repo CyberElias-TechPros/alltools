@@ -5,7 +5,7 @@ import { PageShell } from "@/components/page-shell";
 
 export const metadata: Metadata = pageMetadata({
   title: "Cookie Policy",
-  description: "How Tools uses cookies and local storage — and why the site works with none of them enabled.",
+  description: "How Toolz uses cookies and local storage — and why the site works with none of them enabled.",
   path: "/cookies/",
   keywords: ['cookie policy', 'cookies', 'privacy'],
 });
@@ -20,23 +20,25 @@ export default function CookiesPage() {
     >
       <h2>1. Do you use cookies?</h2>
       <p>
-        Not by default. Loading any tool requires no cookie. We use your browser&apos;s local storage
-        for preferences, which is functionally similar but stays on your device and is never sent to
-        a server in a request header.
+        The tools do not need a cookie, and none of the tools set one. The site carries advertising
+        served by Google AdSense, so Google may set cookies for advertising purposes once you accept
+        them — storage for ads and analytics starts denied and only changes when you choose.
+        Separately, we keep a few preferences in your browser&apos;s local storage, which stays on
+        your device and is never sent to a server in a request header.
       </p>
 
       <h2>2. What is stored in your browser</h2>
       <ul>
         <li>
-          <strong>tools:theme</strong> — your appearance choice (light, dark or system). Stored
+          <strong>toolz:theme</strong> — your appearance choice (light, dark or system). Stored
           until you clear site data.
         </li>
         <li>
-          <strong>tools:recent</strong> — the last six tool pages you opened, used to offer
+          <strong>toolz:recent</strong> — the last six tool pages you opened, used to offer
           shortcuts in the search panel. Stored until cleared.
         </li>
         <li>
-          <strong>tools:consent</strong> — your analytics choice, so we do not ask repeatedly. Only
+          <strong>toolz:consent</strong> — your analytics choice, so we do not ask repeatedly. Only
           created if analytics are enabled and you make a choice.
         </li>
       </ul>
@@ -55,16 +57,21 @@ export default function CookiesPage() {
 
       <h2>4. Advertising cookies</h2>
       <p>
-        Advertising is not currently enabled, so no advertising cookies are set. If advertising is
-        enabled in future, Google and its partners may set cookies to limit repetition, measure
-        performance and — where consent has been obtained — personalise ads. Before that happens, a
-        Google-certified consent management platform will be integrated for visitors in the EEA, UK
-        and Switzerland.
+        This site is supported by advertising served through Google AdSense (publisher ID{" "}
+        <code className="font-mono text-[0.85em]">ca-pub-5010473500037610</code>). Google and its
+        partners may set advertising cookies — for example to limit how often you see the same ad,
+        measure performance, and, where you have consented, personalise ads. Ad storage is denied
+        until you choose &ldquo;Accept&rdquo;, and the decision can be reversed at any time.
+      </p>
+      <p>
+        For visitors in the EEA, the UK and Switzerland, consent is collected through a
+        Google-certified consent management platform before any personalised advertising cookie is
+        set. Where you decline, you may still see advertising, but it will not be personalised.
       </p>
 
       <h2>5. Managing your choices</h2>
       <ul>
-        <li>Use the cookie settings control in the footer to change an analytics choice.</li>
+        <li>Use the cookie settings control in the footer to change your consent choice.</li>
         <li>
           Block or delete cookies for this domain in your browser settings; the tools continue to
           work.

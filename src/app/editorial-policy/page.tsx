@@ -5,7 +5,7 @@ import { PageShell } from "@/components/page-shell";
 
 export const metadata: Metadata = pageMetadata({
   title: "Editorial Policy",
-  description: "How Tools tool pages and guides are researched, written, tested and corrected.",
+  description: "How Toolz tool pages and guides are researched, written, tested and corrected.",
   path: "/editorial-policy/",
   keywords: ['editorial policy', 'how we write', 'accuracy', 'corrections'],
 });

@@ -5,55 +5,57 @@ import Link from "next/link";
 import { getConsent, setConsent, type ConsentState } from "@/lib/analytics";
 import { siteConfig } from "@/lib/site";
 
-/** True when the site has anything optional to ask about. */
-const asksForConsent = Boolean(siteConfig.gaId || siteConfig.adsEnabled);
+/**
+ * The banner is shown only when there is something optional to ask about *and*
+ * the site is not deferring to Google's certified CMP. With
+ * NEXT_PUBLIC_CMP_PROVIDER=google the AdSense message handles consent and this
+ * component stays silent, so a visitor never gets two prompts.
+ */
+const asksForConsent =
+  Boolean(siteConfig.gaId || siteConfig.adsenseClient) && siteConfig.cmpProvider === "builtin";
+
+type Gtag = (command: string, action: string, params: Record<string, unknown>) => void;
+
+function gtag(): Gtag | null {
+  const fn = (window as unknown as { gtag?: Gtag }).gtag;
+  return typeof fn === "function" ? fn : null;
+}
+
+/** Push the visitor's choice through Consent Mode v2. */
+function applyConsent(state: "granted" | "denied") {
+  gtag()?.("consent", "update", {
+    ad_storage: state,
+    ad_user_data: state,
+    ad_personalization: state,
+    analytics_storage: siteConfig.gaId ? state : "denied",
+  });
+}
 
 function loadGoogleAnalytics(measurementId: string) {
-  if (document.getElementById("tools-ga")) return;
+  if (document.getElementById("toolz-ga")) return;
   const script = document.createElement("script");
-  script.id = "tools-ga";
+  script.id = "toolz-ga";
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
   document.head.appendChild(script);
 
   const inline = document.createElement("script");
-  inline.id = "tools-ga-init";
+  inline.id = "toolz-ga-init";
   inline.textContent = `
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied' });
-    gtag('consent', 'update', { analytics_storage: 'granted' });
     gtag('config', '${measurementId}', { anonymize_ip: true });
   `;
   document.head.appendChild(inline);
 }
 
 /**
- * AdSense loader. Only called after explicit consent, and only when both a
- * publisher ID and an ad unit id exist — so a default build loads no ad code
- * and makes no ad requests.
+ * Consent banner + consent-gated analytics.
  *
- * Note: for personalised ads in the EEA, the UK and Switzerland, Google
- * requires a certified consent management platform. This consent gate is a
- * conservative first step, not a replacement for one — see
- * docs/ADSENSE_QA.md §4.5.
- */
-function loadAdSense(clientId: string) {
-  if (document.getElementById("tools-adsense")) return;
-  const script = document.createElement("script");
-  script.id = "tools-adsense";
-  script.async = true;
-  script.crossOrigin = "anonymous";
-  script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(clientId)}`;
-  document.head.appendChild(script);
-}
-
-/**
- * Consent banner + gated analytics/ad loaders.
- *
- * With no NEXT_PUBLIC_GA_ID and no ads configured (the default) this renders
- * nothing and the site makes no third-party requests at all.
+ * The AdSense tag itself is loaded once in the root layout (Google asks for it
+ * to be present on every page), while Consent Mode defaults keep advertising
+ * and analytics storage denied until the visitor chooses here.
  */
 export function Analytics() {
   const [consent, setConsentState] = useState<ConsentState>("unset");
@@ -66,8 +68,8 @@ export function Analytics() {
     setReady(true);
     if (asksForConsent && current === "unset") setBannerOpen(true);
     if (current === "granted") {
+      applyConsent("granted");
       if (siteConfig.gaId) loadGoogleAnalytics(siteConfig.gaId);
-      if (siteConfig.adsEnabled) loadAdSense(siteConfig.adsenseClient);
     }
 
     function onOpen() {
@@ -76,28 +78,32 @@ export function Analytics() {
     function onConsent(event: Event) {
       const detail = (event as CustomEvent<string>).detail as "granted" | "denied";
       setConsentState(detail);
-      if (detail === "granted") {
-        if (siteConfig.gaId) loadGoogleAnalytics(siteConfig.gaId);
-        if (siteConfig.adsEnabled) loadAdSense(siteConfig.adsenseClient);
-      }
+      applyConsent(detail);
+      if (detail === "granted" && siteConfig.gaId) loadGoogleAnalytics(siteConfig.gaId);
     }
-    window.addEventListener("tools:consent-open", onOpen);
-    window.addEventListener("tools:consent", onConsent);
+    window.addEventListener("toolz:consent-open", onOpen);
+    window.addEventListener("toolz:consent", onConsent);
     return () => {
-      window.removeEventListener("tools:consent-open", onOpen);
-      window.removeEventListener("tools:consent", onConsent);
+      window.removeEventListener("toolz:consent-open", onOpen);
+      window.removeEventListener("toolz:consent", onConsent);
     };
   }, []);
 
   function choose(next: "granted" | "denied") {
     setConsent(next);
     setConsentState(next);
+    applyConsent(next);
     setBannerOpen(false);
+    if (next === "granted" && siteConfig.gaId) loadGoogleAnalytics(siteConfig.gaId);
   }
 
   if (!ready || !asksForConsent || !bannerOpen) return null;
 
-  const what = siteConfig.adsEnabled ? "analytics and advertising" : "analytics";
+  const what = siteConfig.adsenseClient
+    ? siteConfig.gaId
+      ? "analytics and advertising"
+      : "advertising"
+    : "analytics";
 
   return (
     <div
@@ -106,11 +112,10 @@ export function Analytics() {
       aria-live="polite"
       className="fixed inset-x-3 bottom-3 z-[85] mx-auto max-w-xl rounded-2xl border border-[var(--border)] bg-[var(--page-elevated)] p-4 shadow-2xl sm:inset-x-auto sm:right-6"
     >
-      <p className="text-sm font-semibold text-[var(--text)]">Optional analytics</p>
+      <p className="text-sm font-semibold text-[var(--text)]">Cookies and ads</p>
       <p className="mt-1 text-sm leading-relaxed text-[var(--text-muted)]">
-        We use aggregate {what} to see which tools are useful and to keep the site free. It
-        never records the text you paste. Choose “Decline” to keep the site fully
-        cookie-free.{" "}
+        The tools themselves never need a cookie — everything you type stays in your browser.
+        Optional {what} helps keep the site free. Choose “Decline” and the site runs cookie-free.{" "}
         <Link href="/cookies/" className="link">
           Cookie policy
         </Link>
@@ -132,7 +137,8 @@ export function Analytics() {
         </button>
       </div>
       <p className="mt-2 text-[0.7rem] text-[var(--text-subtle)]">
-        Current choice: {consent === "unset" ? "not set" : consent}
+        Current choice: {consent === "unset" ? "not set" : consent}. You can change it any time in
+        the footer.
       </p>
     </div>
   );
@@ -150,7 +156,7 @@ export function CookieSettings() {
   return (
     <button
       type="button"
-      onClick={() => window.dispatchEvent(new Event("tools:consent-open"))}
+      onClick={() => window.dispatchEvent(new Event("toolz:consent-open"))}
       className="text-left text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
     >
       Cookie settings
