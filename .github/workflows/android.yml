@@ -122,6 +122,52 @@ jobs:
           print("::error::TAIL " + tail.replace("\n", " | ")[:880])
           PY
 
+      # Everything below is emitted as check-run annotations because the runner
+      # token in this repository is read-only: annotations are the only channel
+      # that survives out of the job.
+      - name: Verify the artefacts
+        if: always()
+        run: |
+          emit() { printf '%s\n' "::warning::$1" | cut -c1-900; }
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          AAPT2=$(find "$SDK/build-tools" -name aapt2 2>/dev/null | sort | tail -1)
+          APKSIGNER=$(find "$SDK/build-tools" -name apksigner 2>/dev/null | sort | tail -1)
+
+          if ls app/build/test-results/testDebugUnitTest/*.xml >/dev/null 2>&1; then
+            python3 - <<'PY' || true
+          import glob, xml.etree.ElementTree as ET
+          tests = failures = errors = skipped = 0
+          for path in glob.glob("app/build/test-results/testDebugUnitTest/*.xml"):
+              root = ET.parse(path).getroot()
+              tests += int(root.get("tests", 0)); failures += int(root.get("failures", 0))
+              errors += int(root.get("errors", 0)); skipped += int(root.get("skipped", 0))
+          print(f"::warning::JVM TESTS: {tests} run, {failures} failed, {errors} errors, {skipped} skipped")
+          PY
+          else
+            emit "JVM TESTS: no test results were produced"
+          fi
+
+          if [ -n "$AAPT2" ] && [ -f dist/toolz-1.0.0-debug.apk ]; then
+            "$AAPT2" dump badging dist/toolz-1.0.0-debug.apk 2>/dev/null | grep -E "^(package|sdkVersion|targetSdkVersion|application-label:|uses-permission)" | head -8 | while read -r line; do emit "BADGING $line"; done
+          fi
+
+          if [ -f dist/toolz-1.0.0.aab ]; then
+            emit "AAB entries: $(unzip -l dist/toolz-1.0.0.aab 2>/dev/null | tail -1 | awk '{print $2}') files"
+            unzip -l dist/toolz-1.0.0.aab 2>/dev/null | grep -E "base/(manifest|resources.pb|dex/classes|res/)" | head -4 | awk '{print $4}' | while read -r line; do emit "AAB has $line"; done
+            emit "AdMob app id in manifest: $(unzip -p dist/toolz-1.0.0.aab base/manifest/AndroidManifest.xml 2>/dev/null | strings | grep -c 'ca-app-pub-5010473500037610' || true) match(es)"
+            emit "AAB sha256: $(sha256sum dist/toolz-1.0.0.aab | cut -d' ' -f1)"
+          else
+            emit "AAB: not produced"
+          fi
+
+          for apk in dist/toolz-1.0.0.apk dist/toolz-1.0.0-debug.apk; do
+            [ -f "$apk" ] || continue
+            emit "$(basename "$apk") sha256: $(sha256sum "$apk" | cut -d' ' -f1) size $(stat -c%s "$apk")"
+            if [ -n "$APKSIGNER" ]; then
+              "$APKSIGNER" verify --print-certs "$apk" 2>&1 | grep -E "^(Signer #1 certificate DN|Number of signers|DOES NOT VERIFY)" | while read -r line; do emit "$(basename "$apk") $line"; done
+            fi
+          done
+
       - name: Publish build output to the pull request branch
         if: always()
         continue-on-error: true
