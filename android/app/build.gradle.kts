@@ -90,6 +90,8 @@ dependencies {
     implementation(libs.play.services.ads)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.zxing.core)
+    implementation(libs.pdfbox.android)
+    implementation(libs.androidx.exifinterface)
     debugImplementation(libs.androidx.ui.tooling)
 
     testImplementation(libs.junit)

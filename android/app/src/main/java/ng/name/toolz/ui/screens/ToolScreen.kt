@@ -46,6 +46,10 @@ import ng.name.toolz.ui.theme.Studio
 
 @Composable
 fun ToolScreen(tool: Tool, onBack: () -> Unit, onOpenCategory: (String) -> Unit) {
+    if (tool.media != null) {
+        MediaToolScreen(tool, onBack)
+        return
+    }
     val prefs = AppState.prefs
     val favorites by prefs.favorites.collectAsState()
     val clipboard = LocalClipboardManager.current

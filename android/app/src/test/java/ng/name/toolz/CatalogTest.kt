@@ -7,6 +7,23 @@ import ng.name.toolz.data.categoryById
 import ng.name.toolz.data.searchTools
 import ng.name.toolz.data.toolBySlug
 import ng.name.toolz.data.toolsIn
+import ng.name.toolz.data.MediaKind
+import ng.name.toolz.media.JpegPage
+import ng.name.toolz.media.PdfWriter
+import ng.name.toolz.media.clampQuality
+import ng.name.toolz.media.countWords
+import ng.name.toolz.media.cropRect
+import ng.name.toolz.media.decodeBase64Image
+import ng.name.toolz.media.encodeBase64
+import ng.name.toolz.media.extractDocxText
+import ng.name.toolz.media.hexOf
+import ng.name.toolz.media.humanBytes
+import ng.name.toolz.media.parseColour
+import ng.name.toolz.media.parsePageOrder
+import ng.name.toolz.media.parsePageRanges
+import ng.name.toolz.media.sanitiseName
+import ng.name.toolz.media.targetLongEdge
+import ng.name.toolz.media.zipOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -371,5 +388,92 @@ class CatalogTest {
             "Matches 1 preset",
             run("social-image-size", mapOf("width" to "1080", "height" to "1080")).label,
         )
+    }
+
+    @Test
+    fun `media maths parses ranges, sizes, names and colours`() {
+        assertEquals(listOf(1..3, 5..5), parsePageRanges("1-3,5", 10))
+        assertEquals((1..3).map { it..it }, parsePageRanges("", 3))
+        assertEquals(listOf(5..5), parsePageRanges("9-12", 5))
+        assertTrue(parsePageRanges("abc", 4).isEmpty())
+        assertEquals(listOf(3, 1, 2), parsePageOrder("3,1,2", 3))
+        assertEquals(null, parsePageOrder("1,1,2", 3))
+        assertEquals(null, parsePageOrder("1,2", 3))
+
+        assertEquals(1600 to 1200, targetLongEdge(4000, 3000, 1600))
+        assertEquals(4000 to 3000, targetLongEdge(4000, 3000, 8000))
+        assertEquals(listOf(500, 0, 3000, 3000), cropRect(4000, 3000, "Centre square").toList())
+        assertEquals(listOf(0, 0, 4000, 3000), cropRect(4000, 3000, "4:3").toList())
+
+        assertEquals("1.50 KB", humanBytes(1536))
+        assertEquals("512 B", humanBytes(512))
+        assertEquals("My-Photo-1", sanitiseName("My Photo (1).jpg", "image"))
+        assertEquals("image", sanitiseName("   ", "image"))
+        assertEquals(0xFFFFFFFF.toInt(), parseColour("#fff"))
+        assertEquals(0xFFD64E18.toInt(), parseColour("#d64e18"))
+        assertEquals(0xFFFF0000.toInt(), parseColour("rgb(255,0,0)"))
+        assertEquals(null, parseColour("purple-ish"))
+        assertEquals("#D64E18", hexOf(0xFFD64E18.toInt()))
+        assertEquals(100, clampQuality("999"))
+        assertEquals(1, clampQuality("0"))
+        assertEquals(3, countWords("one two three"))
+    }
+
+    @Test
+    fun `the pdf writer emits a document a reader can open`() {
+        val pdf = PdfWriter.textPdf("Hello world\n\nSecond paragraph", 12f, "Test document")
+        val text = String(pdf, Charsets.ISO_8859_1)
+        assertTrue(text.startsWith("%PDF-1.4"))
+        assertTrue(text.contains("/Type /Catalog"))
+        assertTrue(text.contains("/Type /Page"))
+        assertTrue(text.contains("/BaseFont /Helvetica"))
+        assertTrue(text.contains("(Hello world) Tj"))
+        assertTrue(text.contains("/Title (Test document)"))
+        assertTrue(text.trimEnd().endsWith("%%EOF"))
+
+        val startxref = text.substringAfterLast("startxref").trim().substringBefore("\n").toInt()
+        assertTrue("startxref points at the xref table", text.substring(startxref).startsWith("xref"))
+
+        val wrapped = PdfWriter.wrap("word ".repeat(400), 12f)
+        assertTrue("long text wraps", wrapped.size > 5)
+        wrapped.forEach { line -> assertTrue("line ${line.length} is too wide", PdfWriter.textWidth(line, 12f) < 500) }
+
+        val jpeg = byteArrayOf(0xFF.toByte(), 0xD8.toByte(), 0x01, 0x02, 0xFF.toByte(), 0xD9.toByte())
+        val imagePdf = String(PdfWriter.imagePdf(listOf(JpegPage(jpeg, 1000, 750))), Charsets.ISO_8859_1)
+        assertTrue(imagePdf.contains("/Filter /DCTDecode"))
+        assertTrue(imagePdf.contains("/Subtype /Image"))
+        assertTrue(imagePdf.contains("/Width 1000"))
+    }
+
+    @Test
+    fun `docx text and zips round-trip`() {
+        val xml = "<w:document><w:body><w:p><w:r><w:t>Hello</w:t></w:r></w:p>" +
+            "<w:p><w:r><w:t>World &amp; friends</w:t></w:r></w:p></w:body></w:document>"
+        val docx = zipOf(listOf("word/document.xml" to xml.toByteArray()))
+        assertEquals("Hello\nWorld & friends", extractDocxText(docx))
+
+        val archive = zipOf(listOf("a.txt" to "alpha".toByteArray(), "b.txt" to "beta".toByteArray()))
+        assertEquals(4, archive[0].toInt())
+        assertTrue(archive.size > 100)
+
+        assertEquals("hello", String(decodeBase64Image("data:text/plain;base64,aGVsbG8=")!!, Charsets.UTF_8))
+        assertEquals(null, decodeBase64Image("   "))
+        assertEquals("aGVsbG8=", encodeBase64("hello".toByteArray()))
+    }
+
+    @Test
+    fun `every media tool is routed and every file tool explains itself`() {
+        val fileTools = allTools.filter { it.media != null }
+        assertEquals(36, fileTools.size)
+        fileTools.forEach { tool ->
+            val result = tool.compute(tool.fields.associate { it.id to it.defaultValue })
+            assertTrue("${tool.slug} has no explanation", result.note != null && result.note!!.length > 20)
+            assertTrue("${tool.slug} claims an answer it cannot give", result.label == "On this device")
+        }
+        assertEquals(16, fileTools.count { it.media == MediaKind.IMAGE })
+        assertEquals(15, fileTools.count { it.media == MediaKind.PDF })
+        assertEquals(1, fileTools.count { it.media == MediaKind.PDF_MULTI })
+        assertEquals(2, fileTools.count { it.media == MediaKind.DOCX })
+        assertEquals(2, fileTools.count { it.media == MediaKind.NONE })
     }
 }

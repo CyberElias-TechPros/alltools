@@ -34,6 +34,8 @@ data class Tool(
     val keywords: List<String> = emptyList(),
     val fields: List<FieldSpec>,
     val compute: (Map<String, String>) -> ToolResult,
+    /** Non-null when the tool needs a file: the UI then opens the media screen. */
+    val media: MediaKind? = null,
 )
 
 data class ToolCategory(
@@ -83,3 +85,6 @@ fun err(message: String) = ToolResult(label = "Check your input", value = "—",
 
 fun requireNumber(value: Double?, message: String): Double =
     value ?: throw IllegalArgumentException(message)
+
+/** How a tool gets its input when it is not typed numbers and text. */
+enum class MediaKind { NONE, IMAGE, PDF, PDF_MULTI, DOCX }
