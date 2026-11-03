@@ -89,7 +89,7 @@ internal val developerTools = listOf(
             field("mode", "Output", FieldKind.SELECT, default = "Pretty", options = listOf("Pretty", "Minified")),
         ),
         compute = { input ->
-            val raw = input["text"].trim()
+            val raw = input["text"].orEmpty().trim()
             if (raw.isEmpty()) return@Tool err("Paste some JSON first.")
             val parsed = runCatching { Json.parse(raw) }.getOrNull()
                 ?: return@Tool err("That is not valid JSON. Check for a missing comma, quote or bracket.")
@@ -113,7 +113,7 @@ internal val developerTools = listOf(
         keywords = listOf("sha256", "md5", "checksum"),
         fields = listOf(field("text", "Text", FieldKind.MULTILINE)),
         compute = { input ->
-            val raw = input["text"]
+            val raw = input["text"].orEmpty()
             if (raw.isEmpty()) return@Tool err("Type something first.")
             val bytes = raw.toByteArray(Charsets.UTF_8)
             fun digest(alg: String) = hex(java.security.MessageDigest.getInstance(alg).digest(bytes))
@@ -555,7 +555,7 @@ internal val educationTools = listOf(
             if (topics.isEmpty()) return@Tool err("Add at least one topic.")
             if (days <= 0) return@Tool err("You need at least one day.")
             val perDay = ceil(topics.size / days.toDouble()).toInt()
-            val block = if (topics.isEmpty()) 0 else minutes / perDay
+            val block = if (topics.isEmpty()) 0.0 else minutes.toDouble() / perDay
             val plan = (0 until days).mapNotNull { d ->
                 val slice = topics.drop(d * perDay).take(perDay)
                 if (slice.isEmpty()) null else "Day ${d + 1}: ${slice.joinToString(", ")} (${fmt(block, 0)} min each)"
@@ -590,9 +590,9 @@ internal val seoTools = listOf(
             ToolResult(
                 "Title", "${title.length} chars",
                 listOf(
-                    verdict(title.length, 30, 60, "Title"),
+                    "Title verdict" to verdict(title.length, 30, 60, "Title"),
                     "Description" to "${description.length} chars",
-                    verdict(description.length, 70, 160, "Description"),
+                    "Description verdict" to verdict(description.length, 70, 160, "Description"),
                 ),
                 note = "Google truncates by pixel width, so these are sensible ranges rather than hard limits.",
             )
@@ -629,7 +629,7 @@ internal val seoTools = listOf(
             val words = wordsOf(input["text"].orEmpty()).map { it.lowercase(Locale.UK).trim('.', ',', '!', '?', ';', ':', '"', '\'') }.filter { it.isNotBlank() }
             if (words.isEmpty()) return@Tool err("Paste some text first.")
             val counts = words.groupingBy { it }.eachCount().entries.sortedByDescending { it.value }.take(5)
-            val details = counts.map { (word, n) to "${n}× · ${pct(n * 100.0 / words.size, 1)}" }
+            val details = counts.map { (word, n) -> word to "${n}× · ${pct(n * 100.0 / words.size, 1)}" }
             val term = input.text("term").lowercase(Locale.UK)
             if (term.isNotBlank()) {
                 val hits = words.count { it == term }
