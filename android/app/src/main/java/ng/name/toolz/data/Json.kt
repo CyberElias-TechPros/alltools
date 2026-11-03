@@ -30,7 +30,10 @@ object Json {
             is Boolean -> out.append(value.toString())
             is Number -> out.append(number(value))
             is Map<*, *> -> {
-                if (value.isEmpty()) return out.append("{}")
+                if (value.isEmpty()) {
+                    out.append("{}")
+                    return
+                }
                 out.append('{')
                 val entries = value.entries.toList()
                 entries.forEachIndexed { index, entry ->
@@ -46,7 +49,10 @@ object Json {
                 out.append('}')
             }
             is List<*> -> {
-                if (value.isEmpty()) return out.append("[]")
+                if (value.isEmpty()) {
+                    out.append("[]")
+                    return
+                }
                 out.append('[')
                 value.forEachIndexed { index, item ->
                     if (pretty) out.append('\n').append("  ".repeat(depth + 1))

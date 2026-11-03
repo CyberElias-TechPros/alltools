@@ -217,7 +217,8 @@ internal val textTools = listOf(
             val raw = input["text"].orEmpty()
             val find = input.text("find")
             if (find.isEmpty()) return@Tool err("Type something to find.")
-            val regex = Regex(Regex.escape(find), if (input.flag("ignoreCase")) RegexOption.IGNORE_CASE else RegexOption.DEFAULT)
+            val options = if (input.flag("ignoreCase")) setOf(RegexOption.IGNORE_CASE) else emptySet()
+            val regex = Regex(Regex.escape(find), options)
             val matches = regex.findAll(raw).count()
             ToolResult(
                 label = "Result",

@@ -142,9 +142,9 @@ fun StudioChip(text: String, selected: Boolean = false, onClick: () -> Unit) {
 @Composable
 fun StudioButton(
     label: String,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     filled: Boolean = true,
+    onClick: () -> Unit,
 ) {
     val bg = if (filled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
     val fg = if (filled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
