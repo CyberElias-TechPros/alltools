@@ -354,7 +354,7 @@ a real domain exists (every check that references the live site is 🟡 or ⛔ t
 
 **7.6 — `ads.txt`.** *Why:* an invented or guessed seller line is worse than an empty file —
 it can invalidate authorised-seller status. `public/ads.txt` now carries the real line
-supplied by Google (`google.com, pub-5010473500037610, DIRECT, f08c47fec0942fa0`). ✅
+supplied by Google (`google.com, pub-9124992249317290, DIRECT, f08c47fec0942fa0`). ✅
 
 **7.7 — CMP.** *Why:* Google requires a certified CMP for personalised ads in the EEA, UK
 and Switzerland. The site now ships Consent Mode v2 defaults plus an in-house banner, and

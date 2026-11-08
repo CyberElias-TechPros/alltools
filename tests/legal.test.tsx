@@ -87,7 +87,7 @@ describe("legal pages", () => {
     expect(markup).toContain("DoubleClick");
     expect(markup).toContain("DART");
     expect(markup).toContain("Third-party vendors, including Google, use cookies to serve ads");
-    expect(markup).toContain("ca-pub-5010473500037610");
+    expect(markup).toContain("ca-pub-9124992249317290");
     expect(markup).toContain("https://adssettings.google.com/");
     expect(markup).toContain("https://www.aboutads.info/choices/");
     expect(markup).toContain("https://policies.google.com/technologies/ads");

@@ -33,7 +33,7 @@ export const siteConfig = {
    * it appears in the page source of every AdSense site — while the ad *unit*
    * ids stay environment-driven so a slot can never render an invented unit.
    */
-  adsenseClient: process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.trim() || "ca-pub-5010473500037610",
+  adsenseClient: process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.trim() || "ca-pub-9124992249317290",
   /**
    * Which consent UI collects choices. "builtin" uses the banner in
    * src/components/analytics.tsx; "google" defers to the certified CMP that

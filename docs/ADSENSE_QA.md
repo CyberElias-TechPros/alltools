@@ -107,7 +107,7 @@ them; adding more slots is a template change, not a rebuild.
 3. Contact mailbox receives a test message; reply works.
 3a. **AdSense loader present in the page source.** `npm run build && npm run verify:adsense`
    must pass; it checks every exported page for
-   `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5010473500037610" crossorigin="anonymous">`
+   `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9124992249317290" crossorigin="anonymous">`
    inside `<head>`, the `google-adsense-account` meta tag, and the `ads.txt` line.
    On the live domain, `curl -s https://toolz.name.ng/ | grep -c adsbygoogle` must print a
    number greater than zero — a 0 means the deployed build predates this fix.
@@ -136,7 +136,7 @@ still fails.
 
 ## 7. After approval
 
-1. `public/ads.txt` already carries the seller line `google.com, pub-5010473500037610, DIRECT,
+1. `public/ads.txt` already carries the seller line `google.com, pub-9124992249317290, DIRECT,
    f08c47fec0942fa0`; confirm it stays exact if the account changes.
 2. Set `NEXT_PUBLIC_ADSENSE_CLIENT` and `NEXT_PUBLIC_ADS_ENABLED=true` in the host's
    environment — never commit either value.
