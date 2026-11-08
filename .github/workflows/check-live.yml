@@ -1,0 +1,41 @@
+name: Check live AdSense surface
+
+on:
+  push:
+    branches: [arena/9dc7415d-alltools]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Fetch as a normal browser
+        run: |
+          echo "=== headers ==="
+          curl -sSIL --max-redirs 5 --max-time 30 https://toolz.name.ng/ | sed -n '1,40p'
+          echo "=== body probes ==="
+          curl -sSL --max-time 30 https://toolz.name.ng/ -o /tmp/home.html
+          echo "adsbygoogle hits:      $(grep -c adsbygoogle /tmp/home.html || true)"
+          echo "client=ca-pub hits:    $(grep -c 'client=ca-pub-9124992249317290' /tmp/home.html || true)"
+          echo "account meta hits:     $(grep -c 'google-adsense-account' /tmp/home.html || true)"
+          echo "rocket-loader hits:    $(grep -c 'rocket-loader' /tmp/home.html || true)"
+          echo "cf email protection:   $(grep -c 'cdn-cgi/l/email-protection' /tmp/home.html || true)"
+          echo "=== head (first 60 lines after <head>) ==="
+          tr '>' '>\n' < /tmp/home.html | sed -n '/<head/,/<\/head/p' | head -60
+
+      - name: Fetch as Google's crawlers
+        run: |
+          for ua in "Googlebot/2.1 (+http://www.google.com/bot.html)" "Mediapartners-Google" "AdsBot-Google (+http://www.google.com/adsbot.html)"; do
+            code=$(curl -sS -o /tmp/x.html -w '%{http_code}' --max-time 30 -A "$ua" https://toolz.name.ng/)
+            echo "UA='$ua' status=$code adsbygoogle=$(grep -c adsbygoogle /tmp/x.html || true) bytes=$(wc -c < /tmp/x.html)"
+          done
+
+      - name: ads.txt
+        run: |
+          curl -sSL --max-time 30 https://toolz.name.ng/ads.txt
+          echo "---"
+          curl -sSL --max-time 30 https://toolz.name.ng/robots.txt | head -5
