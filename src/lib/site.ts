@@ -13,6 +13,14 @@ export const siteUrl = (rawUrl || fallback).replace(/\/+$/, "");
 /** True when the canonical URL has not been configured yet. */
 export const siteUrlIsPlaceholder = siteUrl.includes("example.com");
 
+/**
+ * Public AdSense publisher id. Committed on purpose: it appears in the page
+ * source of every AdSense site. Ad *unit* ids stay environment-driven so a
+ * slot can never render an invented unit.
+ */
+const adsenseClient =
+  process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.trim() || "ca-pub-9124992249317290";
+
 export const siteConfig = {
   name: "Toolz",
   legalName: "Toolz",
@@ -28,12 +36,8 @@ export const siteConfig = {
   email: "hello@toolz.name.ng",
   /** Set NEXT_PUBLIC_GA_ID to enable consented, aggregate analytics. */
   gaId: process.env.NEXT_PUBLIC_GA_ID?.trim() || "",
-  /**
-   * AdSense publisher ID. The public client id is committed here on purpose —
-   * it appears in the page source of every AdSense site — while the ad *unit*
-   * ids stay environment-driven so a slot can never render an invented unit.
-   */
-  adsenseClient: process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.trim() || "ca-pub-5010473500037610",
+  /** Publisher id for the loader and every `data-ad-client` (see above). */
+  adsenseClient,
   /**
    * Which consent UI collects choices. "builtin" uses the banner in
    * src/components/analytics.tsx; "google" defers to the certified CMP that
@@ -57,10 +61,14 @@ export const siteConfig = {
   adsenseSlots: {
     toolPage: process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOOL?.trim() || "",
   },
-  /** Shown in the footer; keep empty until ads are actually live. */
+  /**
+   * Ads are switched on: the site is live and the publisher account exists.
+   * `NEXT_PUBLIC_ADS_ENABLED=false` is the kill switch, so a bad ad layout can
+   * be turned off from the host's dashboard without a code change. A placement
+   * still needs its own unit id (`adsenseSlots`) before anything renders.
+   */
   adsEnabled:
-    Boolean(process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.trim()) &&
-    process.env.NEXT_PUBLIC_ADS_ENABLED === "true",
+    Boolean(adsenseClient) && process.env.NEXT_PUBLIC_ADS_ENABLED?.trim() !== "false",
 } as const;
 
 /**

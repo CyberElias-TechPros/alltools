@@ -249,9 +249,9 @@ Everything is optional for development; see [`.env.example`](.env.example).
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console meta token | unset (tag omitted) |
 | `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Bing Webmaster `msvalidate.01` token | unset (tag omitted) |
 | `NEXT_PUBLIC_GA_ID` | GA4 measurement ID; analytics also requires cookie consent | empty — no analytics |
-| `NEXT_PUBLIC_ADSENSE_CLIENT` | AdSense publisher ID | `ca-pub-5010473500037610` (live) |
-| `NEXT_PUBLIC_ADSENSE_SLOT_TOOL` | Ad unit id for the tool-page slot | empty — slot renders nothing |
-| `NEXT_PUBLIC_ADS_ENABLED` | Must be exactly `"true"` for ad slots to render | `false` |
+| `NEXT_PUBLIC_ADSENSE_CLIENT` | AdSense publisher ID | `ca-pub-9124992249317290` (live) |
+| `NEXT_PUBLIC_ADSENSE_SLOT_TOOL` | Ad unit id for the tool-page slot (Auto ads need none) | empty — slot renders nothing |
+| `NEXT_PUBLIC_ADS_ENABLED` | Kill switch — set `"false"` to stop every ad frame | `true` |
 | `NEXT_PUBLIC_CMP_PROVIDER` | `google` once a Google-certified CMP is live in AdSense | `internal` |
 
 Before launch, set `NEXT_PUBLIC_SITE_URL` to the real domain, replace the placeholder

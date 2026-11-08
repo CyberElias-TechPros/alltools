@@ -22,7 +22,7 @@ content requirements in Google Search's helpful-content guidance.
 | --- | --- | --- | --- |
 | 1.1 | Site is publicly reachable on a real domain | ⛔ | Nothing is deployed yet. Set `NEXT_PUBLIC_SITE_URL`, deploy `out/`, confirm HTTPS. |
 | 1.2 | Site is old enough / has enough indexed pages | ⛔ | Wait until Search Console shows the 254 tool pages, 12 category pages, 4 guides and policy pages indexed. Indexing cannot start until the real domain is live (§1.1). |
-| 1.3 | No ads are shown before approval | ✅ | `src/components/ad-slot.tsx` returns `null` unless `NEXT_PUBLIC_ADS_ENABLED === "true"` *and* a publisher ID exists; no AdSense script is loaded anywhere else (grep `adsbygoogle`). |
+| 1.3 | Every ad frame is gated by config | ✅ | `src/components/ad-slot.tsx` returns `null` unless ads are enabled (`NEXT_PUBLIC_ADS_ENABLED` ≠ `"false"`), a publisher ID exists *and* the placement has a unit id; the only AdSense script in the tree is the loader in `src/components/adsense-loader.tsx` (grep `adsbygoogle`). |
 | 1.4 | No placeholder publisher ID or analytics ID in the codebase | ✅ | `src/lib/site.ts` reads env vars only; the only placeholder is the contact email/domain, tracked in §8. |
 | 1.5 | Hosting terms permit advertising | ⛔ | Vercel Hobby does not permit commercial advertising. Choose Cloudflare Pages, Netlify (paid plan if required), or another host whose terms allow ads. |
 | 1.6 | Site does not encourage invalid clicks | ✅ | No "click our ads", no ads layered over content, no ads in the tool result area. |
@@ -107,7 +107,7 @@ them; adding more slots is a template change, not a rebuild.
 3. Contact mailbox receives a test message; reply works.
 3a. **AdSense loader present in the page source.** `npm run build && npm run verify:adsense`
    must pass; it checks every exported page for
-   `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5010473500037610" crossorigin="anonymous">`
+   `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9124992249317290" crossorigin="anonymous">`
    inside `<head>`, the `google-adsense-account` meta tag, and the `ads.txt` line.
    On the live domain, `curl -s https://toolz.name.ng/ | grep -c adsbygoogle` must print a
    number greater than zero — a 0 means the deployed build predates this fix.
@@ -136,13 +136,15 @@ still fails.
 
 ## 7. After approval
 
-1. `public/ads.txt` already carries the seller line `google.com, pub-5010473500037610, DIRECT,
+1. `public/ads.txt` already carries the seller line `google.com, pub-9124992249317290, DIRECT,
    f08c47fec0942fa0`; confirm it stays exact if the account changes.
-2. Set `NEXT_PUBLIC_ADSENSE_CLIENT` and `NEXT_PUBLIC_ADS_ENABLED=true` in the host's
-   environment — never commit either value.
-3. Set `NEXT_PUBLIC_ADSENSE_SLOT_TOOL` to the tool-page unit id. The loader and the
-   `adsbygoogle.push()` call stay behind the consent gate, so no ad request fires before
-   consent in regulated regions.
+2. `NEXT_PUBLIC_ADSENSE_CLIENT` defaults to the live publisher id and ads are enabled
+   unless `NEXT_PUBLIC_ADS_ENABLED=false`; override either in the host's environment
+   rather than editing code.
+3. Set `NEXT_PUBLIC_ADSENSE_SLOT_TOOL` to the tool-page unit id — or leave it empty and
+   let Google's Auto ads (AdSense → Ads → By site) place ads, which needs only the loader.
+   The `adsbygoogle.push()` call stays behind the consent gate, so no ad request fires
+   before consent in regulated regions.
 4. Enable one slot, review on mobile and desktop for layout shift and accidental clicks,
    then decide whether a second is warranted.
 5. Monitor the Policy Centre weekly for the first month; a single "low value content"

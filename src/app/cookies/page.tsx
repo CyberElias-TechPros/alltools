@@ -60,7 +60,7 @@ export default function CookiesPage() {
         Advertising is switched off until Google approves the publisher account, so no advertising
         cookie is set today. When it is on, this site is supported by advertising served through
         Google AdSense (publisher ID{" "}
-        <code className="font-mono text-[0.85em]">ca-pub-5010473500037610</code>). Google and its
+        <code className="font-mono text-[0.85em]">ca-pub-9124992249317290</code>). Google and its
         partners may then set advertising cookies — for example to limit how often you see the same
         ad, measure performance, and, where you have consented, personalise ads. Ad storage is
         denied until you choose &ldquo;Accept&rdquo;, and the decision can be reversed at any time.

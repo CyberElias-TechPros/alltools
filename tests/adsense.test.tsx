@@ -13,7 +13,7 @@ import { metadata } from "../src/app/layout";
  * source itself.
  */
 
-const PUB = "ca-pub-5010473500037610";
+const PUB = "ca-pub-9124992249317290";
 
 describe("AdSense loader", () => {
   it("renders the snippet Google supplies, verbatim", () => {
@@ -42,7 +42,7 @@ describe("AdSense loader", () => {
 
   it("declares the publisher in ads.txt", () => {
     const adsTxt = readFileSync("public/ads.txt", "utf8");
-    expect(adsTxt).toContain("google.com, pub-5010473500037610, DIRECT,");
+    expect(adsTxt).toContain("google.com, pub-9124992249317290, DIRECT,");
   });
 
   it("does not block the crawler in robots.txt", () => {

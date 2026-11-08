@@ -98,7 +98,7 @@ export default function PrivacyPolicyPage() {
         Advertising is not live yet. The slots are built into the page but render nothing until the
         publisher account below is approved and advertising is switched on. Once it is, this site
         is supported by advertising served through Google AdSense (publisher ID{" "}
-        <code className="font-mono text-[0.85em]">ca-pub-5010473500037610</code>).
+        <code className="font-mono text-[0.85em]">ca-pub-9124992249317290</code>).
       </p>
       <p>
         <strong>

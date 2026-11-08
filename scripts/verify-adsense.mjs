@@ -13,8 +13,8 @@
 import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-const PUB = "ca-pub-5010473500037610";
-const PUB_NUMBER = "pub-5010473500037610";
+const PUB = "ca-pub-9124992249317290";
+const PUB_NUMBER = "pub-9124992249317290";
 const ROOT = process.argv[2] ?? "out";
 
 if (!existsSync(ROOT)) {
