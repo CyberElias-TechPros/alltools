@@ -11,6 +11,7 @@ import { CircularText } from "@/components/bits/circular-text";
 import { SplitText } from "@/components/motion/split-text";
 import { Magnet } from "@/components/motion/magnetic";
 import { HeroParallax } from "./hero-parallax";
+import { readIntroFlag } from "@/components/motion/preloader";
 
 const QUICK_LINKS = [
   { slug: "word-counter", label: "Word counter" },
@@ -107,7 +108,7 @@ export function Hero({ count, categories }: { count: number; categories: number 
      * behind the overlay: wait for the curtain when it is coming, otherwise
      * play immediately.
      */
-    const willIntro = !sessionStorage.getItem("toolz:intro-seen");
+    const willIntro = !readIntroFlag();
 
     if (!willIntro) {
       play();

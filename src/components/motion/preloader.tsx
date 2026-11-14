@@ -11,6 +11,28 @@ import { useEffect, useRef, useState } from "react";
  *   same tab session (sessionStorage flag).
  * - `aria-hidden`: it never blocks assistive technology.
  */
+/**
+ * Storage can throw in private modes and when third-party storage is blocked.
+ * The intro is decorative, so a failure just means "show it again".
+ */
+export const INTRO_KEY = "toolz:intro-seen";
+
+export function readIntroFlag(): boolean {
+  try {
+    return window.sessionStorage.getItem(INTRO_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function writeIntroFlag() {
+  try {
+    window.sessionStorage.setItem(INTRO_KEY, "1");
+  } catch {
+    /* ignore */
+  }
+}
+
 export function Preloader() {
   const [mounted, setMounted] = useState(false);
   const [done, setDone] = useState(false);
@@ -19,13 +41,13 @@ export function Preloader() {
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (sessionStorage.getItem("toolz:intro-seen")) return;
+    if (readIntroFlag()) return;
     setMounted(true);
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
-    sessionStorage.setItem("toolz:intro-seen", "1");
+    writeIntroFlag();
     let cancelled = false;
     (async () => {
       try {
