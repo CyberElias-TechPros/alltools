@@ -10,6 +10,7 @@ import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { Preloader } from "@/components/motion/preloader";
 import { Cursor } from "@/components/motion/cursor";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
+import { PageTransition } from "@/components/motion/page-transition";
 import { ToastProvider } from "@/components/ui";
 import { Analytics } from "@/components/analytics";
 import { AdsenseLoader } from "@/components/adsense-loader";
@@ -203,7 +204,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Cursor />
             <ScrollProgress />
             <SiteHeader index={searchIndex} />
-            <main id="main">{children}</main>
+            <main id="main">
+              <PageTransition>{children}</PageTransition>
+            </main>
             <SiteFooter />
             <Analytics />
           </SmoothScroll>
