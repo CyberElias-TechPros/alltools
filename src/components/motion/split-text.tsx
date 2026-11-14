@@ -160,6 +160,12 @@ export function SplitText({
       onLetterAnimationComplete?.();
       return;
     }
+    // Late hydration: the text is already on screen, so leave it alone rather
+    // than flashing it away and replaying the reveal.
+    if (!scrollTrigger && performance.now() > 900) {
+      onLetterAnimationComplete?.();
+      return;
+    }
     let ctx: { revert: () => void } | null = null;
     let cancelled = false;
     (async () => {

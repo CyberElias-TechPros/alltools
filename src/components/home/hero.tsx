@@ -33,6 +33,12 @@ export function Hero({ count, categories }: { count: number; categories: number 
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    /*
+     * If hydration landed late, the first paint already showed the settled
+     * hero. Rewinding it now would read as a glitch, so skip the entrance
+     * entirely and leave the page exactly as rendered.
+     */
+    if (performance.now() > 900) return;
     let ctx: { revert: () => void } | null = null;
     let cancelled = false;
 
@@ -224,14 +230,14 @@ export function Hero({ count, categories }: { count: number; categories: number 
                     className="glass group flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-colors duration-300 hover:border-[var(--ring)]/40"
                     style={{ marginLeft: i % 2 === 0 ? 0 : 14 }}
                   >
-                    <span className="font-mono text-[0.55rem] tabular-nums text-[var(--text-subtle)]/70">
+                    <span className="font-mono text-[0.6rem] tabular-nums text-[var(--text-subtle)]/70">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[0.8rem] font-medium text-[var(--text)]">
                         {item.label}
                       </span>
-                      <span className="block font-mono text-[0.5rem] uppercase tracking-[0.16em] text-[var(--text-subtle)]">
+                      <span className="block font-mono text-[0.6rem] uppercase tracking-[0.16em] text-[var(--text-subtle)]">
                         {item.meta}
                       </span>
                     </span>
@@ -256,7 +262,7 @@ export function Hero({ count, categories }: { count: number; categories: number 
                 href="#categories"
                 className="group flex flex-col items-end gap-2 text-right text-[var(--text-subtle)]"
               >
-                <span className="max-w-[110px] font-mono text-[0.55rem] uppercase leading-relaxed tracking-[0.18em]">
+                <span className="max-w-[110px] font-mono text-[0.6rem] uppercase leading-relaxed tracking-[0.18em]">
                   Scroll to explore
                 </span>
                 <span className="inline-flex size-9 items-center justify-center rounded-full border border-[var(--border-strong)] transition-colors group-hover:border-[var(--ring)] group-hover:text-[var(--ring)]">

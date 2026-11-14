@@ -9,7 +9,7 @@ a React component, so results are instant, work offline after first load, and ca
 verified by automated tests.
 
 - **Live tools:** 254 across 12 categories (plus 10 honestly labelled as planned)
-- **Test suite:** 971 tests in 27 files (`npm test`) — logic, catalogue rules, a render smoke test over every tool, an interaction sweep that types/clicks through all 254, and known-answer checks through the real UI
+- **Test suite:** 1002 tests in 30 files (`npm test`) — logic, catalogue rules, a render smoke test over every tool, an interaction sweep that types/clicks through all 254, known-answer checks through the real UI, and the homepage text-stat helpers
 - **First-load JS:** one route's worth of code per tool (each tool is code-split)
 - **Domain:** toolz.name.ng
 - **Hosting:** any static host — output is plain HTML/CSS/JS in `out/`

@@ -178,7 +178,7 @@ export default function HomePage() {
               <span className="font-display text-[0.95rem] font-medium tracking-[-0.02em] text-[var(--text-muted)]">
                 {item}
               </span>
-              <span className="font-mono text-[0.55rem] text-[var(--ring)]" aria-hidden>
+              <span className="font-mono text-[0.6rem] text-[var(--accent-text)]" aria-hidden>
                 ✳
               </span>
             </span>
@@ -210,7 +210,7 @@ export default function HomePage() {
               {[
                 "No submit button, no spinner, no round trip",
                 "Nothing you paste is transmitted or stored",
-                "The same engine powers all 254 tools",
+                "The same local-first approach across all 254 tools",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-[0.86rem] text-[var(--text-muted)]">
                   <span className="mt-[0.45rem] size-1 shrink-0 rounded-full bg-[var(--ring)]" aria-hidden />
@@ -315,7 +315,7 @@ export default function HomePage() {
                       {category.tagline}
                     </span>
                     {featured ? (
-                      <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] px-3 py-1 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-[var(--tint)]">
+                      <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-[var(--tint)]">
                         Largest shelf · {count} tools
                       </span>
                     ) : null}
@@ -409,7 +409,7 @@ export default function HomePage() {
                     <p className="font-display text-[1.9rem] font-bold leading-none tracking-[-0.05em] text-[var(--text)]">
                       <CountUp end={stat.value} suffix={stat.suffix} />
                     </p>
-                    <p className="mt-2 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-[var(--text-subtle)]">
+                    <p className="mt-2 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-[var(--text-subtle)]">
                       {stat.label}
                     </p>
                   </div>
@@ -430,7 +430,7 @@ export default function HomePage() {
                           <h3 className="font-display text-[1.12rem] font-semibold tracking-[-0.025em] text-[var(--text)]">
                             {item.title}
                           </h3>
-                          <span className="font-mono text-[0.56rem] uppercase tracking-[0.14em] text-[var(--ring)]">
+                          <span className="font-mono text-[0.56rem] uppercase tracking-[0.14em] text-[var(--accent-text)]">
                             {item.meta}
                           </span>
                         </div>
@@ -450,7 +450,7 @@ export default function HomePage() {
                   <ShieldCheck className="size-4 shrink-0 text-[var(--ring)]" aria-hidden />
                   <p className="font-mono text-[0.6rem] uppercase tracking-[0.16em] text-[var(--text-muted)]">
                     Every tool covered by automated tests ·{" "}
-                    <DecryptedText text="1000+" className="text-[var(--text)]" /> assertions
+                    <DecryptedText text="1,000+" className="text-[var(--text)]" /> passing
                   </p>
                 </div>
               </Reveal>
@@ -573,7 +573,7 @@ export default function HomePage() {
                         {faq.q}
                       </span>
                       <span
-                        className="flex size-7 shrink-0 items-center justify-center rounded-full border border-[var(--border)] font-mono text-sm leading-none text-[var(--text-subtle)] transition-transform duration-300 group-open:rotate-45 group-open:border-[var(--ring)] group-open:text-[var(--ring)]"
+                        className="flex size-7 shrink-0 items-center justify-center rounded-full border border-[var(--border)] font-mono text-sm leading-none text-[var(--text-subtle)] transition-transform duration-300 group-open:rotate-45 group-open:border-[var(--ring)] group-open:text-[var(--accent-text)]"
                         aria-hidden
                       >
                         +
@@ -667,7 +667,7 @@ function SectionHead({
         <p className="flex items-center gap-2.5 font-mono text-[0.58rem] uppercase tracking-[0.2em] text-[var(--text-subtle)]">
           {index ? (
             <>
-              <span className="text-[var(--ring)]">{index}</span>
+              <span className="text-[var(--accent-text)]">{index}</span>
               <span className="h-px w-6 bg-[var(--border-strong)]" aria-hidden />
             </>
           ) : null}
