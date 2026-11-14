@@ -1,5 +1,6 @@
 "use client";
 
+import { lenisStart, lenisStop } from "./motion/smooth-scroll";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -111,10 +112,14 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
     setRecent(readRecentSlugs());
     const frame = requestAnimationFrame(() => inputRef.current?.focus());
     document.documentElement.style.overflow = "hidden";
+    // Pause Lenis too, otherwise its rAF loop keeps scrolling the page behind
+    // the dialog on wheel/touch.
+    lenisStop();
 
     return () => {
       cancelAnimationFrame(frame);
       document.documentElement.style.overflow = "";
+      lenisStart();
       opener?.focus?.();
     };
   }, [open]);
