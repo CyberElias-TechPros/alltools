@@ -1,5 +1,6 @@
 "use client";
 
+import { lenisStart, lenisStop } from "./motion/smooth-scroll";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -111,10 +112,14 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
     setRecent(readRecentSlugs());
     const frame = requestAnimationFrame(() => inputRef.current?.focus());
     document.documentElement.style.overflow = "hidden";
+    // Pause Lenis too, otherwise its rAF loop keeps scrolling the page behind
+    // the dialog on wheel/touch.
+    lenisStop();
 
     return () => {
       cancelAnimationFrame(frame);
       document.documentElement.style.overflow = "";
+      lenisStart();
       opener?.focus?.();
     };
   }, [open]);
@@ -183,7 +188,7 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
 
       {open ? (
         <div
-          className="fixed inset-0 z-[90] flex items-start justify-center bg-[#0b0b09]/45 p-3 pt-[8vh] sm:pt-[12vh]"
+          className="fixed inset-0 z-[90] flex items-start justify-center bg-[#0b0b09]/50 p-3 pt-[8vh] backdrop-blur-md sm:pt-[12vh]"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) close();
           }}
@@ -193,9 +198,9 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
             aria-modal="true"
             aria-label="Search tools"
             onKeyDown={handleKeyDown}
-            className="animate-in w-full max-w-2xl border border-[var(--text)] bg-[var(--page)]"
+            className="animate-in w-full max-w-2xl overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--surface)] shadow-[0_40px_120px_-40px_rgb(0_0_0/0.65)]"
           >
-            <div className="flex items-stretch border-b border-[var(--border)]">
+            <div className="flex items-stretch border-b border-[var(--border)] bg-[var(--surface-muted)]/50">
               <span className="flex w-12 shrink-0 items-center justify-center border-r border-[var(--border)] text-[var(--text-subtle)]">
                 <Search className="size-4" aria-hidden />
               </span>
@@ -216,7 +221,7 @@ export function SearchDialog({ index }: { index: SearchableTool[] }) {
               <button
                 type="button"
                 onClick={close}
-                className="my-auto mr-3 shrink-0 border border-[var(--border-strong)] px-1.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-[var(--text-subtle)] transition-colors hover:border-[var(--text)] hover:text-[var(--text)]"
+                className="my-auto mr-3 shrink-0 rounded-full border border-[var(--border-strong)] px-2 py-1 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-[var(--text-subtle)] transition-colors hover:border-[var(--ring)] hover:text-[var(--text)]"
                 aria-label="Close search"
               >
                 ESC

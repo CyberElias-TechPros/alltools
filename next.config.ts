@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   poweredByHeader: false,
   reactStrictMode: true,
+  /**
+   * Dev-only: allow the sandbox preview host (and any e2b.app subdomain) to
+   * load the dev server from a proxied origin. Has no effect on the exported
+   * production build.
+   */
+  allowedDevOrigins: ["*.e2b.app", "localhost", "127.0.0.1"],
 };
 
 export default nextConfig;

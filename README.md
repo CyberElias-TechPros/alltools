@@ -9,7 +9,7 @@ a React component, so results are instant, work offline after first load, and ca
 verified by automated tests.
 
 - **Live tools:** 254 across 12 categories (plus 10 honestly labelled as planned)
-- **Test suite:** 971 tests in 27 files (`npm test`) — logic, catalogue rules, a render smoke test over every tool, an interaction sweep that types/clicks through all 254, and known-answer checks through the real UI
+- **Test suite:** 1002 tests in 30 files (`npm test`) — logic, catalogue rules, a render smoke test over every tool, an interaction sweep that types/clicks through all 254, known-answer checks through the real UI, and the homepage text-stat helpers
 - **First-load JS:** one route's worth of code per tool (each tool is code-split)
 - **Domain:** toolz.name.ng
 - **Hosting:** any static host — output is plain HTML/CSS/JS in `out/`
@@ -304,6 +304,35 @@ gradle wrapper --gradle-version 8.9   # once, if `gradlew` is not present
 
 Signing keys, store submission and AdMob approval are owner actions — the repo never
 contains credentials.
+
+---
+
+## Design system and motion
+
+The interface is one system: warm paper by day, deep noir at night, a single
+signal orange with violet/cyan atmosphere reserved for the aurora.
+
+- **Type** — Bricolage Grotesque (display), Instrument Serif italic (editorial
+  accent), Inter Tight (text), JetBrains Mono (instrument voice).
+- **Tokens** — `src/app/globals.css`. The `:root` / `.dark` custom properties are
+  the contract every tool surface relies on; the "cinematic upgrade layer" at the
+  end of the file extends them without renaming anything.
+- **Motion** — GSAP + ScrollTrigger and Lenis smooth scrolling. Entry points live
+  in `src/components/motion/`:
+  - `smooth-scroll.tsx` — Lenis driven by the GSAP ticker (keeps ScrollTrigger in
+    sync), anchor handling, and `lenisStop()` / `lenisStart()` for dialogs and menus.
+  - `reveal.tsx` — `Reveal` / `RevealGroup` scroll-triggered fades.
+  - `split-text.tsx` — `SplitText` / `BlurText`, with the intact string exposed to
+    screen readers via an `sr-only` span.
+  - `magnetic.tsx`, `count-up.tsx`, `preloader.tsx`, `cursor.tsx`, `scroll-progress.tsx`.
+- **Components** — React Bits–style primitives in `src/components/bits/`: Aurora,
+  Beams, Particles, Marquee, SpotlightCard, GradientText, ShinyText, TextType,
+  DecryptedText, CircularText. All decorative layers are `aria-hidden` and all
+  canvases pause when the tab is hidden.
+
+Every animation is progressive enhancement: the page renders complete and readable
+in the exported HTML, and `prefers-reduced-motion: reduce` disables the lot
+(preloader, cursor, parallax, split-text, marquees).
 
 ---
 

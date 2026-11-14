@@ -108,7 +108,7 @@ export default function RoadmapPage() {
               </span>
               <span
                 className={cn(
-                  "mt-1 hidden size-2.5 sm:block",
+                  "mt-1 hidden size-2.5 rounded-full sm:block",
                   done ? "bg-[var(--text)]" : active ? "bg-[var(--ring)]" : "border border-[var(--border-strong)]",
                 )}
                 aria-hidden

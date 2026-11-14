@@ -2,9 +2,15 @@ import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/bricolage-grotesque/standard.css";
 import "@fontsource-variable/inter-tight/wght.css";
 import "@fontsource-variable/jetbrains-mono/wght.css";
+import "@fontsource/instrument-serif/400-italic.css";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { SmoothScroll } from "@/components/motion/smooth-scroll";
+import { Preloader } from "@/components/motion/preloader";
+import { Cursor } from "@/components/motion/cursor";
+import { ScrollProgress } from "@/components/motion/scroll-progress";
+import { PageTransition } from "@/components/motion/page-transition";
 import { ToastProvider } from "@/components/ui";
 import { Analytics } from "@/components/analytics";
 import { AdsenseLoader } from "@/components/adsense-loader";
@@ -193,10 +199,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <ToastProvider>
-          <SiteHeader index={searchIndex} />
-          <main id="main">{children}</main>
-          <SiteFooter />
-          <Analytics />
+          <SmoothScroll>
+            <Preloader />
+            <Cursor />
+            <ScrollProgress />
+            <SiteHeader index={searchIndex} />
+            <main id="main">
+              <PageTransition>{children}</PageTransition>
+            </main>
+            <SiteFooter />
+            <Analytics />
+          </SmoothScroll>
         </ToastProvider>
       </body>
     </html>
