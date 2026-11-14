@@ -1090,8 +1090,12 @@
     display: inline-block;
     overflow: hidden;
     vertical-align: bottom;
-    padding-bottom: 0.08em;
-    margin-bottom: -0.08em;
+    /* The mask must extend past the descender line: display type runs at a
+       0.88 line-height, so an em-box of padding is needed below the baseline
+       or the tails of "y", "g" and "p" get clipped. The negative margin keeps
+       the layout identical. Glyphs start 140% below, so they stay hidden. */
+    padding-bottom: 0.3em;
+    margin-bottom: -0.3em;
   }
   .split-word-inner { display: inline-block; will-change: transform; }
   .split-char { display: inline-block; will-change: transform; }

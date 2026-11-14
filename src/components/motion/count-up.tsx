@@ -38,6 +38,9 @@ export function CountUp({
         if (cancelled || !ref.current) return;
         gsap.registerPlugin(ScrollTrigger);
         const obj = { value: 0 };
+        // Start from zero before the trigger fires so the count-up never flashes
+        // the final number first.
+        el.textContent = `${prefix}0${suffix}`;
         ctx = gsap.context(() => {
           gsap.to(obj, {
             value: end,

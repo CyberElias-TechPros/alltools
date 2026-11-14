@@ -60,13 +60,16 @@ export function LiveCounter() {
           { label: "Sentences", value: value.sentences.toLocaleString("en-US") },
           { label: "Read time", value: value.reading },
         ].map((item) => (
-          <div key={item.label} className="bg-[var(--surface)] px-3.5 py-3">
-            <dd className="font-display text-[1.3rem] font-bold leading-none tracking-[-0.04em] tabular-nums text-[var(--text)]">
-              {item.value}
-            </dd>
+          <div
+            key={item.label}
+            className="flex flex-col-reverse bg-[var(--surface)] px-3.5 py-3"
+          >
             <dt className="mt-1.5 font-mono text-[0.5rem] uppercase tracking-[0.16em] text-[var(--text-subtle)]">
               {item.label}
             </dt>
+            <dd className="font-display text-[1.3rem] font-bold leading-none tracking-[-0.04em] tabular-nums text-[var(--text)]">
+              {item.value}
+            </dd>
           </div>
         ))}
       </dl>

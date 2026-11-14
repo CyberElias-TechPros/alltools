@@ -175,7 +175,7 @@ export function SplitText({
             ? el.querySelectorAll(".split-word-inner")
             : el.querySelectorAll(".split-char");
         ctx = gsap.context(() => {
-          gsap.set(targets, { yPercent: 110, rotate: 4, opacity: 0 });
+          gsap.set(targets, { yPercent: 140, rotate: 4, opacity: 0 });
           gsap.to(targets, {
             yPercent: 0,
             rotate: 0,
@@ -211,9 +211,9 @@ export function SplitText({
       ref={ref}
       className={cn("split-text", className)}
       style={{ textAlign, display: "inline-block" }}
-      aria-label={plain}
-      role="text"
     >
+      {/* Screen readers get the intact string; the split glyphs are decorative. */}
+      <span className="sr-only">{plain}</span>
       {parts}
     </span>
   );
@@ -292,7 +292,8 @@ export function BlurText({
         );
 
   return (
-    <span ref={ref} className={cn("blur-text", className)} aria-label={children}>
+    <span ref={ref} className={cn("blur-text", className)}>
+      <span className="sr-only">{children}</span>
       <span aria-hidden>{units}</span>
     </span>
   );

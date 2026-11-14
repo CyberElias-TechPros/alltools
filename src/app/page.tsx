@@ -118,6 +118,15 @@ const TICKER = [
 
 export default function HomePage() {
   const liveCategories = categories.filter((category) => category.status === "live");
+  /**
+   * The biggest shelf gets the editorial emphasis. Derived from the registry so
+   * the claim ("largest shelf") can never drift out of date.
+   */
+  const featuredCategory = categories.reduce(
+    (best, category) =>
+      (toolCountByCategory[category.id] ?? 0) > (toolCountByCategory[best.id] ?? 0) ? category : best,
+    categories[0],
+  ).id;
   const collectionSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -262,16 +271,17 @@ export default function HomePage() {
             {categories.map((category, i) => {
               const count = toolCountByCategory[category.id] ?? 0;
               const planned = count === 0;
+              const featured = category.id === featuredCategory;
               return (
                 <Link
                   key={category.id}
                   href={`/categories/${category.id}/`}
                   data-reveal-item
-                  className={`group relative flex flex-col justify-between gap-6 overflow-hidden bg-[var(--page)] p-5 transition-colors duration-500 hover:bg-[var(--surface)] ${categoryTone(category.id)}`}
+                  className={`group relative flex flex-col justify-between gap-6 overflow-hidden bg-[var(--page)] p-5 transition-colors duration-500 hover:bg-[var(--surface)] ${featured ? "lg:p-7" : ""} ${categoryTone(category.id)}`}
                 >
                   <CategoryArt
                     id={category.id}
-                    className="pointer-events-none absolute -right-6 -top-4 h-24 w-32 opacity-[0.18] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-right-4 group-hover:opacity-40"
+                    className={`pointer-events-none absolute opacity-[0.18] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-right-4 group-hover:opacity-40 ${featured ? "-right-6 -top-8 h-40 w-56" : "-right-6 -top-4 h-24 w-32"}`}
                   />
                   <span className="relative flex items-start justify-between">
                     <span className="flex items-center gap-2.5">
@@ -286,12 +296,29 @@ export default function HomePage() {
                   </span>
 
                   <span className="relative">
-                    <span className="block font-display text-[1.32rem] font-semibold leading-tight tracking-[-0.035em] text-[var(--text)]">
+                    <span
+                      className={
+                        featured
+                          ? "block font-display text-[clamp(1.9rem,3.4vw,2.7rem)] font-bold leading-[0.95] tracking-[-0.05em] text-[var(--text)]"
+                          : "block font-display text-[1.32rem] font-semibold leading-tight tracking-[-0.035em] text-[var(--text)]"
+                      }
+                    >
                       {category.shortName}
                     </span>
-                    <span className="mt-1.5 block text-[0.83rem] leading-relaxed text-[var(--text-muted)]">
+                    <span
+                      className={
+                        featured
+                          ? "mt-2 block max-w-sm text-[0.9rem] leading-relaxed text-[var(--text-muted)]"
+                          : "mt-1.5 block text-[0.83rem] leading-relaxed text-[var(--text-muted)]"
+                      }
+                    >
                       {category.tagline}
                     </span>
+                    {featured ? (
+                      <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] px-3 py-1 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-[var(--tint)]">
+                        Largest shelf · {count} tools
+                      </span>
+                    ) : null}
                   </span>
 
                   <span className="relative flex items-center justify-between">
@@ -362,6 +389,7 @@ export default function HomePage() {
                   </p>
                   <p className="mt-3">
                     This one keeps{" "}
+                    <span className="sr-only">everything local</span>
                     <TextType
                       texts={["everything local", "zero uploads", "instant results", "no accounts"]}
                       className="font-medium text-[var(--text)]"

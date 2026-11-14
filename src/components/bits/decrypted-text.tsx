@@ -71,7 +71,8 @@ export function DecryptedText({
   }, [text, speed, maxIterations]);
 
   return (
-    <span ref={ref} className={cn("decrypted-text", className)} aria-label={text}>
+    <span ref={ref} className={cn("decrypted-text", className)}>
+      <span className="sr-only">{text}</span>
       <span aria-hidden>{display}</span>
     </span>
   );
