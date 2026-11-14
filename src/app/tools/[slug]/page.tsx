@@ -87,7 +87,11 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
     <>
       <JsonLd data={[breadcrumbSchema, appSchema, faqSchema]} />
 
-      <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
+      <div className="relative isolate mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -inset-x-8 -top-24 -z-10 h-80 bg-[radial-gradient(50%_100%_at_20%_0%,var(--ring-soft),transparent_72%)]"
+        />
         <Breadcrumbs
           items={[
             { href: "/tools/", label: "All tools" },

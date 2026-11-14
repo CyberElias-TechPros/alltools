@@ -473,7 +473,7 @@ export default function HomePage() {
                 <Reveal key={guide.href} delay={i * 0.06}>
                   <Link
                     href={guide.href}
-                    className="group flex items-start gap-5 border-b border-[var(--border)] py-6 first:pt-0"
+                    className="group flex items-start gap-5 border-b border-[var(--border)] py-6"
                   >
                     <span className="mt-1 font-mono text-[0.58rem] tabular-nums uppercase tracking-[0.14em] text-[var(--text-subtle)]">
                       {String(i + 1).padStart(2, "0")} / {guide.kicker}

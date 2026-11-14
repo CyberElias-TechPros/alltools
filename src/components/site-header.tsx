@@ -113,15 +113,17 @@ export function SiteHeader({ index }: { index: SearchableTool[] }) {
           <div className="ml-auto flex items-center gap-1.5">
             <SearchDialog index={index} />
             <ThemeToggle />
-            <Magnet strength={0.2} padding={0} className="hidden lg:inline-block">
-              <Link
-                href="/tools/"
-                className="btn btn-primary !min-h-9 !gap-1.5 !px-4 !text-[0.8rem] !font-medium"
-              >
-                Browse tools
-                <ArrowUpRight className="size-3.5" aria-hidden />
-              </Link>
-            </Magnet>
+            <div className="hidden lg:block">
+              <Magnet strength={0.2} padding={0}>
+                <Link
+                  href="/tools/"
+                  className="btn btn-primary !min-h-9 !gap-1.5 !px-4 !text-[0.8rem] !font-medium"
+                >
+                  Browse tools
+                  <ArrowUpRight className="size-3.5" aria-hidden />
+                </Link>
+              </Magnet>
+            </div>
             <button
               type="button"
               onClick={() => setMobileOpen((value) => !value)}
