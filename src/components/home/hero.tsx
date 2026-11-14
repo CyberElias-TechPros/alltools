@@ -161,8 +161,10 @@ export function Hero({ count, categories }: { count: number; categories: number 
                 <SplitText splitBy="chars" stagger={0.022} delay={0.12} duration={1.05} textAlign="left">
                   you need
                 </SplitText>
-                <span className="serif-accent ml-3 inline-block translate-y-[0.02em] text-[0.62em] font-normal text-[var(--accent-text)]">
-                  <SplitText splitBy="words" stagger={0.05} delay={0.4} duration={0.9}>
+              </span>
+              <span className="mt-2 block font-normal sm:mt-4">
+                <span className="serif-accent block text-[clamp(1.15rem,3.4vw,2.35rem)] leading-[1.1] text-[var(--accent-text)]">
+                  <SplitText splitBy="words" stagger={0.05} delay={0.42} duration={0.9} textAlign="left">
                     — none of the uploads.
                   </SplitText>
                 </span>
